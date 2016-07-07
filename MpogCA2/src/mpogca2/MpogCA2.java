@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -18,9 +19,13 @@ import javafx.stage.Stage;
  * @author tongliang
  */
 public class MpogCA2 extends Application {
+    private Button host, join, help, setting, exit;
+    private Label mainTitle;
     
     @Override
     public void start(Stage primaryStage) {
+        
+        
         Button btn = new Button();
         btn.setText("Say 'Hello World'");
         btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -34,18 +39,20 @@ public class MpogCA2 extends Application {
         StackPane root = new StackPane();
         root.getChildren().add(btn);
         
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 400, 600);
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Main menu");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
+    }//end of main javafx class
+    
+    
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
-    }
+    }//end of main method
     
 }
