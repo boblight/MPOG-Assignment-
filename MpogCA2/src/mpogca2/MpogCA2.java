@@ -7,7 +7,11 @@
 //test
 package mpogca2;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.net.ServerSocket;
+import java.net.Socket;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,17 +36,30 @@ import javafx.stage.WindowEvent;
  */
 public class MpogCA2 extends Application {
 
-    private Button host, join, help, exit, startGame;
+    private Button host, join, help, exit, startGame, confirm;
     private TextArea chatArea;
-    private TextField chatMsg;
+    private TextField chatMsg, inputPName;
     private Label mainTitle;
     private Stage currentStage;
+    
+    public static boolean isServer, gameStart = false, switchTurn = false, btnDisable = true,
+            serverStarted = false, gameServerStarted = false, serverRunning = false, gameServerRunning = false,
+            clientStarted = false, gameClientStarted = false, clientRunning = false, gameClientRunning = false;
+    
+    public static Socket socket;
+    public static ServerSocket serverSocket;
+    public static DataOutputStream dos;
+    public static DataInputStream dis;
 
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
 
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Main Menu");
+        
+        host.setOnAction(e -> {
+           bPush.play();
+        });
         
         exit.setOnAction(e -> {
            bPush.play();
@@ -51,6 +68,19 @@ public class MpogCA2 extends Application {
         
     }//end of main javafx class
 
+    public Scene hostScreen() {
+        StackPane root = new StackPane();
+        Scene scene = new Scene(root, 300, 200);
+        
+        VBox v = new VBox(15);
+        v.setAlignment(Pos.CENTER);
+        
+        inputPName = new TextField();
+        
+        
+        return null;
+    }
+    
     //create lobby
     public Scene createLobby() {
         BorderPane root = new BorderPane();
