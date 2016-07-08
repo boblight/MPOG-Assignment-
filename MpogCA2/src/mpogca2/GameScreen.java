@@ -94,6 +94,7 @@ public class GameScreen {
 
     void Update() {
 
+        //this is to move the object 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
