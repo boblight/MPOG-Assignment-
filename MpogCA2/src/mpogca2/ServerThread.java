@@ -9,6 +9,15 @@ package mpogca2;
  *
  * @author tongliang
  */
-public class ServerThread {
+public class ServerThread implements Runnable {
+
+    public ServerThread() {
+        
+    }//end of constructor
+    
+    @Override
+    public void run() {
+        
+    }//end of run
     
 }//end of server thread
