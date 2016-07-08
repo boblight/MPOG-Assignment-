@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 //test
 package mpogca2;
 
@@ -32,7 +31,7 @@ import javafx.stage.WindowEvent;
  */
 public class MpogCA2 extends Application {
 
-    private Button host, join, help, exit, startGame;
+    private Button host, join, help, exit, startGame, testGame;
     private TextArea chatArea;
     private TextField chatMsg;
     private Label mainTitle;
@@ -43,27 +42,25 @@ public class MpogCA2 extends Application {
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Main Menu");
-        
+
         exit.setOnAction(e -> {
-           bPush.play();
-           System.exit(0);
+            bPush.play();
+            System.exit(0);
         });
-        
+
     }//end of main javafx class
 
     //create lobby
     public Scene createLobby() {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 500);
-        
+
         HBox h = new HBox(15);
         VBox v = new VBox(15);
-        
-        
-        
+
         return null;
     }//end of createLobby
-    
+
     //create main menu ui
     public Scene createMainMenu() {
         BorderPane root = new BorderPane();
@@ -77,15 +74,26 @@ public class MpogCA2 extends Application {
         join = new Button("Join lobby");
         help = new Button("How to play");
         exit = new Button("Exit");
-        
+        testGame = new Button("TestGame");
+
         vbCenter.getChildren().add(mainTitle);
         vbCenter.getChildren().add(host);
         vbCenter.getChildren().add(join);
         vbCenter.getChildren().add(help);
         vbCenter.getChildren().add(exit);
-        
+        vbCenter.getChildren().add(testGame);
+
+        testGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                GameScreen gs = new GameScreen();
+                gs.StartGameScreen();
+            }
+
+        });
+
         root.setCenter(vbCenter);
-        
+
         return scene;
     }//end of createMainMenu
 
