@@ -31,15 +31,15 @@ public class GameScreen {
     int y = 0;
     int xSpeed = 0, ySpeed = 0;
 
-    //this part is where we all play the game 
+    //this part is where we all play the game
     public void StartGameScreen() {
 
-        //create the gameUI 
+        //create the gameUI
         stage = new Stage();
         pane = new Pane();
         scene = new Scene(pane, 1200, 1080);
 
-        //create player(s) 
+        //create player(s)
         player = new Circle(100);
         player.setFill(Color.BLUE);
 
@@ -94,7 +94,8 @@ public class GameScreen {
 
     void Update() {
 
-        //this is to move the object 
+        //this is to move the object
+        //added another comment to test git 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
