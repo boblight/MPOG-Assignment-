@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.*;
 import javafx.util.Duration;
+import mpogca2.engine.*;
 
 /**
  *
@@ -27,9 +28,17 @@ public class GameScreen {
     Pane pane;
     Scene scene;
     Circle player;
+    
+    GameObject testPlayer;
+    GameObject testPlayer2;
+    
     int x = 0;
     int y = 0;
-    int xSpeed = 0, ySpeed = 0;
+    
+    int xDirection = 0;
+    int yDirection = 0;
+    int xDirection1 = 0;
+    int yDirection1 = 0;
 
     //this part is where we all play the game
     public void StartGameScreen() {
@@ -39,14 +48,32 @@ public class GameScreen {
         pane = new Pane();
         scene = new Scene(pane, 1200, 1080);
 
+<<<<<<< db1178478318c0333a5f6b3bc87bc6ad6f558914
         //create player(s)
         player = new Circle(100);
         player.setFill(Color.BLUE);
 
         pane.getChildren().add(player);
 
+=======
+        //create player(s) 
+//        player = new Circle(100);
+//        player.setFill(Color.BLUE);
+//
+//        pane.getChildren().add(player);
+//
+        //Test GameObject Class
+        testPlayer = new GameObject(300, 100, 20, "#6e248d","player");
+        testPlayer2 = new GameObject(100, 100, 20, "#f1892d", "player");
+        pane.getChildren().add(testPlayer.getCircle());
+        pane.getChildren().add(testPlayer2.getCircle());
+        
+>>>>>>> 89b06137898e4972c18953c5cc7182d2443df7da
         stage.setScene(scene);
         stage.setTitle("Orbs");
+        
+        
+        
 
         //create TimeLine
         Timeline();
@@ -94,25 +121,55 @@ public class GameScreen {
 
     void Update() {
 
+<<<<<<< db1178478318c0333a5f6b3bc87bc6ad6f558914
         //this is to move the object
         //added another comment to test git 
+=======
+        handleKeyboard();
+        
+        testPlayer.move(xDirection, yDirection, 3);
+        testPlayer2.move(xDirection1, yDirection1, 3);
+        
+        if (testPlayer.isCollided(testPlayer2))
+        {
+            System.out.println("Collision Success");
+        }
+
+    }
+    
+    void handleKeyboard()
+    {
+        //this is to move the object 
+>>>>>>> 89b06137898e4972c18953c5cc7182d2443df7da
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("Up");
 
                 if (event.getCode() == KeyCode.UP) {
-                    ySpeed = -10;
+                    yDirection = -1;
                 }
                 if (event.getCode() == KeyCode.DOWN) {
-                    ySpeed = 10;
+                    yDirection = 1;
                 }
                 if (event.getCode() == KeyCode.LEFT) {
-                    xSpeed = -10;
+                    xDirection = -1;
                 }
                 if (event.getCode() == KeyCode.RIGHT) {
-                    xSpeed = 10;
+                    xDirection = 1;
+                }
+                
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 1;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 1;
                 }
             }
         });
@@ -120,27 +177,36 @@ public class GameScreen {
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-
+                
+                System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
+                
                 if (event.getCode() == KeyCode.UP) {
-                    ySpeed = 0;
+                    yDirection = 0;
                 }
                 if (event.getCode() == KeyCode.DOWN) {
-                    ySpeed = 0;
+                    yDirection = 0;
                 }
                 if (event.getCode() == KeyCode.LEFT) {
-                    xSpeed = 0;
+                    xDirection = 0;
                 }
                 if (event.getCode() == KeyCode.RIGHT) {
-                    xSpeed = 0;
+                    xDirection = 0;
+                }
+
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 0;
                 }
             }
         });
-
-        x += xSpeed;
-        y += ySpeed;
-
-        player.relocate(x, y);
-
     }
 
 }
