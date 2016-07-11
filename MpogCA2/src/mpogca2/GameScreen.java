@@ -5,6 +5,7 @@
  */
 package mpogca2;
 
+import java.util.Random;
 import javafx.animation.*;
 import javafx.event.*;
 import javafx.scene.*;
@@ -28,17 +29,17 @@ public class GameScreen {
     Pane pane;
     Scene scene;
     Circle player;
-    
-    GameObject testPlayer;
-    GameObject testPlayer2;
-    
+
+    GameObject testPlayer, testPlayer2, middleCircle, bullet;
     int x = 0;
     int y = 0;
-    
+
     int xDirection = 0;
     int yDirection = 0;
     int xDirection1 = 0;
     int yDirection1 = 0;
+
+    int time = 0;
 
     //this part is where we all play the game
     public void StartGameScreen() {
@@ -46,34 +47,25 @@ public class GameScreen {
         //create the gameUI
         stage = new Stage();
         pane = new Pane();
-        scene = new Scene(pane, 1200, 1080);
+        scene = new Scene(pane, 800, 600);
 
-<<<<<<< db1178478318c0333a5f6b3bc87bc6ad6f558914
         //create player(s)
-        player = new Circle(100);
-        player.setFill(Color.BLUE);
+        //   player = new Circle();
+        // player.setCenterX(400.0);
+        //player.setCenterY(300.0);
+        //player.setRadius(80.0);
+        middleCircle = new GameObject(320, 220, 80, "#FB1616", "middleCircle");
 
-        pane.getChildren().add(player);
+        pane.getChildren().add(middleCircle.getCircle());
 
-=======
-        //create player(s) 
-//        player = new Circle(100);
-//        player.setFill(Color.BLUE);
-//
-//        pane.getChildren().add(player);
-//
         //Test GameObject Class
-        testPlayer = new GameObject(300, 100, 20, "#6e248d","player");
-        testPlayer2 = new GameObject(100, 100, 20, "#f1892d", "player");
+        testPlayer = new GameObject(300, 100, 50, "#6e248d", "player");
+        testPlayer2 = new GameObject(100, 100, 50, "#f1892d", "player");
         pane.getChildren().add(testPlayer.getCircle());
         pane.getChildren().add(testPlayer2.getCircle());
-        
->>>>>>> 89b06137898e4972c18953c5cc7182d2443df7da
+
         stage.setScene(scene);
         stage.setTitle("Orbs");
-        
-        
-        
 
         //create TimeLine
         Timeline();
@@ -105,6 +97,10 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
+
+                        System.out.println("time " + time);
+                        SpawnBullets(time);
+
                     }
                 }
                 )
@@ -121,26 +117,33 @@ public class GameScreen {
 
     void Update() {
 
-<<<<<<< db1178478318c0333a5f6b3bc87bc6ad6f558914
+        //timer for the spawnbullet
+        time++;
         //this is to move the object
         //added another comment to test git 
-=======
         handleKeyboard();
-        
+
         testPlayer.move(xDirection, yDirection, 3);
         testPlayer2.move(xDirection1, yDirection1, 3);
-        
-        if (testPlayer.isCollided(testPlayer2))
-        {
+
+        //this is for when collide players
+        if (testPlayer.isCollided(testPlayer2)) {
             System.out.println("Collision Success");
         }
 
+//        if (testPlayer.isCollided(middleCircle)) {
+//
+//            System.out.println("Player 1 collided with middle thing");
+//
+//        }
+//
+//        if (testPlayer2.isCollided(middleCircle)) {
+//            System.out.println("Player 2 collied with middle thing");
+//        }
     }
-    
-    void handleKeyboard()
-    {
+
+    void handleKeyboard() {
         //this is to move the object 
->>>>>>> 89b06137898e4972c18953c5cc7182d2443df7da
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
@@ -158,7 +161,7 @@ public class GameScreen {
                 if (event.getCode() == KeyCode.RIGHT) {
                     xDirection = 1;
                 }
-                
+
                 if (event.getCode() == KeyCode.W) {
                     yDirection1 = -1;
                 }
@@ -177,9 +180,9 @@ public class GameScreen {
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                
+
                 System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
-                
+
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
                 }
@@ -207,6 +210,31 @@ public class GameScreen {
                 }
             }
         });
+    }
+
+    void SpawnBullets(int counterTime) {
+
+        //timer method to spawn the bullets 
+        if (counterTime == 180) {
+
+            int u = 320;
+
+            Random x = new Random();
+            int randomNumber = x.nextInt(10);
+            System.out.println("Math.random is : " + randomNumber);
+
+            //spawn bullets 
+            for (int i = 0; i < randomNumber; i++) {
+
+                bullet = new GameObject(u, 220, 30, "#56C1FF", "bullet");
+                pane.getChildren().add(bullet.getCircle());
+                u += 10;
+            }
+
+            time = 0;
+
+        }
+
     }
 
 }

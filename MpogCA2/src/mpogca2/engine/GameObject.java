@@ -24,6 +24,7 @@ public class GameObject {
     {
         position = new Vector2D();
         circle = new Circle (20, Color.web("#3498db"));
+        circle.relocate(position.x, position.y);
         
     }
     
@@ -31,7 +32,11 @@ public class GameObject {
     {
         position = new Vector2D(x, y);
         circle = new Circle (radius, Color.web(hexColor));
+        //circle.setCenterX(radius/2);
+        //circle.setCenterY(radius/2);
         this.tag = tag;
+        circle.setTranslateX(position.x);
+        circle.setTranslateY(position.y);
     }
     
     public Circle getCircle()
@@ -45,7 +50,9 @@ public class GameObject {
         temp.normalize();
         temp.multiply(speed);
         position.add(temp);
-        circle.relocate(position.x, position.y);
+        //circle.relocate(position.x, position.y);
+        circle.setTranslateX(position.x);
+        circle.setTranslateY(position.y);
     }
     
 //    public boolean isCollided(GameObject temp)
