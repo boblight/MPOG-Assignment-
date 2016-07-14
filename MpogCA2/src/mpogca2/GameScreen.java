@@ -59,7 +59,8 @@ public class GameScreen {
         // player.setCenterX(400.0);
         //player.setCenterY(300.0);
         //player.setRadius(80.0);
-        middleCircle = new GameObject(320, 220, 80, "#9b59b6", "middleCircle");
+        middleCircle = new GameObject(320, 220, 80, "#8e44ad", "middleCircle");
+        
         
         pane.getChildren().add(middleCircle.getCircle());
 
@@ -240,7 +241,7 @@ public class GameScreen {
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
                 
-                Bullet bullet = new Bullet(400, 300, 20, 5, "6d1d8f", -1, 1);
+                Bullet bullet = new Bullet(400, 300, 20, 5, "#9b59b6", -1, 1);
 
                 pane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
