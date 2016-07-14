@@ -25,22 +25,22 @@ import mpogca2.engine.*;
  * @author Desti
  */
 public class GameScreen {
-    
+
     Stage stage;
     Pane pane;
     Scene scene;
     Circle player;
-    
+
     GameObject testPlayer, testPlayer2, middleCircle;
     ArrayList<Bullet> bulletList;
     int x = 0;
     int y = 0;
-    
+
     int xDirection = 0;
     int yDirection = 0;
     int xDirection1 = 0;
     int yDirection1 = 0;
-    
+
     int time = 0;
 
     //this part is where we all play the game
@@ -58,7 +58,7 @@ public class GameScreen {
         //player.setCenterY(300.0);
         //player.setRadius(80.0);
         middleCircle = new GameObject(320, 220, 80, "#FB1616", "middleCircle");
-        
+
         pane.getChildren().add(middleCircle.getCircle());
 
         //Test GameObject Class
@@ -66,19 +66,19 @@ public class GameScreen {
         testPlayer2 = new GameObject(100, 100, 50, "#f1892d", "player");
         pane.getChildren().add(testPlayer.getCircle());
         pane.getChildren().add(testPlayer2.getCircle());
-        
+
         bulletList = new ArrayList<Bullet>();
-        
+
         stage.setScene(scene);
         stage.setTitle("Orbs");
 
         //create TimeLine
         Timeline();
-        
+
         stage.show();
-        
+
     }
-    
+
     public void Timeline() {
 
         //creates the Timeline that updates the screen '
@@ -102,24 +102,24 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-                        
+
                         System.out.println("time " + time);
                         SpawnBullets(time);
-                        
+
                     }
                 }
                 )
         ).cycleCount(Timeline.INDEFINITE).build();
-        
+
         tick.play();//Starts the timeline
 
     }
-    
+
     public void InitPlayers() {
 
         //initialize players
     }
-    
+
     void Update() {
 
         //timer for the spawnbullet
@@ -127,7 +127,7 @@ public class GameScreen {
         //this is to move the object
         //added another comment to test git 
         handleKeyboard();
-        
+
         testPlayer.move(xDirection, yDirection, 3);
         testPlayer2.move(xDirection1, yDirection1, 3);
 
@@ -135,7 +135,7 @@ public class GameScreen {
         if (testPlayer.isCollided(testPlayer2)) {
             System.out.println("Collision Success");
         }
-        
+
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
@@ -150,14 +150,14 @@ public class GameScreen {
 //            System.out.println("Player 2 collied with middle thing");
 //        }
     }
-    
+
     void handleKeyboard() {
         //this is to move the object 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            
+
             @Override
             public void handle(KeyEvent event) {
-                
+
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = -1;
                 }
@@ -170,7 +170,7 @@ public class GameScreen {
                 if (event.getCode() == KeyCode.RIGHT) {
                     xDirection = 1;
                 }
-                
+
                 if (event.getCode() == KeyCode.W) {
                     yDirection1 = -1;
                 }
@@ -185,13 +185,13 @@ public class GameScreen {
                 }
             }
         });
-        
+
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                
+
                 System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
-                
+
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
                 }
@@ -204,7 +204,7 @@ public class GameScreen {
                 if (event.getCode() == KeyCode.RIGHT) {
                     xDirection = 0;
                 }
-                
+
                 if (event.getCode() == KeyCode.W) {
                     yDirection1 = 0;
                 }
@@ -220,31 +220,38 @@ public class GameScreen {
             }
         });
     }
-    
+
     void SpawnBullets(int counterTime) {
 
         //timer method to spawn the bullets 
         if (counterTime == 180) {
-            
+
             int u = 320;
-            
+
             Random x = new Random();
             int randomNumber = x.nextInt(10);
             System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
-                
+
                 Bullet bullet = new Bullet(400, 300, 20, 5, "#56C1FF", -1, 1);
                 pane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
                 u += 10;
             }
-            
+
             time = 0;
-            
+
         }
-        
+
     }
-    
+
+    void PackagePos() {
+
+        //send postition of players over network 
+        GameNetworkObject o = new GameNetworkObject();
+
+    }
+
 }
