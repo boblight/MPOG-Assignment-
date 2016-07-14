@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -51,12 +52,16 @@ public class MpogCA2 extends Application {
     public static ServerSocket serverSocket;
     public static DataOutputStream dos;
     public static DataInputStream dis;
+    
+    public static Image title;
+    public static ImageView titleImv;
 
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
 
     @Override
     public void start(Stage primaryStage) {
-        Action(primaryStage, createMainMenu(), "Main Menu");
+        Action(primaryStage, createMainMenu(), "Orbs");
+        primaryStage.getIcons().add(new Image("logo.png"));
         
         host.setOnAction(e -> {
            bPush.play();
@@ -72,6 +77,7 @@ public class MpogCA2 extends Application {
     public Scene hostScreen() {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 300, 200);
+        scene.getStylesheets().add("style.css");
         
         VBox v = new VBox(15);
         v.setAlignment(Pos.CENTER);
@@ -86,6 +92,7 @@ public class MpogCA2 extends Application {
     public Scene createLobby() {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 500);
+        scene.getStylesheets().add("style.css");
 
         HBox h = new HBox(15);
         VBox v = new VBox(15);
@@ -97,18 +104,29 @@ public class MpogCA2 extends Application {
     public Scene createMainMenu() {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 860, 660);
-
+        scene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
+        
         VBox vbCenter = new VBox(15);
         vbCenter.setAlignment(Pos.CENTER);
 
-        mainTitle = new Label("Ooorrbbs");
+        title = new Image("title.png", 600, 461, true, true);
+        titleImv = new ImageView(title);
+        
+        //mainTitle = new Label("Ooorrbbs");
         host = new Button("Host lobby");
+        host.getStyleClass().add("menubtn");
         join = new Button("Join lobby");
+        join.getStyleClass().add("menubtn");
         help = new Button("How to play");
+        help.getStyleClass().add("menubtn");
         exit = new Button("Exit");
+        exit.getStyleClass().add("menubtn");
         testGame = new Button("TestGame");
+        testGame.getStyleClass().add("menubtn");
 
-        vbCenter.getChildren().add(mainTitle);
+        vbCenter.getChildren().add(titleImv);
+        //vbCenter.getChildren().add(mainTitle);
         vbCenter.getChildren().add(host);
         vbCenter.getChildren().add(join);
         vbCenter.getChildren().add(help);

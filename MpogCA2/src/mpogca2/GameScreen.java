@@ -9,6 +9,7 @@ import java.util.Random;
 import javafx.animation.*;
 import javafx.event.*;
 import javafx.scene.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
@@ -46,6 +47,7 @@ public class GameScreen {
 
         //create the gameUI
         stage = new Stage();
+        stage.getIcons().add(new Image("logo.png"));
         pane = new Pane();
         scene = new Scene(pane, 800, 600);
 
@@ -54,19 +56,22 @@ public class GameScreen {
         // player.setCenterX(400.0);
         //player.setCenterY(300.0);
         //player.setRadius(80.0);
-        middleCircle = new GameObject(320, 220, 80, "#FB1616", "middleCircle");
+        middleCircle = new GameObject(320, 220, 80, "#8e44ad", "middleCircle");
 
         pane.getChildren().add(middleCircle.getCircle());
 
         //Test GameObject Class
-        testPlayer = new GameObject(300, 100, 50, "#6e248d", "player");
-        testPlayer2 = new GameObject(100, 100, 50, "#f1892d", "player");
+        testPlayer = new GameObject(300, 100, 50, "#e74c3c", "player");
+        testPlayer2 = new GameObject(100, 100, 50, "#f1c40f", "player");
         pane.getChildren().add(testPlayer.getCircle());
         pane.getChildren().add(testPlayer2.getCircle());
 
         stage.setScene(scene);
         stage.setTitle("Orbs");
 
+        scene.getStylesheets().add("style.css");
+        pane.getStyleClass().add("mainbg");
+        
         //create TimeLine
         Timeline();
 
@@ -226,7 +231,7 @@ public class GameScreen {
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
-                bullet = new GameObject(u, 220, 30, "#56C1FF", "bullet");
+                bullet = new GameObject(u, 220, 30, "#9b59b6", "bullet");
                 pane.getChildren().add(bullet.getCircle());
                 u += 10;
             }
