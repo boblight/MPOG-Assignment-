@@ -248,6 +248,7 @@ public class GameScreen {
             }
             
             time = 0;
+            //test
             
         }
         
