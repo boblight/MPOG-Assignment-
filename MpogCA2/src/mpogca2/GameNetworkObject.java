@@ -24,5 +24,7 @@ public class GameNetworkObject {
     public ArrayList GetBulletList() {
         return bulletList;
     }
+    
+    
 
 }
