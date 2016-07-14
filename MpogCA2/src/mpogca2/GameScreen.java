@@ -5,6 +5,7 @@
  */
 package mpogca2;
 
+import java.util.ArrayList;
 import java.util.Random;
 import javafx.animation.*;
 import javafx.event.*;
@@ -30,7 +31,8 @@ public class GameScreen {
     Scene scene;
     Circle player;
 
-    GameObject testPlayer, testPlayer2, middleCircle, bullet;
+    GameObject testPlayer, testPlayer2, middleCircle;
+    ArrayList<Bullet> bulletList;
     int x = 0;
     int y = 0;
 
@@ -64,6 +66,8 @@ public class GameScreen {
         pane.getChildren().add(testPlayer.getCircle());
         pane.getChildren().add(testPlayer2.getCircle());
 
+        bulletList = new ArrayList <Bullet> ();
+        
         stage.setScene(scene);
         stage.setTitle("Orbs");
 
@@ -131,6 +135,11 @@ public class GameScreen {
             System.out.println("Collision Success");
         }
 
+        for (int i = 0; i < bulletList.size(); i++)
+        {
+            bulletList.get(i).bulletMove();
+        }
+        
 //        if (testPlayer.isCollided(middleCircle)) {
 //
 //            System.out.println("Player 1 collided with middle thing");
@@ -226,8 +235,9 @@ public class GameScreen {
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
-                bullet = new GameObject(u, 220, 30, "#56C1FF", "bullet");
+                Bullet bullet = new Bullet(400, 300, 20, 5, "#56C1FF", -1, 1);
                 pane.getChildren().add(bullet.getCircle());
+                bulletList.add(bullet);
                 u += 10;
             }
 
