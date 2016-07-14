@@ -70,7 +70,7 @@ public class GameScreen {
 
         //Test GameObject Class
         testPlayer = new GameObject(300, 100, 50, "#3498db", "player");
-        testPlayer2 = new GameObject(100, 100, 50, "#2980b9", "player");
+        testPlayer2 = new GameObject(100, 100, 50, "#e74c3c", "player");
         pane.getChildren().add(testPlayer.getCircle());
         pane.getChildren().add(testPlayer2.getCircle());
 
@@ -245,7 +245,7 @@ public class GameScreen {
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
                 
-                Bullet bullet = new Bullet(400, 300, 20, 5, "#8646a0", -1, 1);
+                Bullet bullet = new Bullet(400, 300, 20, 5, "6d1d8f", -1, 1);
 
                 pane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
