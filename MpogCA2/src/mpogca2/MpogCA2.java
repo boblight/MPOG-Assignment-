@@ -156,8 +156,8 @@ public class MpogCA2 extends Application {
                         try {
                             serverSocket = new ServerSocket();
 
-                            chatArea.setText("Server Started. \n Your Ip is: " + InetAddress.getLocalHost().getHostAddress()
-                                    + "\n Waiting for other players to connect.");
+                            chatArea.setText("Server Started. \nYour IP is: " + InetAddress.getLocalHost().getHostAddress()
+                                    + "\nWaiting for other players to connect.");
 
                             server = new ServerThread(8000, Runtime.getRuntime().availableProcessors() + 1);
                             new Thread(server).start();

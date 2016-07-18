@@ -184,7 +184,7 @@ public class ServerThread implements Runnable {
 
                         pCount++;
                         Platform.runLater(() -> {
-                            chatArea.appendText("\n A player has connected. Total player count: " + pCount);
+                            chatArea.appendText("\nA player has connected. Total player count: " + pCount +"\n");
                         });
 
                         //create a final list of players and send it to clients
