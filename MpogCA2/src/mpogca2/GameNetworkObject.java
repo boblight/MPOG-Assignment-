@@ -7,6 +7,7 @@ package mpogca2;
 
 import java.util.ArrayList;
 import mpogca2.engine.Bullet;
+import mpogca2.engine.GameObject;
 
 /**
  *
@@ -16,7 +17,10 @@ public class GameNetworkObject {
 
     //used to package the data to be sent over the network
     ArrayList<Bullet> bulletList;
+    ArrayList<GameObject> playerList;
+    GameObject thisPlayer;
 
+    //bullets
     public void SetBulletList(ArrayList<Bullet> bulletList) {
         this.bulletList = bulletList;
     }
@@ -24,7 +28,23 @@ public class GameNetworkObject {
     public ArrayList GetBulletList() {
         return bulletList;
     }
-    
-    
 
+    //send the player state to all the clients 
+    //server to client
+    public void SetPlayerList(ArrayList<GameObject> playerList) {
+        this.playerList = playerList;
+    }
+
+    public ArrayList GetPlayerList() {
+        return playerList;
+    }
+
+    //client to server 
+    public void SetThisPlayer(GameObject thisPlayer) {
+        this.thisPlayer = thisPlayer;
+    }
+
+    public GameObject GetThisPlayer() {
+        return thisPlayer;
+    }
 }
