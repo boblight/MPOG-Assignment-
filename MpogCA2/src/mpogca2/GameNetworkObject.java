@@ -6,6 +6,7 @@
 package mpogca2;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 import mpogca2.engine.Bullet;
 import mpogca2.engine.GameObject;
 
@@ -13,7 +14,7 @@ import mpogca2.engine.GameObject;
  *
  * @author Desti
  */
-public class GameNetworkObject {
+public class GameNetworkObject implements Serializable {
 
     //used to package the data to be sent over the network
     ArrayList<Bullet> bulletList;
