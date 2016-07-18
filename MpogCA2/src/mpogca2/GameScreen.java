@@ -59,7 +59,7 @@ public class GameScreen {
         // player.setCenterX(400.0);
         //player.setCenterY(300.0);
         //player.setRadius(80.0);
-        middleCircle = new GameObject(320, 220, 80, "#9b59b6", "middleCircle");
+        middleCircle = new GameObject(320, 220, 80, "#8e44ad", "middleCircle");
 
         pane.getChildren().add(middleCircle.getCircle());
 
