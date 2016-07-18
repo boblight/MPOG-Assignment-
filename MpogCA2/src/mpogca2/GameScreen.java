@@ -34,6 +34,7 @@ public class GameScreen {
 
     GameObject testPlayer, testPlayer2, middleCircle;
     ArrayList<Bullet> bulletList;
+    GameNetworkObject gno; //this object is to be used to send data over object 
     int x = 0;
     int y = 0;
 
@@ -44,6 +45,20 @@ public class GameScreen {
 
     int time = 0;
 
+    boolean isServer = true; //to determine if the player is a server or not
+
+    public GameScreen() {
+
+        //default constructor
+    }
+
+    public GameScreen(boolean isServer) {
+
+        //if i am server 
+        this.isServer = isServer;
+
+    }
+
     //this part is where we all play the game
     public void StartGameScreen() {
 
@@ -51,15 +66,10 @@ public class GameScreen {
         stage = new Stage();
         stage.getIcons().add(new Image("logo.png"));
         pane = new Pane();
-        scene = new Scene(pane, 1395, 875);
+        scene = new Scene(pane, 1390, 870);
         stage.setResizable(false);
 
-        //create player(s)
-        //   player = new Circle();
-        // player.setCenterX(400.0);
-        //player.setCenterY(300.0);
-        //player.setRadius(80.0);
-        middleCircle = new GameObject(320, 220, 80, "#8e44ad", "middleCircle");
+        middleCircle = new GameObject(695, 435, 80, "#8e44ad", "middleCircle");
 
         pane.getChildren().add(middleCircle.getCircle());
 
@@ -78,28 +88,20 @@ public class GameScreen {
         pane.getStyleClass().add("mainbg");
 
         //create TimeLine
-        Timeline();
+        if (isServer == false) {
+            ClientTimeline();
+        }
+
+        if (isServer == true) {
+            ServerTimeline();
+        }
 
         stage.show();
-
     }
 
-    public void Timeline() {
+    public void ClientTimeline() {
 
-        //creates the Timeline that updates the screen '
-//        AnimationTimer timer;
-//        Timeline tl = new Timeline();
-//        tl.setCycleCount(Timeline.INDEFINITE);
-//        tl.setAutoReverse(true);
-//
-//        timer = new AnimationTimer() {
-//            @Override
-//            public void handle(long now) {
-//
-//                Update();
-//
-//            }
-//        };
+        //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
                 new KeyFrame(
                         new Duration(10),//This is how often it updates in milliseconds
@@ -107,9 +109,8 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-
                         System.out.println("time " + time);
-                        SpawnBullets(time);
+                        //get the bullet and set on the client
 
                     }
                 }
@@ -120,11 +121,40 @@ public class GameScreen {
 
     }
 
-    public void InitPlayers() {
+    public void ServerTimeline() {
 
-        //initialize players
+        //creates the Timeline that updates the screen 
+        Timeline tick = TimelineBuilder.create().keyFrames(
+                new KeyFrame(
+                        new Duration(10),//This is how often it updates in milliseconds
+                        new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+                        //You put what you want to update here
+                        Update();
+                        System.out.println("time " + time);
+                        SpawnBullets(time);
+                        //send the bullet over the network
+                    }
+                }
+                )
+        ).cycleCount(Timeline.INDEFINITE).build();
+
+        tick.play();//Starts the timeline
+
     }
 
+    //to init all the other players that are connected
+    public void InitPlayers(ArrayList<GameObject> playerList) {
+
+        //initialize players
+        for (int i = 0; i < playerList.size(); i++) {
+            
+            //loop through the list and init the players 
+            
+        }
+    }
+
+    //update needs to be reworked to cater to multiplayer
     void Update() {
 
         //timer for the spawnbullet
@@ -145,18 +175,10 @@ public class GameScreen {
             bulletList.get(i).bulletMove();
         }
 
-//        if (testPlayer.isCollided(middleCircle)) {
-//
-//            System.out.println("Player 1 collided with middle thing");
-//
-//        }
-//
-//        if (testPlayer2.isCollided(middleCircle)) {
-//            System.out.println("Player 2 collied with middle thing");
-//        }
     }
 
     void handleKeyboard() {
+
         //this is to move the object 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
@@ -229,21 +251,23 @@ public class GameScreen {
     void SpawnBullets(int counterTime) {
 
         //timer method to spawn the bullets 
-        if (counterTime == 180) {
+        if (counterTime == 100) {
 
             int u = 320;
 
             Random x = new Random();
-            int randomNumber = x.nextInt(10);
+            int randomNumber = x.nextInt(20);
             System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
-                Bullet bullet = new Bullet(400, 300, 20, 5, "#9b59b6", -1, 1);
-
+                int xPos = x.nextInt(21) - 10;
+                int yPos = x.nextInt(21) - 10;
+                Bullet bullet = new Bullet(695, 435, 20, 5, "#9b59b6", xPos, yPos);
                 pane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
+
                 u += 10;
             }
 
@@ -252,12 +276,4 @@ public class GameScreen {
         }
 
     }
-
-    void PackagePos() {
-
-        //send postition of players over network 
-        GameNetworkObject o = new GameNetworkObject();
-
-    }
-
 }
