@@ -145,6 +145,15 @@ public class ServerThread implements Runnable {
             }
         }//end of removeDc
 
+        public void shutdown() {
+            try {
+                pool.shutdown();
+                socket.close();
+            } catch (Exception ex) {
+                
+            }
+        }
+        
         //to be called when needed to update client
         public void updateClientLobby() {
             try {
