@@ -51,9 +51,8 @@ import mpogca2.ServerThread.*;
  */
 public class MpogCA2 extends Application {
 
-
     public static int latestId = 1;//store latest id of players
-    
+
     private Button host, join, help, exit, startGame, testGame, confirm, back; //buttons for menu interactions
 
     public static ListView<String> pLobby;
@@ -65,12 +64,12 @@ public class MpogCA2 extends Application {
     private static TextField chatMsg, inputPName, inputIp;
     private Label mainTitle;
     private Stage currentStage;
-    
+
     public static boolean isServer, gameStart = false, switchTurn = false, btnDisable = true,
             serverStarted = false, gameServerStarted = false, serverRunning = false, gameServerRunning = false,
             clientStarted = false, gameClientStarted = false, clientRunning = false, gameClientRunning = false,
             gameStarted = false;
-    
+
     public static Player pLocal;
     public static List<Player> pList = new ArrayList<>(); //store list of players and assign them IDs to distinguish them
     public static int pCount = 0;
@@ -84,7 +83,7 @@ public class MpogCA2 extends Application {
     public static DataInputStream dis;
 
     public static Runnable server, client;
-    
+
     public static Image title;
     public static ImageView titleImv;
 
@@ -94,8 +93,6 @@ public class MpogCA2 extends Application {
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Orbs");
         primaryStage.getIcons().add(new Image("logo.png"));
-        
-  
 
     }//end of main javafx class
 
@@ -103,7 +100,7 @@ public class MpogCA2 extends Application {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 300, 200);
         scene.getStylesheets().add("style.css");
-        
+
         VBox v = new VBox(15);
         v.setAlignment(Pos.CENTER);
         HBox h = new HBox(10);
@@ -171,8 +168,7 @@ public class MpogCA2 extends Application {
 
         return scene;
     }//end of host screen
-    
-    
+
     public Scene joinScreen() {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 500, 400);
@@ -251,7 +247,7 @@ public class MpogCA2 extends Application {
 
         return scene;
     }//end of join screen
-    
+
     //create lobby
     public Scene createLobby() {
         BorderPane root = new BorderPane();
@@ -283,6 +279,25 @@ public class MpogCA2 extends Application {
 
         back.setOnAction(e -> {
             bPush.play();
+            
+            listData.removeAll(listData);
+            pLobby.setItems(listData);
+
+            try {
+                if (serverRunning == true) {
+                    serverSocket.close();
+                    clientList.forEach((s) -> {
+                        s.shutdown();
+                    });
+                    serverRunning = false;
+                } else if (clientRunning == true) {
+                    socket.close();
+                    clientRunning = false;
+                }
+            } catch (IOException ex) {
+                System.out.println("Failed to close socket");
+            }
+
             Action(currentStage, createMainMenu(), "Main Menu");
         });
 
@@ -306,7 +321,7 @@ public class MpogCA2 extends Application {
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
                             } catch (IOException ex) {
-                                chatArea.appendText("\n Failed to send message.");
+                                chatArea.appendText("\nFailed to send message.");
                             }
                         }
                     }
@@ -323,13 +338,13 @@ public class MpogCA2 extends Application {
         Scene scene = new Scene(root, 860, 660);
         scene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
-        
+
         VBox vbCenter = new VBox(15);
         vbCenter.setAlignment(Pos.CENTER);
 
         title = new Image("title.png", 600, 461, true, true);
         titleImv = new ImageView(title);
-        
+
         host = new Button("Host lobby");
         host.getStyleClass().add("menubtn");
         join = new Button("Join lobby");
@@ -348,9 +363,9 @@ public class MpogCA2 extends Application {
         vbCenter.getChildren().add(exit);
         vbCenter.getChildren().add(testGame);
 
-root.setCenter(vbCenter);
+        root.setCenter(vbCenter);
 
-  host.setOnAction(e -> {
+        host.setOnAction(e -> {
             bPush.play();
             Action(currentStage, hostScreen(), "Host Game");
         });
@@ -359,8 +374,8 @@ root.setCenter(vbCenter);
             bPush.play();
             Action(currentStage, joinScreen(), "Join Screen");
         });
-        
-                exit.setOnAction(e -> {
+
+        exit.setOnAction(e -> {
             bPush.play();
             Platform.exit();
             System.exit(0);
