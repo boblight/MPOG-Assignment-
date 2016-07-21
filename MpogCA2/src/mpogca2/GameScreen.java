@@ -33,6 +33,8 @@ public class GameScreen {
     Circle player;
 
     GameObject testPlayer, testPlayer2, middleCircle, thisPlayer;
+    
+    ArrayList<GamePlayer> playerList;
     ArrayList<Bullet> bulletList;
     GameNetworkObject gno; //this object is to be used to send data over object 
     int x = 0;
@@ -50,6 +52,7 @@ public class GameScreen {
     public GameScreen() {
 
         //default constructor
+        
     }
 
     public GameScreen(boolean isServer) {
@@ -69,14 +72,18 @@ public class GameScreen {
         scene = new Scene(pane, 1390, 870);
         stage.setResizable(false);
 
-        middleCircle = new GameObject(695, 435, 80, 0, "middleCircle", "#8e44ad");
+        middleCircle = new GameObject(695, 435, 80, "#8e44ad");
         pane.getChildren().add(middleCircle.getCircle());
 
+        playerList = new ArrayList<GamePlayer>();
+        InitPlayers();
+        
         //Test GameObject Class
-        testPlayer = new GameObject(300, 100, 50, 1, "PlayerOne", "#3498db");
-        testPlayer2 = new GameObject(100, 100, 50, 2, "PlayerTwo", "#e74c3c");
-        pane.getChildren().add(testPlayer.getCircle());
-        pane.getChildren().add(testPlayer2.getCircle());
+//        testPlayer = new GamePlayer(300, 100, 50, "#3498db", "PlayerOne", 0);
+//        testPlayer2 = new GamePlayer(100, 100, 50, "#e74c3c", "PlayerTwo", 1);
+//        pane.getChildren().add(testPlayer.getCircle());
+//        pane.getChildren().add(testPlayer2.getCircle());
+        
         //create the player 
 
         bulletList = new ArrayList<Bullet>();
@@ -109,7 +116,7 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-                        System.out.println("time " + time);
+                        //System.out.println("time " + time);
                         //get the bullet and set on the client
 
                     }
@@ -131,7 +138,7 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-                        System.out.println("time " + time);
+                        //System.out.println("time " + time);
                         SpawnBullets(time);
                         //send the bullet over the network
                     }
@@ -144,13 +151,25 @@ public class GameScreen {
     }
 
     //to init all the other players that are connected
-    public void InitPlayers(ArrayList<GameObject> playerList) {
+    public void InitPlayers() {
 
         //initialize players
-        for (int i = 0; i < playerList.size(); i++) {
+        //for (int i = 0; i < playerList.size(); i++) {
 
             //loop through the list and init the players 
-        }
+            //Bullet bullet = new Bullet(695, 435, 20, 5, "#9b59b6", xPos, yPos);
+            testPlayer2 = new GamePlayer(100, 100, 50, "#e74c3c", "PlayerTwo", 1);
+            GamePlayer gamePlayer = new GamePlayer(100, 100, 50, "#3498db", "PlayerOne", 1);
+            GamePlayer gamePlayer2 = new GamePlayer(100, 300, 50, "#e74c3c", "PlayerTwo", 2);
+            
+            playerList.add(gamePlayer);
+            playerList.add(gamePlayer2);
+            
+            pane.getChildren().add(gamePlayer.getCircle());
+            pane.getChildren().add(gamePlayer2.getCircle());
+            
+            
+        //}
     }
 
     //update needs to be reworked to cater to multiplayer
@@ -162,13 +181,16 @@ public class GameScreen {
         //added another comment to test git 
         handleKeyboard();
 
-        testPlayer.move(xDirection, yDirection, 3);
-        testPlayer2.move(xDirection1, yDirection1, 3);
+        //testPlayer.move(xDirection, yDirection, 3);
+        //testPlayer2.move(xDirection1, yDirection1, 3);
 
+        playerList.get(0).move(xDirection, yDirection, 3);
+        playerList.get(1).move(xDirection1, yDirection1, 3);
+        
         //this is for when collide players
-        if (testPlayer.isCollided(testPlayer2)) {
-            System.out.println("Collision Success");
-        }
+//        if (testPlayer.isCollided(testPlayer2)) {
+//            System.out.println("Collision Success");
+//        }
 
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
@@ -224,7 +246,7 @@ public class GameScreen {
             @Override
             public void handle(KeyEvent event) {
 
-                System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
+                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
 
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
@@ -255,6 +277,18 @@ public class GameScreen {
         });
     }
 
+    void BulletCollision()
+    {
+        for (int i = 0; i < playerList.size(); i++)
+        {
+            for (int j = 0; j < bulletList.size(); j++)
+            {
+                if(playerList.get(i).isCollided(bulletList.get(j)))
+                    playerList.get(i).dead();
+            }
+        }
+    }
+    
     void SpawnBullets(int counterTime) {
 
         //timer method to spawn the bullets 

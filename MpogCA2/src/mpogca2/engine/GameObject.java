@@ -15,8 +15,7 @@ import javafx.scene.shape.Circle;
 public class GameObject {
 
     public Vector2D position;
-    public String playerName, playerColour;
-    int playerNum;
+    public String color;
 
     Circle circle;
 
@@ -28,12 +27,10 @@ public class GameObject {
     }
 
     //xpos, ypos, radius, player num, player name, player colour 
-    public GameObject(float x, float y, float radius, int playerNum, String playerName, String playerColour) {
+    public GameObject(float x, float y, float radius, String hexColor) {
 
-        this.playerNum = playerNum;
-        this.playerName = playerName;
         position = new Vector2D(x, y);
-        circle = new Circle(radius, Color.web(playerColour));
+        circle = new Circle(radius, Color.web(hexColor));
         circle.setCenterX(radius / 2);
         circle.setCenterY(radius / 2);
         circle.setTranslateX(position.x);
