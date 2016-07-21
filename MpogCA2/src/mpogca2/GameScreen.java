@@ -69,15 +69,16 @@ public class GameScreen {
         scene = new Scene(pane, 1390, 870);
         stage.setResizable(false);
 
-        //  middleCircle = new GameObject(695, 435, 80, "#8e44ad", "middleCircle");
+        middleCircle = new GameObject(695, 435, 80, 0, "middleCircle", "#8e44ad");
         pane.getChildren().add(middleCircle.getCircle());
 
         //Test GameObject Class
-        //    testPlayer = new GameObject(300, 100, 50, "#3498db", "player");
-        //  testPlayer2 = new GameObject(100, 100, 50, "#e74c3c", "player");
-        // pane.getChildren().add(testPlayer.getCircle());
-        // pane.getChildren().add(testPlayer2.getCircle());
+        testPlayer = new GameObject(300, 100, 50, 1, "PlayerOne", "#3498db");
+        testPlayer2 = new GameObject(100, 100, 50, 2, "PlayerTwo", "#e74c3c");
+        pane.getChildren().add(testPlayer.getCircle());
+        pane.getChildren().add(testPlayer2.getCircle());
         //create the player 
+
         bulletList = new ArrayList<Bullet>();
 
         stage.setScene(scene);
@@ -282,7 +283,5 @@ public class GameScreen {
         }
 
     }
-
-    
 
 }
