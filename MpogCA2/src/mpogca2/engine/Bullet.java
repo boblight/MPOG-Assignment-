@@ -18,7 +18,7 @@ public class Bullet extends GameObject{
     
     public Bullet (float x, float y, float radius, float speed, String hexColor, float xDirection, float yDirection)
     {
-        super(x, y, radius, hexColor,"bullets");
+       // super(x, y, radius, hexColor,"bullets");
         this.xDirection = xDirection;
         this.yDirection = yDirection;
         this.speed = speed;
