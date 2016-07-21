@@ -313,6 +313,25 @@ public class MpogCA2 extends Application {
             //when client receive command change their own gameStarted=true
             
             gameStarted=true; //change server gameStarted=true, client still not changed
+            System.out.println("server changed gameStarted=false");
+            startGame.setVisible(false);
+            
+            
+                            try {
+                                dos = new DataOutputStream(socket.getOutputStream());
+                                System.out.println("sending to clients to change gameStarted=true");
+                                dos.writeUTF("+" + "changing gameStarted=true on client");
+                                dos.flush();
+                            } catch (IOException ex) {
+                                System.out.println("error occured when changing client gameStarted=true");
+                            }
+                        //changing on clientthread receive message starting with +
+
+            
+            
+            
+            
+            
         });
 
         //when user enter msg

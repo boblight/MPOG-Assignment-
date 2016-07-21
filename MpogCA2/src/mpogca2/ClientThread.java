@@ -40,7 +40,7 @@ public class ClientThread implements Runnable {
                     dos.writeUTF(pLocal.getName());
                     dos.flush();
 
-                    while (gameStarted == false && clientRunning == true) {
+                    while (clientRunning == true) {
 
                         if (socket.isConnected()) {
                             dis = new DataInputStream(socket.getInputStream());
@@ -56,12 +56,18 @@ public class ClientThread implements Runnable {
                                     listData.remove(received);
                                     pLobby.setItems(listData);
                                 });
-                            } else if (!namesReceived.contains(readInput)) {
+                            } else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+")) {
                                 Platform.runLater(() -> {
                                     listData.add(readInput);
                                     pLobby.setItems(listData);
                                 });
                                 namesReceived.add(readInput);
+                            }
+                            else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
+                                
+                                System.out.println("received from network: " + readInput);
+                                gameStarted=true;
+                                System.out.println("client has changed gamestarted=true");
                             }
                         } else {
                             break;
