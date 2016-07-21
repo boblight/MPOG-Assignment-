@@ -69,8 +69,7 @@ public class GameScreen {
         scene = new Scene(pane, 1390, 870);
         stage.setResizable(false);
 
-        middleCircle = new GameObject(695, 435, 80, "#8e44ad", "middleCircle");
-
+        //  middleCircle = new GameObject(695, 435, 80, "#8e44ad", "middleCircle");
         pane.getChildren().add(middleCircle.getCircle());
 
         //Test GameObject Class
@@ -79,8 +78,6 @@ public class GameScreen {
         // pane.getChildren().add(testPlayer.getCircle());
         // pane.getChildren().add(testPlayer2.getCircle());
         //create the player 
-        
-        
         bulletList = new ArrayList<Bullet>();
 
         stage.setScene(scene);
@@ -183,6 +180,7 @@ public class GameScreen {
         //update for client 
         handleKeyboard();
 
+        //receive the network object and set all the other players 
     }
 
     void handleKeyboard() {
@@ -284,4 +282,7 @@ public class GameScreen {
         }
 
     }
+
+    
+
 }
