@@ -32,7 +32,7 @@ public class GameScreen {
     Scene scene;
     Circle player;
 
-    GameObject testPlayer, testPlayer2, middleCircle;
+    GameObject testPlayer, testPlayer2, middleCircle, thisPlayer;
     ArrayList<Bullet> bulletList;
     GameNetworkObject gno; //this object is to be used to send data over object 
     int x = 0;
@@ -74,11 +74,13 @@ public class GameScreen {
         pane.getChildren().add(middleCircle.getCircle());
 
         //Test GameObject Class
-        testPlayer = new GameObject(300, 100, 50, "#3498db", "player");
-        testPlayer2 = new GameObject(100, 100, 50, "#e74c3c", "player");
-        pane.getChildren().add(testPlayer.getCircle());
-        pane.getChildren().add(testPlayer2.getCircle());
-
+        //    testPlayer = new GameObject(300, 100, 50, "#3498db", "player");
+        //  testPlayer2 = new GameObject(100, 100, 50, "#e74c3c", "player");
+        // pane.getChildren().add(testPlayer.getCircle());
+        // pane.getChildren().add(testPlayer2.getCircle());
+        //create the player 
+        
+        
         bulletList = new ArrayList<Bullet>();
 
         stage.setScene(scene);
@@ -148,9 +150,8 @@ public class GameScreen {
 
         //initialize players
         for (int i = 0; i < playerList.size(); i++) {
-            
+
             //loop through the list and init the players 
-            
         }
     }
 
@@ -174,6 +175,13 @@ public class GameScreen {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
+
+    }
+
+    void UpdateClient() {
+
+        //update for client 
+        handleKeyboard();
 
     }
 
