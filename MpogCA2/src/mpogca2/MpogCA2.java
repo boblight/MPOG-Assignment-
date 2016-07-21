@@ -137,7 +137,7 @@ public class MpogCA2 extends Application {
                 error.setText("Please input player name.");
             } else {
                 bPush.play();
-                Action(currentStage, createLobby(), "Lobby");
+                Action(currentStage, createServerLobby(), "Lobby");
                 pLocal = new Player(inputPName.getText());
 
                 //adding to listview at lobby screen
@@ -218,7 +218,7 @@ public class MpogCA2 extends Application {
                 bPush.play();
                 pLocal = new Player(inputPName.getText());
                 try {
-                    ipAddress = InetAddress.getByName(inputIp.getText());
+                    ipAddress = InetAddress.getByName(inputIp.getText().trim());
                     socket = new Socket(ipAddress, 8000);
 
                     socket.setTcpNoDelay(false);
@@ -236,7 +236,7 @@ public class MpogCA2 extends Application {
                             client = new ClientThread();
                             new Thread(client).start();
 
-                            Action(currentStage, createLobby(), "Lobby");
+                            Action(currentStage, createClientLobby(), "Lobby");
                         }
                     }
                 } catch (IOException ex) {
@@ -248,8 +248,106 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of join screen
 
-    //create lobby
-    public Scene createLobby() {
+    //create server lobby
+    public Scene createServerLobby() {
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 1000, 600);
+        scene.getStylesheets().add("style.css");
+
+        HBox h = new HBox(75);
+        h.setAlignment(Pos.CENTER);
+        VBox v = new VBox(15);
+        v.setAlignment(Pos.CENTER);
+
+        pLobby.setPrefWidth(400);
+        pLobby.setPrefHeight(100);
+        chatMsg = new TextField();
+        chatArea = new TextArea();
+        chatArea.setWrapText(true);
+        chatArea.setPrefHeight(400);
+        chatArea.setPrefWidth(300);
+        chatArea.setEditable(false);
+        back = new Button("Exit");
+        
+        startGame=new Button("Start Game");
+
+        v.getChildren().add(chatArea);
+        v.getChildren().add(chatMsg);
+        
+        v.getChildren().add(startGame);
+        
+        v.getChildren().add(back);
+        h.getChildren().add(pLobby);
+        h.getChildren().add(v);
+
+        root.setCenter(h);
+
+        back.setOnAction(e -> {
+            bPush.play();
+            
+            listData.removeAll(listData);
+            pLobby.setItems(listData);
+
+            try {
+                if (serverRunning == true) {
+                    serverSocket.close();
+                    clientList.forEach((s) -> {
+                        s.shutdown();
+                    });
+                    serverRunning = false;
+                } else if (clientRunning == true) {
+                    socket.close();
+                    clientRunning = false;
+                }
+            } catch (IOException ex) {
+                System.out.println("Failed to close socket");
+            }
+
+            Action(currentStage, createMainMenu(), "Main Menu");
+        });
+        
+        startGame.setOnAction(e -> {
+            bPush.play();
+            
+            //send message to client with command 
+            //when client receive command change their own gameStarted=true
+            
+            gameStarted=true; //change server gameStarted=true, client still not changed
+        });
+
+        //when user enter msg
+        chatMsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode().equals(KeyCode.ENTER)) {
+                    if (!chatMsg.getText().trim().equals("")) {
+                        String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
+                        //in outputstream logic
+                        if (serverRunning == true) {
+                            chatArea.appendText("\n" + sendMsg);
+                            clientList.forEach((client) -> {
+                                client.updateClientChat("<" + sendMsg);
+                            });
+                        } else if (clientRunning == true) {
+                            try {
+                                dos = new DataOutputStream(socket.getOutputStream());
+                                System.out.println(sendMsg);
+                                dos.writeUTF("<" + sendMsg);
+                                dos.flush();
+                            } catch (IOException ex) {
+                                chatArea.appendText("\nFailed to send message.");
+                            }
+                        }
+                    }
+                    chatMsg.clear();
+                }//end of keypressed events
+            }
+        });
+        return scene;
+    }//end of create server lobby
+    
+        //create server lobby
+    public Scene createClientLobby() {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 600);
         scene.getStylesheets().add("style.css");
@@ -271,6 +369,8 @@ public class MpogCA2 extends Application {
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
+        
+        
         v.getChildren().add(back);
         h.getChildren().add(pLobby);
         h.getChildren().add(v);
@@ -330,7 +430,7 @@ public class MpogCA2 extends Application {
             }
         });
         return scene;
-    }//end of createLobby
+    }//end of create client lobby
 
     //create main menu ui
     public Scene createMainMenu() {
