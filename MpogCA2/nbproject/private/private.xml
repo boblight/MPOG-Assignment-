@@ -3,24 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/GameObject.java</file>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/GameNetworkObject.java</file>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/ServerThread.java</file>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/ClientThread.java</file>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/Bullet.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/Game.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/Vector2D.java</file>
             <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/GameScreen.java</file>
             <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/MpogCA2.java</file>
         </group>
-=======
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/MpogCA2.java</file>
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/GameServer.java</file>
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/ClientThread.java</file>
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/ServerThread.java</file>
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/GameNetworkObject.java</file>
-            <file>file:/C:/Schoolwork/MPOG/Netbeans%20Projects/MPOG-Assignment-/MpogCA2/src/mpogca2/GameScreen.java</file>
-        </group>
-        <group/>
->>>>>>> adbfcfc332a9165e13017bf152e430d81e243f60
     </open-files>
 </project-private>

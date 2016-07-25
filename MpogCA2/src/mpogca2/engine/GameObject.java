@@ -26,7 +26,7 @@ public class GameObject {
 
     }
 
-    //xpos, ypos, radius, player num, player name, player colour 
+    //xpos, ypos, radius, player colour 
     public GameObject(float x, float y, float radius, String hexColor) {
 
         position = new Vector2D(x, y);

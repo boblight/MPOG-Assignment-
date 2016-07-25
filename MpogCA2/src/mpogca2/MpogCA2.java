@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
+import java.util.Random;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -38,12 +42,17 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import mpogca2.ServerThread.*;
+import mpogca2.engine.Bullet;
+import mpogca2.engine.GameObject;
+import mpogca2.engine.GamePlayer;
 
 /**
  *
@@ -89,6 +98,19 @@ public class MpogCA2 extends Application {
 
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
 
+    //game area UI elements
+    public static Pane pane;
+    Scene gameScene;
+    Stage gameStage;
+    int bulletSpawn = 0;
+    ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    int xDirection = 0;
+    int yDirection = 0;
+    int xDirection1 = 0;
+    int yDirection1 = 0;
+    GamePlayer g;
+    GameObject middleObj;
+
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Orbs");
@@ -96,6 +118,7 @@ public class MpogCA2 extends Application {
 
     }//end of main javafx class
 
+    //create the screen for inputting name (host)
     public Scene hostScreen() {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 300, 200);
@@ -169,6 +192,7 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of host screen
 
+    //create screen for inputting name + IP (client)
     public Scene joinScreen() {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 500, 400);
@@ -250,9 +274,10 @@ public class MpogCA2 extends Application {
 
     //create server lobby
     public Scene createServerLobby() {
+
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1000, 600);
-        scene.getStylesheets().add("style.css");
+        gameScene = new Scene(root, 1200, 600);
+        gameScene.getStylesheets().add("style.css");
 
         HBox h = new HBox(75);
         h.setAlignment(Pos.CENTER);
@@ -262,20 +287,22 @@ public class MpogCA2 extends Application {
         pLobby.setPrefWidth(400);
         pLobby.setPrefHeight(100);
         chatMsg = new TextField();
+        chatMsg.setFocusTraversable(false);
         chatArea = new TextArea();
+        chatArea.setFocusTraversable(false);
         chatArea.setWrapText(true);
         chatArea.setPrefHeight(400);
         chatArea.setPrefWidth(300);
         chatArea.setEditable(false);
         back = new Button("Exit");
-        
-        startGame=new Button("Start Game");
+        back.setFocusTraversable(false);
+        startGame = new Button("Start Game");
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
-        
+
         v.getChildren().add(startGame);
-        
+
         v.getChildren().add(back);
         h.getChildren().add(pLobby);
         h.getChildren().add(v);
@@ -284,7 +311,7 @@ public class MpogCA2 extends Application {
 
         back.setOnAction(e -> {
             bPush.play();
-            
+
             listData.removeAll(listData);
             pLobby.setItems(listData);
 
@@ -305,33 +332,48 @@ public class MpogCA2 extends Application {
 
             Action(currentStage, createMainMenu(), "Main Menu");
         });
-        
+
         startGame.setOnAction(e -> {
             bPush.play();
-            
+
             //send message to client with command 
             //when client receive command change their own gameStarted=true
-            
-            gameStarted=true; //change server gameStarted=true, client still not changed
+            gameStarted = true; //change server gameStarted=true, client still not changed
             System.out.println("server changed gameStarted=false");
             startGame.setVisible(false);
-            
-            
-                            try {
-                                dos = new DataOutputStream(socket.getOutputStream());
-                                System.out.println("sending to clients to change gameStarted=true");
-                                dos.writeUTF("+" + "changing gameStarted=true on client");
-                                dos.flush();
-                            } catch (IOException ex) {
-                                System.out.println("error occured when changing client gameStarted=true");
-                            }
-                        //changing on clientthread receive message starting with +
+            //hide the playerList 
+            pLobby.setVisible(false);
 
-            
-            
-            
-            
-            
+            //tell all clients that game has started
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                System.out.println("sending to clients to change gameStarted=true");
+                dos.writeUTF("+" + "changing gameStarted=true on client");
+                dos.flush();
+            } catch (IOException ex) {
+                System.out.println("error occured when changing client gameStarted=true");
+            }
+            //changing on clientthread receive message starting with +
+
+            //init the gamearea 
+            g = new GamePlayer(100, 100, 25, "#3498db", "PlayerOne", 1);
+            middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
+
+            pane = new Pane();
+            pane.setMinHeight(600);
+            pane.setMaxHeight(600);
+            pane.setMinWidth(800);
+            pane.setMaxWidth(800);
+            //     pane.setPrefHeight(400);
+            //   pane.setPrefWidth(600);
+            pane.setStyle("-fx-background-color: #2c3e50");
+
+            pane.getChildren().add(g.getCircle());
+            pane.getChildren().add(middleObj.getCircle());
+            root.setLeft(pane);
+            pane.setFocusTraversable(true);
+            ServerTimeline();
+
         });
 
         //when user enter msg
@@ -362,10 +404,10 @@ public class MpogCA2 extends Application {
                 }//end of keypressed events
             }
         });
-        return scene;
+        return gameScene;
     }//end of create server lobby
-    
-        //create server lobby
+
+    //create client lobby
     public Scene createClientLobby() {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 600);
@@ -388,8 +430,7 @@ public class MpogCA2 extends Application {
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
-        
-        
+
         v.getChildren().add(back);
         h.getChildren().add(pLobby);
         h.getChildren().add(v);
@@ -398,7 +439,7 @@ public class MpogCA2 extends Application {
 
         back.setOnAction(e -> {
             bPush.play();
-            
+
             listData.removeAll(listData);
             pLobby.setItems(listData);
 
@@ -450,6 +491,189 @@ public class MpogCA2 extends Application {
         });
         return scene;
     }//end of create client lobby
+
+    public void ServerTimeline() {
+
+        //creates the Timeline that updates the screen 
+        Timeline tick = TimelineBuilder.create().keyFrames(
+                new KeyFrame(
+                        new Duration(10),//This is how often it updates in milliseconds
+                        new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+                        //You put what you want to update here
+                        ServerUpdate();
+                        //System.out.println("time " + time);
+                        //get the bullet and set on the client
+                    }
+                }
+                )
+        ).cycleCount(Timeline.INDEFINITE).build();
+
+        tick.play();//Starts the timeline
+
+    }
+
+    public void ClientTimeline() {
+
+        //creates the Timeline that updates the screen 
+        Timeline tick = TimelineBuilder.create().keyFrames(
+                new KeyFrame(
+                        new Duration(10),//This is how often it updates in milliseconds
+                        new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+                        //You put what you want to update here
+
+                        //System.out.println("time " + time);
+                        //get the bullet and set on the client
+                    }
+                }
+                )
+        ).cycleCount(Timeline.INDEFINITE).build();
+
+        tick.play();//Starts the timeline
+
+    }
+
+    public void ServerUpdate() {
+
+        HandleKeyboard();
+        bulletSpawn++;
+        System.out.println(bulletSpawn);
+        SpawnBullets(bulletSpawn);
+        g.move(xDirection, yDirection, 3);
+
+        for (int i = 0; i < bulletList.size(); i++) {
+            bulletList.get(i).bulletMove();
+        }
+        
+        destroyBullets();
+
+    }
+
+    public void ClientUpdate() {
+
+    }
+
+    public void HandleKeyboard() {
+
+        //this is to move the object 
+        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+
+                if (event.getCode() == KeyCode.UP) {
+                    yDirection = -1;
+                }
+                if (event.getCode() == KeyCode.DOWN) {
+                    yDirection = 1;
+                }
+                if (event.getCode() == KeyCode.LEFT) {
+                    xDirection = -1;
+                }
+                if (event.getCode() == KeyCode.RIGHT) {
+                    xDirection = 1;
+                }
+
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 1;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 1;
+                }
+            }
+        });
+
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+
+                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
+                if (event.getCode() == KeyCode.UP) {
+                    yDirection = 0;
+                }
+                if (event.getCode() == KeyCode.DOWN) {
+                    yDirection = 0;
+                }
+                if (event.getCode() == KeyCode.LEFT) {
+                    xDirection = 0;
+                }
+                if (event.getCode() == KeyCode.RIGHT) {
+                    xDirection = 0;
+                }
+
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 0;
+                }
+            }
+        });
+
+    }
+
+    void destroyBullets()
+    {
+        for (int i = 0; i < bulletList.size(); i++)
+        {
+            if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius())
+            {
+                bulletList.remove(i);
+            }
+            
+            if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius())
+            {
+                bulletList.remove(i);
+            }
+            
+            if (bulletList.get(i).position.x <= 0)
+            {
+                bulletList.remove(i);
+            }
+            
+            if (bulletList.get(i).position.y <= 0)
+            {
+                bulletList.remove(i);
+            }
+        }
+    }
+    
+    public void SpawnBullets(int time) {
+
+        if (time == 100) {
+
+            Random x = new Random();
+            int randomNumber = x.nextInt(20) + 10;
+            System.out.println("Math.random is : " + randomNumber);
+
+            //spawn bullets 
+            for (int i = 0; i < randomNumber; i++) {
+
+                int xPos = x.nextInt(21) - 10;
+                int yPos = x.nextInt(21) - 10;
+                Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
+                pane.getChildren().add(bullet.getCircle());
+                bulletList.add(bullet);
+
+            }
+
+            bulletSpawn = 0;
+        }
+
+    }
 
     //create main menu ui
     public Scene createMainMenu() {
@@ -514,7 +738,7 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of createMainMenu
 
-//change screen
+    //change screen
     public void Action(Stage stage, Scene scene, String title) {
         currentStage = stage;
 
