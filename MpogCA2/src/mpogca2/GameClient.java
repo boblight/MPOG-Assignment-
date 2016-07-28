@@ -19,8 +19,7 @@ public class GameClient implements Runnable {
     //update list of players
     //String readInput = "";
     //List<String> namesReceived = new ArrayList<>();
-    
-    GameNetworkObject gno=new GameNetworkObject();
+    //GameNetworkObject gno = new GameNetworkObject();
 
     @Override
     public void run() {
@@ -37,38 +36,42 @@ public class GameClient implements Runnable {
                     while (clientRunning == true) {
 
                         if (gsocket.isConnected()) {
-                            
+
                             try {
                                 gdis = new ObjectInputStream(gsocket.getInputStream());
-                                gno = (GameNetworkObject)gdis.readObject();
-                            } catch(IOException e) {
+                                gno = (GameNetworkObject) gdis.readObject();
+                                Platform.runLater(() -> {
+                                    SetBullets(gno);
+                                });
+
+                            } catch (IOException e) {
                                 break;
                             } catch (ClassNotFoundException ex) {
                                 Logger.getLogger(GameClient.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            
-                    }//end of loop
-                    gsocket.close();
-                    gdis.close();
-                    gdos.close();
-                    clientRunning = false;
-                    clientStarted = false;
-                    System.out.println("Disconnected from server");
+
+                        }//end of loop
+                        gsocket.close();
+                        gdis.close();
+                        gdos.close();
+                        clientRunning = false;
+                        clientStarted = false;
+                        System.out.println("Disconnected from server");
                     }
-                    } catch (IOException ex) {
+                } catch (IOException ex) {
                     try {
                         gsocket.close();
                         gdis.close();
                         gdos.close();
                         clientRunning = false;
                         clientStarted = false;
-                        
+
                     } catch (IOException ex1) {
-                        
+
                     }
                 }//end of big try catch
-            }   
-            
+            }
+
         }//end of client running block
     }//end of run method
 

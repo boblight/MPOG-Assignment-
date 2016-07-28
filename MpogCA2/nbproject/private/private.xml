@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/GameObject.java</file>
-            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/Bullet.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/GameClient.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/GameNetworkObject.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/GameServer.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/engine/GamePlayer.java</file>
+            <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/ClientThread.java</file>
             <file>file:/E:/School/Y3/MPOG/MPOG-Assignment-/MpogCA2/src/mpogca2/MpogCA2.java</file>
         </group>
     </open-files>

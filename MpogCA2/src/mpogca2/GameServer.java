@@ -22,7 +22,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import static mpogca2.MpogCA2.*;
 
-
 public class GameServer implements Runnable {
 
     public final ExecutorService pool;
@@ -38,36 +37,52 @@ public class GameServer implements Runnable {
     @Override
     public void run() {
 //        try {
-            serverStarted = true;
+        serverStarted = true;
 
-            if (serverRunning == true) {
-                //toSend.add(pLocal.getName());
+        if (serverRunning == true) {
+            //toSend.add(pLocal.getName());
 
-                //to keep accepting and updating client lobbies as long as game has not started
-                while (gameStarted == true) {
-                    //socket = serverSocket.accept();//accept client
-                    //id++; //identify handlers
-                    Handler h = new Handler(gsocket, this);//create new handler class each time client joins
-                    hList.add(h);//add handler to list of handler
-                    pool.execute(h);//run handler class in new Thread
+            //to keep accepting and updating client lobbies as long as game has not started
+            while (gameStarted) {
+                System.out.println("Hello");
+                //socket = serverSocket.accept();//accept client
+                //id++; //identify handlers
+                // Handler h = new Handler(gsocket, this);//create new handler class each time client joins
+                // hList.add(h);//add handler to list of handler
+                // pool.execute(h);//run handler class in new Thread
 
-                    gclientList.add(h);
-
-                    //buffer time for network
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
+                //gclientList.add(h);
+                //buffer time for network
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+//                }
 //                    hList.forEach((o) -> {
 //                        o.updateClient();
 //                    });
-                }//end of infinite loop
-                pool.shutdownNow();
-                serverRunning = false;
-                serverStarted = false;
-            }//end of server running
+                if (gsocket.isConnected()) {
+
+                    try {
+
+                        gdis = new ObjectInputStream(gsocket.getInputStream());
+                        gdos = new ObjectOutputStream(gsocket.getOutputStream());
+
+                        gdos.writeObject(gno);
+
+                        System.out.println("Object sent");
+
+                    } catch (Exception ex) {
+
+                    }
+
+                }
+
+            }//end of infinite loop
+            pool.shutdownNow();
+            serverRunning = false;
+            serverStarted = false;
+        }//end of server running
 //        } 
 //        catch (IOException ex) {
 //            pool.shutdownNow();
@@ -76,13 +91,11 @@ public class GameServer implements Runnable {
 //        }
     }//end of run
 
-
-
     class Handler implements Runnable {
 
         private Socket gameSocket;
         boolean running = true;
-        
+
         GameServer gameServer;
 
         Handler(Socket socket, GameServer server) {
@@ -93,6 +106,7 @@ public class GameServer implements Runnable {
         //send to all client
         public void sendToClient(GameNetworkObject gno) {
             try {
+                gdis = new ObjectInputStream(socket.getInputStream());
                 gdos = new ObjectOutputStream(gsocket.getOutputStream());
                 gdos.writeObject(gno);
                 gdos.flush();
@@ -100,6 +114,25 @@ public class GameServer implements Runnable {
                 System.out.println("Failed to send game object to client");
             }
         }//end of sendToClient
+
+        //receive from client 
+        public GameNetworkObject receiveFromClient() {
+
+            GameNetworkObject gno = new GameNetworkObject();
+
+            try {
+
+                gdis = new ObjectInputStream(socket.getInputStream());
+                gdos = new ObjectOutputStream(socket.getOutputStream());
+                gno = (GameNetworkObject) gdis.readObject();
+
+            } catch (Exception ex) {
+                System.out.println("Failed to send game object to client");
+            }
+
+            return gno;
+
+        }
 
 //        //remove anyclients that dc at clients' side
 //        public void removeDc(String remove) {
@@ -111,23 +144,18 @@ public class GameServer implements Runnable {
 //                System.out.println("Failed to update client's list view:\n " + ex.getMessage());
 //            }
 //        }//end of removeDc
-
         public void shutdown() {
             try {
                 pool.shutdown();
                 gsocket.close();
             } catch (Exception ex) {
-                
+
             }
         }
-        
-
-        
 
         //initialize each handler
         @Override
         public void run() {
-
 
         }//end of run method
     }//end of handler class

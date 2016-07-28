@@ -102,6 +102,7 @@ public class MpogCA2 extends Application {
     public static List<GameServer.Handler> gclientList = new ArrayList<>();
     public static Socket gsocket;
     public static ServerSocket gserverSocket;
+    public static ServerSocket gclientSocket;
     public static ObjectOutputStream gdos;
     public static ObjectInputStream gdis;
     public static Runnable gserver, gclient;
@@ -123,10 +124,14 @@ public class MpogCA2 extends Application {
     int xDirection1 = 0;
     int yDirection1 = 0;
 
-    ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
-    ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
-    GamePlayer player1, player2, player3, player4;
-    GameObject middleObj;
+    int playerCount = 1; //this is to help assign the player their numbers 
+
+    public static ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    public static ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
+    public static GamePlayer player1, player2, player3, player4;
+    public static GameObject middleObj;
+    public static BorderPane root = new BorderPane();
+    public static GameNetworkObject gno = new GameNetworkObject();
 
     @Override
     public void start(Stage primaryStage) {
@@ -412,36 +417,14 @@ public class MpogCA2 extends Application {
                 if (serverStarted == true) {
                     try {
                         gserverSocket = new ServerSocket();
-
                         gserver = new GameServer(8001, Runtime.getRuntime().availableProcessors() + 1);
                         new Thread(gserver).start();
+                        InitGamePaneServer(root);
                     } catch (IOException ex) {
                         System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
                     }//end of trycatch
                 }//end of if server start
             }//end of if server running
-
-            //init the gamearea 
-            g = new GamePlayer(100, 100, 25, "#3498db", "PlayerOne", 1);
-
-            middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
-
-            gamePane = new Pane();
-            gamePane.setMinHeight(600);
-            gamePane.setMaxHeight(600);
-            gamePane.setMinWidth(800);
-            gamePane.setMaxWidth(800);
-            gamePane.setStyle("-fx-background-color: #2c3e50");
-
-            //add current player
-            gamePane.getChildren().add(player1.getCircle());
-
-            //get all the other player
-            //the middle circle 
-            gamePane.getChildren().add(middleObj.getCircle());
-
-            root.setLeft(gamePane);
-            ServerTimeline();
 
         });
 
@@ -476,9 +459,32 @@ public class MpogCA2 extends Application {
         return gameScene;
     }//end of create server lobby
 
+    public void InitGamePaneServer(BorderPane root) {
+
+        middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
+
+        gamePane = new Pane();
+        gamePane.setMinHeight(600);
+        gamePane.setMaxHeight(600);
+        gamePane.setMinWidth(800);
+        gamePane.setMaxWidth(800);
+        gamePane.setStyle("-fx-background-color: #34495e");
+
+        //add current player
+        gamePane.getChildren().add(player1.getCircle());
+
+        //get all the other player
+        //the middle circle 
+        gamePane.getChildren().add(middleObj.getCircle());
+
+        root.setLeft(gamePane);
+        ServerTimeline();
+
+    }
+
     //create client lobby
     public Scene createClientLobby() {
-        BorderPane root = new BorderPane();
+        //BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 600);
         scene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
@@ -492,6 +498,7 @@ public class MpogCA2 extends Application {
         pLobby.setPrefHeight(100);
         chatMsg = new TextField();
         chatMsg.getStyleClass().add("chatbox");
+        chatMsg.setFocusTraversable(false);
         chatArea = new TextArea();
         chatArea.getStyleClass().add("chathistory");
         chatArea.setWrapText(true);
@@ -534,6 +541,22 @@ public class MpogCA2 extends Application {
             Action(currentStage, createMainMenu(), "Main Menu");
         });
 
+        try {
+            // gclientSocket = new GameClient();
+
+        } catch (Exception ex) {
+
+        }
+
+        System.out.println("gamestarted:" + gameStarted);
+        System.out.println("clientStarted" + clientStarted);
+        //kappa
+        //connect to game server when gamestarted is true
+        //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
+
+        //You put what you want to update here
+        //System.out.println("time " + time);
+        //get the bullet and set on the client
         //when user enter msg
         chatMsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -565,6 +588,27 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of create client lobby
 
+    public static void InitGamePaneClient(BorderPane root) {
+
+        middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
+
+        gamePane = new Pane();
+        gamePane.setMinHeight(600);
+        gamePane.setMaxHeight(600);
+        gamePane.setMinWidth(800);
+        gamePane.setMaxWidth(800);
+        gamePane.setStyle("-fx-background-color: #34495e");
+
+        //add current player
+        // gamePane.getChildren().add(player1.getCircle());
+//get all the other player
+        //the middle circle 
+        gamePane.getChildren().add(middleObj.getCircle());
+
+        root.setLeft(gamePane);
+        ClientTimeline();
+    }
+
     //Methods essential for the game to work ///////////////////////////////////
     public void ServerTimeline() {
 
@@ -587,7 +631,7 @@ public class MpogCA2 extends Application {
 
     }
 
-    public void ClientTimeline() {
+    public static void ClientTimeline() {
 
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
@@ -595,18 +639,7 @@ public class MpogCA2 extends Application {
                         new Duration(10),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
-
-                        //kappa
-                        //connect to game server when gamestarted is true
-                        //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
-                        if (gameStarted == true && clientStarted == true) {
-                            gclient = new GameClient();
-                        }
-                        new Thread(gclient).start();
-
-                        //You put what you want to update here
-                        //System.out.println("time " + time);
-                        //get the bullet and set on the client
+                        ClientUpdate();
                     }
                 }
                 )
@@ -618,32 +651,56 @@ public class MpogCA2 extends Application {
 
     public void ServerUpdate() {
 
-        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
-
-        //kappa
-        //when server running, 
-        if (serverRunning == true) {
-            gclientList.forEach((gclient) -> {
-                gclient.sendToClient(gno);
-                //for each gclient in gclientlist, send game network object over
-            });
-        } else if (clientRunning == true) {
-            try {
-                gdos = new ObjectOutputStream(gsocket.getOutputStream());
-                System.out.println("sending gno");
-                gdos.writeObject(gno);
-                gdos.flush();
-            } catch (IOException ex) {
-                System.out.println("failed to send gno");
-            }
-        }
-
+//        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
+//
+//        //kappa
+//        //when server running, 
+//        if (serverRunning == true) {
+//            gclientList.forEach((gclient) -> {
+//                gclient.sendToClient(gno);
+//                //for each gclient in gclientlist, send game network object over
+//            });
+//        } else if (clientRunning == true) {
+//            try {
+//                gdos = new ObjectOutputStream(gsocket.getOutputStream());
+//                System.out.println("sending gno");
+//                gdos.writeObject(gno);
+//                gdos.flush();
+//            } catch (IOException ex) {
+//                System.out.println("failed to send gno");
+//            }
+//        }
+//        GameNetworkObject objectFromClient = new GameNetworkObject();
+//        GameNetworkObject objectToClient = new GameNetworkObject();
+        //receive the data from client(s)
+//        if (clientRunning == true) {
+//
+//            try {
+//
+//                objectFromClient = (GameNetworkObject) gdis.readObject();
+//
+//                //add the players to the list 
+//            } catch (Exception ex) {
+//
+//            }
+        //update the positions 
         HandleKeyboard();
         bulletSpawn++;
         System.out.println(bulletSpawn);
         SpawnBullets(bulletSpawn);
-        g.move(xDirection, yDirection, 3);
+        player1.move(xDirection, yDirection, 3);
 
+        gno.SetBulletList(bulletList);
+
+        //send list of bullets to client 
+//        try {
+//
+//            gdos.writeObject(gno);
+//            System.out.println("Obj sent");
+//
+//        } catch (Exception ex) {
+//
+//        };
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
@@ -652,27 +709,46 @@ public class MpogCA2 extends Application {
 
     }
 
-    public void ClientUpdate() {
+    public static void SetBullets(GameNetworkObject gno) {
+
+        MpogCA2.gno = gno;
+
+    }
+
+    public static void ClientUpdate() {
 
         //kappa
         //send gno
-        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
+//        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
+//
+//        if (clientRunning == true) {
+//            //gclientList.forEach((gclient) -> {
+//            //  gclient.sendToClient(gno);
+//            // });
+//            try {
+//                gdis = new ObjectInputStream(gsocket.getInputStream());
+//                gno = (GameNetworkObject) gdis.readObject();
+//            } catch (Exception ex) {
+//                System.out.println(ex.toString());
+//            }
+//        } else if (clientRunning == true) {
+////            try {
+//////                gdos = new ObjectOutputStream(gsocket.getOutputStream());
+//////                System.out.println("sending gno");
+//////                gdos.writeObject(gno);
+//////                gdos.flush();
+////            } catch (IOException ex) {
+////                System.out.println("failed to send gno");
+////            }
+//        }
+        bulletList = gno.GetBulletList();
 
-        if (serverRunning == true) {
-            gclientList.forEach((gclient) -> {
-                gclient.sendToClient(gno);
-            });
-        } else if (clientRunning == true) {
-            try {
-                gdos = new ObjectOutputStream(gsocket.getOutputStream());
-                System.out.println("sending gno");
-                gdos.writeObject(gno);
-                gdos.flush();
-            } catch (IOException ex) {
-                System.out.println("failed to send gno");
-            }
+        //HandleKeyboard();
+        for (int i = 0; i < bulletList.size(); i++) {
+            bulletList.get(i).bulletMove();
         }
 
+        //des/troyBullets();
     }
 
     public void HandleKeyboard() {
@@ -750,24 +826,24 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < bulletList.size(); i++) {
 
             if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
-                pane.getChildren().remove(bulletList.get(i).getCircle());
+                gamePane.getChildren().remove(bulletList.get(i).getCircle());
                 if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
                     bulletList.remove(i);
                 }
 
                 if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius()) {
-                    pane.getChildren().remove(bulletList.get(i).getCircle());
+                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
                     bulletList.remove(i);
                 }
 
                 if (bulletList.get(i).position.x <= 0) {
-                    pane.getChildren().remove(bulletList.get(i).getCircle());
+                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
                     bulletList.remove(i);
                 }
 
                 if (bulletList.get(i).position.y <= 0) {
 
-                    pane.getChildren().remove(bulletList.get(i).getCircle());
+                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
 
                     bulletList.remove(i);
                 }
@@ -777,7 +853,7 @@ public class MpogCA2 extends Application {
 
     public void SpawnBullets(int time) {
 
-        if (time == 10) {
+        if (time == 100) {
 
             Random x = new Random();
             int randomNumber = x.nextInt(20) + 10;
@@ -789,7 +865,7 @@ public class MpogCA2 extends Application {
                 int xPos = x.nextInt(21) - 10;
                 int yPos = x.nextInt(21) - 10;
                 Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
-                pane.getChildren().add(bullet.getCircle());
+                gamePane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
 
             }

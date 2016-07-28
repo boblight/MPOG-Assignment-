@@ -62,12 +62,26 @@ public class ClientThread implements Runnable {
                                     pLobby.setItems(listData);
                                 });
                                 namesReceived.add(readInput);
-                            }
-                            else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
-                                
+                            } else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
+
                                 System.out.println("received from network: " + readInput);
-                                gameStarted=true;
+                                gameStarted = true;
                                 System.out.println("client has changed gamestarted=true");
+                                System.out.println("gameStarted:" + gameStarted);
+
+                                Platform.runLater(() -> {
+
+                                    if (gameStarted == true && clientStarted == true) {
+
+                                        pLobby.setVisible(false);
+                                        gclient = new GameClient();
+                                        System.out.println("Game Client thread started");
+                                        InitGamePaneClient(root);
+                                        System.out.println("Pane created");
+                                        new Thread(gclient).start();
+                                    }
+
+                                });
                             }
                         } else {
                             break;
