@@ -35,12 +35,15 @@ public class ServerThread implements Runnable {
 
     public volatile List<String> toSend = new ArrayList<>();//List for storing all player names
     public boolean outComplete = false;
+    
+    //
     public final ExecutorService pool;
     private String readInput;
     public List<Handler> hList = new ArrayList<>();
     public String name;
     int id;
-
+    //
+    
     public ServerThread(int port, int poolSize) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), port));
@@ -112,6 +115,7 @@ public class ServerThread implements Runnable {
 
     class Handler implements Runnable {
 
+        //
         private Socket socket;
         boolean running = true;
         int id;
@@ -123,6 +127,8 @@ public class ServerThread implements Runnable {
             this.server = server;
         }//end of constructor
 
+        //
+        
         //message to all client
         public void updateClientChat(String msg) {
             try {

@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -46,6 +48,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -84,7 +88,7 @@ public class MpogCA2 extends Application {
     public static int pCount = 0;
     public static InetAddress ipAddress;
 
-    public static List<Handler> clientList = new ArrayList<>();
+    public static List<ServerThread.Handler> clientList = new ArrayList<>();
 
     public static Socket socket;
     public static ServerSocket serverSocket;
@@ -93,10 +97,20 @@ public class MpogCA2 extends Application {
 
     public static Runnable server, client;
 
-    public static Image title;
-    public static ImageView titleImv;
+    //kappa
+    //g in front is for game networking
+    public static List<GameServer.Handler> gclientList = new ArrayList<>();
+    public static Socket gsocket;
+    public static ServerSocket gserverSocket;
+    public static ObjectOutputStream gdos;
+    public static ObjectInputStream gdis;
+    public static Runnable gserver, gclient;
+
+    public static Image title, helpDiagram;
+    public static ImageView titleImv, helpDiagramImv;
 
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
+    final Media bgm = new Media(new File("src/BGM.mp3").toURI().toString());
 
     //game area UI elements
     public static Pane gamePane;
@@ -119,13 +133,18 @@ public class MpogCA2 extends Application {
         Action(primaryStage, createMainMenu(), "Orbs");
         primaryStage.getIcons().add(new Image("logo.png"));
 
+        MediaPlayer mediaPlay = new MediaPlayer(bgm);
+        mediaPlay.setAutoPlay(true);
+        mediaPlay.setVolume(0.8);
+
     }//end of main javafx class
 
     //create the screen for inputting name (host)
     public Scene hostScreen() {
         StackPane root = new StackPane();
-        Scene scene = new Scene(root, 300, 200);
+        Scene scene = new Scene(root, 800, 540);
         scene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
 
         VBox v = new VBox(15);
         v.setAlignment(Pos.CENTER);
@@ -135,10 +154,18 @@ public class MpogCA2 extends Application {
         h2.setAlignment(Pos.CENTER);
 
         inputPName = new TextField();
+        inputPName.getStyleClass().add("chatbox");
+        inputPName.setMaxWidth(720);
         confirm = new Button("Confirm");
+        confirm.getStyleClass().add("menubtn");
         back = new Button("Back");
-        nameLbl = new Label("Input Name: ");
+        back.getStyleClass().add("menubtn");
+        nameLbl = new Label("Player Name: ");
+        nameLbl.getStyleClass().add("labeltextlarge");
         error = new Label();
+        error.getStyleClass().add("labeltext");
+
+        root.getStyleClass().add("mainbg");
 
         h.getChildren().add(back);
         h.getChildren().add(confirm);
@@ -159,8 +186,9 @@ public class MpogCA2 extends Application {
         });
 
         confirm.setOnAction(e -> {
+            bPush.play();
             if (inputPName.getText().trim().equals("")) {
-                error.setText("Please input player name.");
+                error.setText("Please enter player name.");
             } else {
                 bPush.play();
                 Action(currentStage, createServerLobby(), "Lobby");
@@ -198,7 +226,9 @@ public class MpogCA2 extends Application {
     //create screen for inputting name + IP (client)
     public Scene joinScreen() {
         StackPane root = new StackPane();
-        Scene scene = new Scene(root, 500, 400);
+        Scene scene = new Scene(root, 800, 540);
+        scene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
 
         VBox v = new VBox(15);
         v.setAlignment(Pos.CENTER);
@@ -210,12 +240,21 @@ public class MpogCA2 extends Application {
         h3.setAlignment(Pos.CENTER);
 
         inputPName = new TextField();
+        inputPName.getStyleClass().add("chatbox");
+        inputPName.setMaxWidth(700);
         inputIp = new TextField();
+        inputIp.getStyleClass().add("chatbox");
+        inputIp.setMaxWidth(700);
         confirm = new Button("Confirm");
+        confirm.getStyleClass().add("menubtn");
         back = new Button("Back");
-        nameLbl = new Label("Input Name: ");
-        ipLbl = new Label("Input Host IP: ");
+        back.getStyleClass().add("menubtn");
+        nameLbl = new Label("Player Name: ");
+        nameLbl.getStyleClass().add("labeltextlarge");
+        ipLbl = new Label("Host IP: ");
+        ipLbl.getStyleClass().add("labeltextlarge");
         error = new Label();
+        error.getStyleClass().add("labeltext");
 
         h.getChildren().add(back);
         h.getChildren().add(confirm);
@@ -239,8 +278,9 @@ public class MpogCA2 extends Application {
         });
 
         confirm.setOnAction(e -> {
+            bPush.play();
             if (inputPName.getText().trim().equals("")) {
-                error.setText("Please input player name.");
+                error.setText("Please enter player name.");
             } else {
                 bPush.play();
                 pLocal = new Player(inputPName.getText());
@@ -267,7 +307,7 @@ public class MpogCA2 extends Application {
                         }
                     }
                 } catch (IOException ex) {
-                    error.setText("Host IP could not be found. Please enter a proper IP address");
+                    error.setText("Host IP could not be found. Please enter a proper IP address.");
                 }
             }
         });
@@ -281,6 +321,7 @@ public class MpogCA2 extends Application {
         BorderPane root = new BorderPane();
         gameScene = new Scene(root, 1200, 600);
         gameScene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
 
         HBox h = new HBox(75);
         h.setAlignment(Pos.CENTER);
@@ -290,16 +331,20 @@ public class MpogCA2 extends Application {
         pLobby.setPrefWidth(400);
         pLobby.setPrefHeight(100);
         chatMsg = new TextField();
+        chatMsg.getStyleClass().add("chatbox");
         chatMsg.setFocusTraversable(false);
         chatArea = new TextArea();
+        chatArea.getStyleClass().add("chathistory");
         chatArea.setFocusTraversable(false);
         chatArea.setWrapText(true);
         chatArea.setPrefHeight(400);
         chatArea.setPrefWidth(300);
         chatArea.setEditable(false);
         back = new Button("Exit");
+        back.getStyleClass().add("smallbtn");
         back.setFocusTraversable(false);
         startGame = new Button("Start Game");
+        startGame.getStyleClass().add("smallbtn");
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
@@ -342,7 +387,7 @@ public class MpogCA2 extends Application {
             //send message to client with command 
             //when client receive command change their own gameStarted=true
             gameStarted = true; //change server gameStarted=true, client still not changed
-            System.out.println("server changed gameStarted=false");
+            System.out.println("server changed gameStarted=true");
             startGame.setVisible(false);
             //hide the playerList 
             pLobby.setVisible(false);
@@ -359,7 +404,26 @@ public class MpogCA2 extends Application {
             //changing on clientthread receive message starting with +
 
             //Start the game area 
-            player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1); 
+            player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+            //kappa
+            //init game server on port 8001 when server is started and running
+            if (serverRunning == true) {
+
+                if (serverStarted == true) {
+                    try {
+                        gserverSocket = new ServerSocket();
+
+                        gserver = new GameServer(8001, Runtime.getRuntime().availableProcessors() + 1);
+                        new Thread(gserver).start();
+                    } catch (IOException ex) {
+                        System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
+                    }//end of trycatch
+                }//end of if server start
+            }//end of if server running
+
+            //init the gamearea 
+            g = new GamePlayer(100, 100, 25, "#3498db", "PlayerOne", 1);
+
             middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
             gamePane = new Pane();
@@ -417,6 +481,7 @@ public class MpogCA2 extends Application {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 600);
         scene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
 
         HBox h = new HBox(75);
         h.setAlignment(Pos.CENTER);
@@ -426,12 +491,15 @@ public class MpogCA2 extends Application {
         pLobby.setPrefWidth(400);
         pLobby.setPrefHeight(100);
         chatMsg = new TextField();
+        chatMsg.getStyleClass().add("chatbox");
         chatArea = new TextArea();
+        chatArea.getStyleClass().add("chathistory");
         chatArea.setWrapText(true);
         chatArea.setPrefHeight(400);
         chatArea.setPrefWidth(300);
         chatArea.setEditable(false);
         back = new Button("Exit");
+        back.getStyleClass().add("smallbtn");
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
@@ -527,8 +595,16 @@ public class MpogCA2 extends Application {
                         new Duration(10),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
-                        //You put what you want to update here
 
+                        //kappa
+                        //connect to game server when gamestarted is true
+                        //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
+                        if (gameStarted == true && clientStarted == true) {
+                            gclient = new GameClient();
+                        }
+                        new Thread(gclient).start();
+
+                        //You put what you want to update here
                         //System.out.println("time " + time);
                         //get the bullet and set on the client
                     }
@@ -541,6 +617,26 @@ public class MpogCA2 extends Application {
     }
 
     public void ServerUpdate() {
+
+        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
+
+        //kappa
+        //when server running, 
+        if (serverRunning == true) {
+            gclientList.forEach((gclient) -> {
+                gclient.sendToClient(gno);
+                //for each gclient in gclientlist, send game network object over
+            });
+        } else if (clientRunning == true) {
+            try {
+                gdos = new ObjectOutputStream(gsocket.getOutputStream());
+                System.out.println("sending gno");
+                gdos.writeObject(gno);
+                gdos.flush();
+            } catch (IOException ex) {
+                System.out.println("failed to send gno");
+            }
+        }
 
         HandleKeyboard();
         bulletSpawn++;
@@ -557,6 +653,25 @@ public class MpogCA2 extends Application {
     }
 
     public void ClientUpdate() {
+
+        //kappa
+        //send gno
+        GameNetworkObject gno = new GameNetworkObject(); //Game network object for holding all the data to be sent
+
+        if (serverRunning == true) {
+            gclientList.forEach((gclient) -> {
+                gclient.sendToClient(gno);
+            });
+        } else if (clientRunning == true) {
+            try {
+                gdos = new ObjectOutputStream(gsocket.getOutputStream());
+                System.out.println("sending gno");
+                gdos.writeObject(gno);
+                gdos.flush();
+            } catch (IOException ex) {
+                System.out.println("failed to send gno");
+            }
+        }
 
     }
 
@@ -636,22 +751,26 @@ public class MpogCA2 extends Application {
 
             if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
                 pane.getChildren().remove(bulletList.get(i).getCircle());
-                bulletList.remove(i);
-            }
+                if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
+                    bulletList.remove(i);
+                }
 
-            if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius()) {
-                pane.getChildren().remove(bulletList.get(i).getCircle());
-                bulletList.remove(i);
-            }
+                if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius()) {
+                    pane.getChildren().remove(bulletList.get(i).getCircle());
+                    bulletList.remove(i);
+                }
 
-            if (bulletList.get(i).position.x <= 0) {
-                pane.getChildren().remove(bulletList.get(i).getCircle());
-                bulletList.remove(i);
-            }
+                if (bulletList.get(i).position.x <= 0) {
+                    pane.getChildren().remove(bulletList.get(i).getCircle());
+                    bulletList.remove(i);
+                }
 
-            if (bulletList.get(i).position.y <= 0) {
-                pane.getChildren().remove(bulletList.get(i).getCircle());
-                bulletList.remove(i);
+                if (bulletList.get(i).position.y <= 0) {
+
+                    pane.getChildren().remove(bulletList.get(i).getCircle());
+
+                    bulletList.remove(i);
+                }
             }
         }
     }
@@ -702,15 +821,15 @@ public class MpogCA2 extends Application {
         help.getStyleClass().add("menubtn");
         exit = new Button("Exit");
         exit.getStyleClass().add("menubtn");
-        testGame = new Button("TestGame");
-        testGame.getStyleClass().add("menubtn");
+//        testGame = new Button("TestGame");
+//        testGame.getStyleClass().add("menubtn");
 
         vbCenter.getChildren().add(titleImv);
         vbCenter.getChildren().add(host);
         vbCenter.getChildren().add(join);
         vbCenter.getChildren().add(help);
         vbCenter.getChildren().add(exit);
-        vbCenter.getChildren().add(testGame);
+//        vbCenter.getChildren().add(testGame);
 
         root.setCenter(vbCenter);
 
@@ -724,23 +843,34 @@ public class MpogCA2 extends Application {
             Action(currentStage, joinScreen(), "Join Screen");
         });
 
+        help.setOnAction(e -> {
+            bPush.play();
+            createHelpScreen();
+        });
+
         exit.setOnAction(e -> {
             bPush.play();
+
+            try {
+                Thread.sleep(80);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             Platform.exit();
             System.exit(0);
         });
 
         //guys please add comment for this kind of thing
         //test game to be deleted most likely
-        testGame.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                GameScreen gs = new GameScreen();
-                gs.StartGameScreen();
-            }
-
-        });
-
+//        testGame.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                GameScreen gs = new GameScreen();
+//                gs.StartGameScreen();
+//            }
+//
+//        });
         return scene;
     }//end of createMainMenu
 
@@ -800,5 +930,31 @@ public class MpogCA2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }//end of main method
+
+    public static void createHelpScreen() {
+        Stage helpStage = new Stage();
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add("style.css");
+
+        VBox vbCenter = new VBox(15);
+        vbCenter.setAlignment(Pos.CENTER);
+
+        root.setCenter(vbCenter);
+        root.getStyleClass().add("mainbg");
+
+        helpDiagram = new Image("instructions.png");
+        helpDiagramImv = new ImageView(helpDiagram);
+        helpDiagramImv.setPreserveRatio(true);
+        helpDiagramImv.fitWidthProperty().bind(scene.widthProperty());
+        helpDiagramImv.fitHeightProperty().bind(scene.heightProperty());
+
+        vbCenter.getChildren().add(helpDiagramImv);
+
+        helpStage.setTitle("How to Play");
+        helpStage.setScene(scene);
+        helpStage.getIcons().add(new Image("logo.png"));
+        helpStage.show();
+    }//end of create help screen
 
 }
