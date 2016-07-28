@@ -688,6 +688,27 @@ public class MpogCA2 extends Application {
         bulletSpawn++;
         System.out.println(bulletSpawn);
         SpawnBullets(bulletSpawn);
+        
+        if (0 > player1.position.x && xDirection == -1)
+        {
+            xDirection = 0;
+        }
+        
+        if (player1.position.x > 800 && xDirection == 1)
+        {
+            xDirection = 0;
+        }
+        
+        if (0 > player1.position.y && yDirection == -1)
+        {
+            yDirection = 0;
+        }
+        
+        if (player1.position.y > 600 && yDirection == 1)
+        {
+            yDirection = 0;
+        }
+        
         player1.move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
@@ -825,29 +846,29 @@ public class MpogCA2 extends Application {
     void destroyBullets() {
         for (int i = 0; i < bulletList.size(); i++) {
 
-            if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
-                gamePane.getChildren().remove(bulletList.get(i).getCircle());
-                if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
-                    bulletList.remove(i);
-                }
-
-                if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius()) {
+            //if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
+                if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
                     gamePane.getChildren().remove(bulletList.get(i).getCircle());
                     bulletList.remove(i);
                 }
 
-                if (bulletList.get(i).position.x <= 0) {
+                if (bulletList.get(i).position.y > 600 - bulletList.get(i).getCircle().getRadius()) {
                     gamePane.getChildren().remove(bulletList.get(i).getCircle());
                     bulletList.remove(i);
                 }
 
-                if (bulletList.get(i).position.y <= 0) {
+                if (bulletList.get(i).position.x < 0) {
+                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
+                    bulletList.remove(i);
+                }
+
+                if (bulletList.get(i).position.y < 0) {
 
                     gamePane.getChildren().remove(bulletList.get(i).getCircle());
 
                     bulletList.remove(i);
                 }
-            }
+            //}
         }
     }
 
