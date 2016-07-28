@@ -99,16 +99,19 @@ public class MpogCA2 extends Application {
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
 
     //game area UI elements
-    public static Pane pane;
+    public static Pane gamePane;
     Scene gameScene;
-    Stage gameStage;
+
     int bulletSpawn = 0;
-    ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+
     int xDirection = 0;
     int yDirection = 0;
     int xDirection1 = 0;
     int yDirection1 = 0;
-    GamePlayer g;
+
+    ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
+    GamePlayer player1, player2, player3, player4;
     GameObject middleObj;
 
     @Override
@@ -355,23 +358,25 @@ public class MpogCA2 extends Application {
             }
             //changing on clientthread receive message starting with +
 
-            //init the gamearea 
-            g = new GamePlayer(100, 100, 25, "#3498db", "PlayerOne", 1);
+            //Start the game area 
+            player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1); 
             middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
-            pane = new Pane();
-            pane.setMinHeight(600);
-            pane.setMaxHeight(600);
-            pane.setMinWidth(800);
-            pane.setMaxWidth(800);
-            //     pane.setPrefHeight(400);
-            //   pane.setPrefWidth(600);
-            pane.setStyle("-fx-background-color: #2c3e50");
+            gamePane = new Pane();
+            gamePane.setMinHeight(600);
+            gamePane.setMaxHeight(600);
+            gamePane.setMinWidth(800);
+            gamePane.setMaxWidth(800);
+            gamePane.setStyle("-fx-background-color: #2c3e50");
 
-            pane.getChildren().add(g.getCircle());
-            pane.getChildren().add(middleObj.getCircle());
-            root.setLeft(pane);
-            pane.setFocusTraversable(true);
+            //add current player
+            gamePane.getChildren().add(player1.getCircle());
+
+            //get all the other player
+            //the middle circle 
+            gamePane.getChildren().add(middleObj.getCircle());
+
+            root.setLeft(gamePane);
             ServerTimeline();
 
         });
@@ -492,6 +497,7 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of create client lobby
 
+    //Methods essential for the game to work ///////////////////////////////////
     public void ServerTimeline() {
 
         //creates the Timeline that updates the screen 
@@ -545,7 +551,7 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
-        
+
         destroyBullets();
 
     }
@@ -625,35 +631,34 @@ public class MpogCA2 extends Application {
 
     }
 
-    void destroyBullets()
-    {
-        for (int i = 0; i < bulletList.size(); i++)
-        {
-            if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius())
-            {
+    void destroyBullets() {
+        for (int i = 0; i < bulletList.size(); i++) {
+
+            if (bulletList.get(i).position.x >= 800 - bulletList.get(i).getCircle().getRadius()) {
+                pane.getChildren().remove(bulletList.get(i).getCircle());
                 bulletList.remove(i);
             }
-            
-            if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius())
-            {
+
+            if (bulletList.get(i).position.y >= 600 - bulletList.get(i).getCircle().getRadius()) {
+                pane.getChildren().remove(bulletList.get(i).getCircle());
                 bulletList.remove(i);
             }
-            
-            if (bulletList.get(i).position.x <= 0)
-            {
+
+            if (bulletList.get(i).position.x <= 0) {
+                pane.getChildren().remove(bulletList.get(i).getCircle());
                 bulletList.remove(i);
             }
-            
-            if (bulletList.get(i).position.y <= 0)
-            {
+
+            if (bulletList.get(i).position.y <= 0) {
+                pane.getChildren().remove(bulletList.get(i).getCircle());
                 bulletList.remove(i);
             }
         }
     }
-    
+
     public void SpawnBullets(int time) {
 
-        if (time == 100) {
+        if (time == 10) {
 
             Random x = new Random();
             int randomNumber = x.nextInt(20) + 10;
@@ -675,6 +680,7 @@ public class MpogCA2 extends Application {
 
     }
 
+    //end of methods essential for the game to work ////////////////////////////
     //create main menu ui
     public Scene createMainMenu() {
         BorderPane root = new BorderPane();
