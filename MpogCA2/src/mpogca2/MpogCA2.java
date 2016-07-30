@@ -967,15 +967,27 @@ public class MpogCA2 extends Application {
         help.getStyleClass().add("menubtn");
         exit = new Button("Exit");
         exit.getStyleClass().add("menubtn");
-//        testGame = new Button("TestGame");
-//        testGame.getStyleClass().add("menubtn");
 
+        
+        //for testing
+        testGame = new Button("TestGame");
+        testGame.getStyleClass().add("menubtn");
+        vbCenter.getChildren().add(testGame);
+        testGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                    bPush.play();
+                    Action(currentStage, endScreen(), "Game Over");
+            }
+        });
+        
+        
         vbCenter.getChildren().add(titleImv);
         vbCenter.getChildren().add(host);
         vbCenter.getChildren().add(join);
         vbCenter.getChildren().add(help);
         vbCenter.getChildren().add(exit);
-//        vbCenter.getChildren().add(testGame);
+
 
         root.setCenter(vbCenter);
 
@@ -1009,16 +1021,68 @@ public class MpogCA2 extends Application {
             System.exit(0);
         });
 
-
-//        testGame.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-
-//            }
-//
-//        });
         return scene;
     }//end of createMainMenu
+    
+    
+    
+        public Scene endScreen() {
+        StackPane root = new StackPane();
+        Scene scene = new Scene(root, 800, 540);
+        scene.getStylesheets().add("style.css");
+        root.getStyleClass().add("mainbg");
+
+        VBox v = new VBox(15);
+        v.setAlignment(Pos.CENTER);
+        HBox h = new HBox(10);
+        h.setAlignment(Pos.CENTER);
+        HBox h2 = new HBox(10);
+        h2.setAlignment(Pos.CENTER);
+        HBox h3 = new HBox(10);
+        h3.setAlignment(Pos.CENTER);
+
+        inputPName = new TextField();
+        inputPName.getStyleClass().add("chatbox");
+        inputPName.setMaxWidth(700);
+        inputIp = new TextField();
+        inputIp.getStyleClass().add("chatbox");
+        inputIp.setMaxWidth(700);
+        confirm = new Button("Confirm");
+        confirm.getStyleClass().add("menubtn");
+        back = new Button("Back");
+        back.getStyleClass().add("menubtn");
+        nameLbl = new Label("Player Name: ");
+        nameLbl.getStyleClass().add("labeltextlarge");
+        ipLbl = new Label("Host IP: ");
+        ipLbl.getStyleClass().add("labeltextlarge");
+        error = new Label();
+        error.getStyleClass().add("labeltext");
+
+        h.getChildren().add(back);
+        h.getChildren().add(confirm);
+        h2.getChildren().add(nameLbl);
+        h2.getChildren().add(inputPName);
+        h3.getChildren().add(ipLbl);
+        h3.getChildren().add(inputIp);
+        v.getChildren().add(h2);
+        v.getChildren().add(h3);
+        v.getChildren().add(error);
+        v.getChildren().add(h);
+
+        //instantiate listview before networking starts
+        pLobby = new ListView<>();
+
+        root.getChildren().add(v);
+
+        back.setOnAction(e -> {
+            gameStarted=false;
+            bPush.play();
+            Action(currentStage, createMainMenu(), "Main Menu");
+        });
+        return scene;
+        }//end endScreen()
+    
+
 
     //change screen
     public void Action(Stage stage, Scene scene, String title) {
