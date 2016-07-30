@@ -133,9 +133,13 @@ public class MpogCA2 extends Application {
     public static GameNetworkObject gno = new GameNetworkObject();
     public static String gameData = "";
 
+    public static HBox h;
+    public static VBox v;
+    
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Orbs");
+        primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image("logo.png"));
 
         MediaPlayer mediaPlay = new MediaPlayer(bgm);
@@ -196,7 +200,7 @@ public class MpogCA2 extends Application {
                 error.setText("Please enter player name.");
             } else {
                 bPush.play();
-                Action(currentStage, createServerLobby(), "Lobby");
+                Action(currentStage, createServerLobby(), "Orbs");
                 pLocal = new Player(inputPName.getText());
 
                 //adding to listview at lobby screen
@@ -308,7 +312,7 @@ public class MpogCA2 extends Application {
                             client = new ClientThread();
                             new Thread(client).start();
 
-                            Action(currentStage, createClientLobby(), "Lobby");
+                            Action(currentStage, createClientLobby(), "Orbs");
                         }
                     }
                 } catch (IOException ex) {
@@ -324,13 +328,13 @@ public class MpogCA2 extends Application {
     public Scene createServerLobby() {
 
         BorderPane root = new BorderPane();
-        gameScene = new Scene(root, 1200, 600);
+        gameScene = new Scene(root, 1060, 600);
         gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
-
-        HBox h = new HBox(75);
+        
+        h = new HBox(75);
         h.setAlignment(Pos.CENTER);
-        VBox v = new VBox(15);
+        v = new VBox(15);
         v.setAlignment(Pos.CENTER);
 
         pLobby.setPrefWidth(400);
@@ -353,13 +357,12 @@ public class MpogCA2 extends Application {
 
         v.getChildren().add(chatArea);
         v.getChildren().add(chatMsg);
-
         v.getChildren().add(startGame);
-
         v.getChildren().add(back);
+        
         h.getChildren().add(pLobby);
         h.getChildren().add(v);
-
+        
         root.setCenter(h);
 
         back.setOnAction(e -> {
@@ -422,7 +425,7 @@ public class MpogCA2 extends Application {
                 playerList.add(player3);
                 playerList.add(player4);
 
-                InitGamePaneServer(root);
+                InitGamePaneServer(h);
                 
             }//end else (when there are players to start)
         });
@@ -474,7 +477,7 @@ public class MpogCA2 extends Application {
         return g;
     }
 
-    public void InitGamePaneServer(BorderPane root) {
+    public void InitGamePaneServer(HBox h) {
         longshoot.play(); //play sound
         
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
@@ -495,7 +498,11 @@ public class MpogCA2 extends Application {
         //the middle circle 
         gamePane.getChildren().add(middleObj.getCircle());
 
-        root.setLeft(gamePane);
+        //root.setLeft(gamePane);
+        h.setSpacing(0);
+        h.getChildren().remove(pLobby);
+        h.getChildren().add(gamePane);
+        
         ServerTimeline();
 
     }
@@ -503,13 +510,13 @@ public class MpogCA2 extends Application {
     //create client lobby
     public Scene createClientLobby() {
         //BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1000, 600);
+        Scene scene = new Scene(root, 1060, 600);
         scene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
-        HBox h = new HBox(75);
+        h = new HBox(75);
         h.setAlignment(Pos.CENTER);
-        VBox v = new VBox(15);
+        v = new VBox(15);
         v.setAlignment(Pos.CENTER);
 
         pLobby.setPrefWidth(400);
@@ -605,7 +612,7 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of create client lobby
 
-    public static void InitGamePaneClient(BorderPane root) {
+    public static void InitGamePaneClient(HBox h) {
         longshoot.play(); //play sound
 
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
@@ -636,7 +643,11 @@ public class MpogCA2 extends Application {
         //the middle circle 
         gamePane.getChildren().add(middleObj.getCircle());
 
-        root.setLeft(gamePane);
+        //root.setLeft(gamePane);
+        h.setSpacing(0);
+        h.getChildren().remove(pLobby);
+        h.getChildren().add(gamePane);
+        
         ClientTimeline();
     }
 
@@ -686,12 +697,13 @@ public class MpogCA2 extends Application {
         HandleKeyboard();
         bulletSpawn++;
         //System.out.println(bulletSpawn);
+        
         SpawnBullets(bulletSpawn);
 
         player1.move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
-
+        
         //send list of bullets to client 
 
         for (int i = 0; i < bulletList.size(); i++) {
@@ -707,8 +719,7 @@ public class MpogCA2 extends Application {
 //
 //    }
     public static void ClientUpdate() {
-
-     
+        
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
@@ -857,6 +868,7 @@ public class MpogCA2 extends Application {
     public void SpawnBullets(int time) {
 
         if (time == 150) {
+            shoot.play(); //play sound
             Random x = new Random();
             int randomNumber = x.nextInt(10) + 10;
             System.out.println("Math.random is : " + randomNumber);
@@ -902,6 +914,7 @@ public class MpogCA2 extends Application {
         gameData = "#" + x;
         System.out.println(gameData);
 
+        
         clientList.forEach((client) -> {
             client.updateClientChat(gameData);
 
@@ -949,7 +962,7 @@ public class MpogCA2 extends Application {
 
         join.setOnAction(e -> {
             bPush.play();
-            Action(currentStage, joinScreen(), "Join Screen");
+            Action(currentStage, joinScreen(), "Join Game");
         });
 
         help.setOnAction(e -> {

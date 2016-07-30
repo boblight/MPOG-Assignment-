@@ -152,7 +152,7 @@ public class ClientThread implements Runnable {
                                     if (gameStarted == true && clientStarted == true) {
 
                                         pLobby.setVisible(false);
-                                        InitGamePaneClient(root);
+                                        InitGamePaneClient(h);
                                     }
 
                                 });
