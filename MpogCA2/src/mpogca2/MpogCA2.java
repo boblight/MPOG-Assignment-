@@ -416,6 +416,14 @@ public class MpogCA2 extends Application {
 
             //Start the game area 
             player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+            player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
+            player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
+            player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
+            playerList.add(player1);
+            playerList.add(player2);
+            playerList.add(player3);
+            playerList.add(player4);
+
             InitGamePaneServer(root);
             //kappa
             //init game server on port 8001 when server is started and running
@@ -493,7 +501,9 @@ public class MpogCA2 extends Application {
         gamePane.setStyle("-fx-background-color: #34495e");
 
         //add current player
-        gamePane.getChildren().add(player1.getCircle());
+        for (int i = 0; i < playerList.size(); i++) {
+            gamePane.getChildren().add(playerList.get(i).getCircle());
+        }
 
         //get all the other player
         //the middle circle 
@@ -620,6 +630,19 @@ public class MpogCA2 extends Application {
         gamePane.setMinWidth(800);
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
+
+        player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+        player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
+        player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
+        player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
+        playerList.add(player1);
+        playerList.add(player2);
+        playerList.add(player3);
+        playerList.add(player4);
+
+        for (int i = 0; i < playerList.size(); i++) {
+            gamePane.getChildren().add(playerList.get(i).getCircle());
+        }
 
         //add current player
         // gamePane.getChildren().add(player1.getCircle());
