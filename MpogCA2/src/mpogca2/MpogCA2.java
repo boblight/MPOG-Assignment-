@@ -106,6 +106,10 @@ public class MpogCA2 extends Application {
     public static ImageView titleImv, helpDiagramImv;
 
     final static AudioClip bPush = new AudioClip(new File("src/buttonPush.wav").toURI().toString());
+    final static AudioClip chatSound = new AudioClip(new File("src/chat.wav").toURI().toString());
+    final static AudioClip pop = new AudioClip(new File("src/pop.wav").toURI().toString());
+    final static AudioClip shoot = new AudioClip(new File("src/shoot.wav").toURI().toString());
+    final static AudioClip longshoot = new AudioClip(new File("src/oldshoot.wav").toURI().toString());
     final Media bgm = new Media(new File("src/BGM.mp3").toURI().toString());
 
     //game area UI elements
@@ -386,7 +390,7 @@ public class MpogCA2 extends Application {
             bPush.play();
 
             if (clientList.isEmpty()) {
-                chatArea.appendText("\nYou need more players to start the game.");
+                chatArea.appendText("\nYou need more players to start the game.\n");
             }
             else {
                 //send message to client with command 
@@ -419,7 +423,7 @@ public class MpogCA2 extends Application {
                 playerList.add(player4);
 
                 InitGamePaneServer(root);
-
+                
             }//end else (when there are players to start)
         });
 
@@ -471,7 +475,8 @@ public class MpogCA2 extends Application {
     }
 
     public void InitGamePaneServer(BorderPane root) {
-
+        longshoot.play(); //play sound
+        
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
         gamePane = new Pane();
@@ -601,6 +606,7 @@ public class MpogCA2 extends Application {
     }//end of create client lobby
 
     public static void InitGamePaneClient(BorderPane root) {
+        longshoot.play(); //play sound
 
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 

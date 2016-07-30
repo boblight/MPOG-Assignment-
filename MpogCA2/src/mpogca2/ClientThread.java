@@ -134,7 +134,7 @@ public class ClientThread implements Runnable {
                                     listData.remove(received);
                                     pLobby.setItems(listData);
                                 });
-                            } else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+")) {
+                            } else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+") && !readInput.substring(0, 1).equals("#")) { //+ for startgame, # for gamedata
                                 Platform.runLater(() -> {
                                     listData.add(readInput);
                                     pLobby.setItems(listData);
@@ -186,7 +186,7 @@ public class ClientThread implements Runnable {
                         clientRunning = false;
                         clientStarted = false;
                         Platform.runLater(() -> {
-                            chatArea.appendText("\nDisconnected from host. Please exit to main menu.");
+                            chatArea.appendText("\nDisconnected from host. Please exit to the menu.");
                         });
                         System.out.println("Disconnected from server");
                     } catch (IOException ex1) {

@@ -93,7 +93,7 @@ public class ServerThread implements Runnable {
 
     //reupdate all client's lobby whenever a client updates
     public void reUpdateClientLobby(String name) {
-        String message = "\n" + name + " dced";
+        String message = "\n" + name + " disconnected.\n";
         //toSend.remove(name);
         Platform.runLater(() -> {
             synchronized (listData) {
