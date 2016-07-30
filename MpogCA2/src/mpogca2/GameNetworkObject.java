@@ -20,6 +20,7 @@ public class GameNetworkObject implements Serializable {
     ArrayList<Bullet> bulletList;
     ArrayList<GameObject> playerList;
     GameObject thisPlayer;
+    String x;
 
     //bullets
     public void SetBulletList(ArrayList<Bullet> bulletList) {

@@ -20,7 +20,6 @@ public class GameClient implements Runnable {
     //String readInput = "";
     //List<String> namesReceived = new ArrayList<>();
     //GameNetworkObject gno = new GameNetworkObject();
-
     @Override
     public void run() {
 
@@ -41,7 +40,7 @@ public class GameClient implements Runnable {
                                 gdis = new ObjectInputStream(gsocket.getInputStream());
                                 gno = (GameNetworkObject) gdis.readObject();
                                 Platform.runLater(() -> {
-                                    SetBullets(gno);
+                                    //SetBullets(gno);
                                 });
 
                             } catch (IOException e) {

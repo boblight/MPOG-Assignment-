@@ -50,13 +50,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import static mpogca2.ClientThread.tempbList;
 import mpogca2.ServerThread.*;
 import mpogca2.engine.Bullet;
 import mpogca2.engine.GameObject;
 import mpogca2.engine.GamePlayer;
+import org.json.simple.JSONObject;
+import org.json.*;
+import org.json.simple.JSONArray;
 
 /**
  *
@@ -132,6 +137,7 @@ public class MpogCA2 extends Application {
     public static GameObject middleObj;
     public static BorderPane root = new BorderPane();
     public static GameNetworkObject gno = new GameNetworkObject();
+    public static String gameData = "";
 
     @Override
     public void start(Stage primaryStage) {
@@ -410,26 +416,29 @@ public class MpogCA2 extends Application {
 
             //Start the game area 
             player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+            InitGamePaneServer(root);
             //kappa
             //init game server on port 8001 when server is started and running
-            if (serverRunning == true) {
-
-                if (serverStarted == true) {
-                    try {
-                        gserverSocket = new ServerSocket();
-                        gserver = new GameServer(8001, Runtime.getRuntime().availableProcessors() + 1);
-                        new Thread(gserver).start();
-                        InitGamePaneServer(root);
-                    } catch (IOException ex) {
-                        System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
-                    }//end of trycatch
-                }//end of if server start
-            }//end of if server running
-
+//            if (serverRunning == true) {
+//
+//                if (serverStarted == true) {
+//                    try {
+////                        gserverSocket = new ServerSocket();
+////                        gserver = new GameServer(8001, Runtime.getRuntime().availableProcessors() + 1);
+////                        new Thread(gserver).start();
+//                        InitGamePaneServer(root);
+//                    } catch (IOException ex) {
+//                        System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
+//                    }//end of trycatch
+//                }//end of if server start
+//            }//end of if server running
         });
 
         //when user enter msg
         chatMsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            GameNetworkObject g = new GameNetworkObject();
+
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
@@ -440,6 +449,8 @@ public class MpogCA2 extends Application {
                             chatArea.appendText("\n" + sendMsg);
                             clientList.forEach((client) -> {
                                 client.updateClientChat("<" + sendMsg);
+                                //client.updateClientChat("#{\"BulletList\":[{\"bullet\":[390,290]},{\"bullet\":[390,290]}]");
+                                //client.TestJSON(TestJson());
                             });
                         } else if (clientRunning == true) {
                             try {
@@ -447,6 +458,7 @@ public class MpogCA2 extends Application {
                                 System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
+
                             } catch (IOException ex) {
                                 chatArea.appendText("\nFailed to send message.");
                             }
@@ -458,6 +470,16 @@ public class MpogCA2 extends Application {
         });
         return gameScene;
     }//end of create server lobby
+
+    public String TestJson() {
+
+        JSONObject obj = new JSONObject();
+        obj.put("Hello", "test");
+
+        String g = "#" + obj.toString();
+
+        return g;
+    }
 
     public void InitGamePaneServer(BorderPane root) {
 
@@ -615,7 +637,7 @@ public class MpogCA2 extends Application {
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
                 new KeyFrame(
-                        new Duration(10),//This is how often it updates in milliseconds
+                        new Duration(20),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
@@ -636,7 +658,7 @@ public class MpogCA2 extends Application {
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
                 new KeyFrame(
-                        new Duration(10),//This is how often it updates in milliseconds
+                        new Duration(20),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
                         ClientUpdate();
@@ -686,29 +708,9 @@ public class MpogCA2 extends Application {
         //update the positions 
         HandleKeyboard();
         bulletSpawn++;
-        System.out.println(bulletSpawn);
+        //System.out.println(bulletSpawn);
         SpawnBullets(bulletSpawn);
-        
-        if (0 > player1.position.x && xDirection == -1)
-        {
-            xDirection = 0;
-        }
-        
-        if (player1.position.x > 800 && xDirection == 1)
-        {
-            xDirection = 0;
-        }
-        
-        if (0 > player1.position.y && yDirection == -1)
-        {
-            yDirection = 0;
-        }
-        
-        if (player1.position.y > 600 && yDirection == 1)
-        {
-            yDirection = 0;
-        }
-        
+
         player1.move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
@@ -725,17 +727,15 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
-
         destroyBullets();
-
+        UpdateClientBullets(bulletList);
     }
 
-    public static void SetBullets(GameNetworkObject gno) {
-
-        MpogCA2.gno = gno;
-
-    }
-
+//   // public static void SetBullets(GameNetworkObject gno) {
+//
+//        MpogCA2.gno = gno;
+//
+//    }
     public static void ClientUpdate() {
 
         //kappa
@@ -762,14 +762,32 @@ public class MpogCA2 extends Application {
 ////                System.out.println("failed to send gno");
 ////            }
 //        }
-        bulletList = gno.GetBulletList();
+        // bulletList = gno.GetBulletList();
+        //HandleKeyboard();/        
+//        System.out.println("bulletSize is " + bulletList.size());
+//        for (int i = 0; i < bulletList.size(); i++) {
+//            bulletList.get(i).bulletMove();
+//        }
+        //destroyBullets();
+//        for (int i = 0; i < bulletList.size(); i++) {
+//            gamePane.getChildren().remove(bulletList.get(i).getCircle());
+//        }
+        gamePane.getChildren().clear();
+        gamePane.getChildren().add(middleObj.getCircle());
+        bulletList = tempbList;
 
-        //HandleKeyboard();
-        for (int i = 0; i < bulletList.size(); i++) {
-            bulletList.get(i).bulletMove();
+        System.out.println(bulletList.size());
+        for (int t = 0; t < bulletList.size(); t++) {
+
+            gamePane.getChildren().add(bulletList.get(t).getCircle());
+
         }
 
-        //des/troyBullets();
+        System.out.println("Client Update");
+//        for (int i = 0; i < bulletList.size(); i++) {
+//
+//            bulletList.get(i).bulletMove();
+//        }
     }
 
     public void HandleKeyboard() {
@@ -841,59 +859,116 @@ public class MpogCA2 extends Application {
             }
         });
 
+        // Prevents player from moving out of screen
+        if (0 > player1.position.x && xDirection == -1) {
+            xDirection = 0;
+        }
+
+        if (player1.position.x > 800 && xDirection == 1) {
+            xDirection = 0;
+        }
+
+        if (0 > player1.position.y && yDirection == -1) {
+            yDirection = 0;
+        }
+
+        if (player1.position.y > 600 && yDirection == 1) {
+            yDirection = 0;
+        }
+
     }
 
     void destroyBullets() {
         for (int i = 0; i < bulletList.size(); i++) {
 
             //if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
-                if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
-                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
-                    bulletList.remove(i);
-                }
+            if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
+                gamePane.getChildren().remove(bulletList.get(i).getCircle());
+                bulletList.remove(i);
+            }
 
-                if (bulletList.get(i).position.y > 600 - bulletList.get(i).getCircle().getRadius()) {
-                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
-                    bulletList.remove(i);
-                }
+            if (bulletList.get(i).position.y > 600 - bulletList.get(i).getCircle().getRadius()) {
+                gamePane.getChildren().remove(bulletList.get(i).getCircle());
+                bulletList.remove(i);
+            }
 
-                if (bulletList.get(i).position.x < 0) {
-                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
-                    bulletList.remove(i);
-                }
+            if (bulletList.get(i).position.x < 0) {
+                gamePane.getChildren().remove(bulletList.get(i).getCircle());
+                bulletList.remove(i);
+            }
 
-                if (bulletList.get(i).position.y < 0) {
+            if (bulletList.get(i).position.y < 0) {
 
-                    gamePane.getChildren().remove(bulletList.get(i).getCircle());
+                gamePane.getChildren().remove(bulletList.get(i).getCircle());
 
-                    bulletList.remove(i);
-                }
+                bulletList.remove(i);
+            }
             //}
         }
+
+        System.out.println("Bullets Destroyed");
     }
 
+//    public void SendBullets(String bList) {
+//
+//        clientList.forEach((client) -> {
+//            client.SendBullets("#" + bList);
+//
+//        });
+//
+//    }
     public void SpawnBullets(int time) {
 
-        if (time == 100) {
-
+        if (time == 150) {
             Random x = new Random();
-            int randomNumber = x.nextInt(20) + 10;
+            int randomNumber = x.nextInt(10) + 10;
             System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
                 int xPos = x.nextInt(21) - 10;
+                System.out.println(xPos);
                 int yPos = x.nextInt(21) - 10;
+                System.out.println(yPos);
+                System.out.println("myrntfenrbfvdhmnbfv");
+
                 Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
                 gamePane.getChildren().add(bullet.getCircle());
                 bulletList.add(bullet);
 
             }
-
             bulletSpawn = 0;
         }
+    }
 
+    public void UpdateClientBullets(ArrayList<Bullet> bList) {
+
+        JSONObject r = new JSONObject();
+        JSONArray bulletListJ = new JSONArray();
+
+        for (int i = 0; i < bList.size(); i++) {
+
+            JSONArray bulletJL = new JSONArray();
+            JSONObject bulletJ = new JSONObject();
+            bulletJL.add((int) bList.get(i).position.x);
+            bulletJL.add((int) bList.get(i).position.y);
+            bulletJ.put("bullet", bulletJL);
+            bulletListJ.add(bulletJ);
+
+        }
+
+        r.put("BulletList", bulletListJ);
+        //System.out.println(r.toString());
+
+        String x = r.toString();
+        gameData = "#" + x;
+        System.out.println(gameData);
+
+        clientList.forEach((client) -> {
+            client.updateClientChat(gameData);
+
+        });
     }
 
     //end of methods essential for the game to work ////////////////////////////
@@ -950,8 +1025,10 @@ public class MpogCA2 extends Application {
 
             try {
                 Thread.sleep(80);
+
             } catch (InterruptedException ex) {
-                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ClientThread.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
             Platform.exit();

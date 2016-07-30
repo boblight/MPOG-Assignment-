@@ -10,13 +10,20 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import static mpogca2.MpogCA2.*;
+import mpogca2.engine.Bullet;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -26,7 +33,67 @@ public class ClientThread implements Runnable {
 
     //update list of players
     String readInput = "";
+    GameNetworkObject gnr;
     List<String> namesReceived = new ArrayList<>();
+    public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
+
+    public void UnpackJSON(String bulletString) {
+
+        int bulSize = 0;
+        //ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
+        JSONParser jParser = new JSONParser();
+        JSONObject outerObj = new JSONObject(); //entire object
+        JSONObject innerObj = new JSONObject(); //one bullet
+        JSONArray outerArray = new JSONArray(); //list of bullets 
+        JSONArray innerArray = new JSONArray(); //access the coordinates inside the bullets 
+        JSONArray posArray = new JSONArray();
+
+        try {
+            // System.out.println(bulletString);
+            outerObj = (JSONObject) jParser.parse(bulletString);
+            outerArray = (JSONArray) outerObj.get("BulletList");
+            bulSize = outerArray.size();
+
+            tempbList.clear();
+            for (int i = 0; i < outerArray.size(); i++) {
+
+                innerObj = (JSONObject) outerArray.get(i);
+                //loop through the bullets to get the coordinates
+                posArray = (JSONArray) innerObj.get("bullet");
+
+                int xPos = 0, yPos = 0;
+                for (int q = 0; q < posArray.size(); q++) {
+
+                    String p = posArray.get(q).toString();
+                    if (q == 0) {
+                        xPos = Integer.parseInt(posArray.get(q).toString());
+                    }
+                    if (q == 1) {
+                        yPos = Integer.parseInt(posArray.get(q).toString());
+
+                        //System.out.println("Position: " + p);
+                    }
+                }
+                System.out.println("xPos: " + xPos);
+                System.out.println("yPos: " + yPos);
+                Bullet b = new Bullet(xPos, yPos, 20, 5, "#9b59b6", xPos, yPos);
+
+                tempbList.add(b);
+                System.out.println("Bullet added");
+            }
+
+//            if (tempbList.size() == bulSize) {
+//
+//                System.out.println("tempbList size is: " + tempbList.size());
+//                System.out.println("bulSize is " + bulSize);
+//                //bulletList = tempbList;
+//                System.out.println("bulletSize is " + bulletList.size());
+//            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     @Override
     public void run() {
@@ -44,7 +111,18 @@ public class ClientThread implements Runnable {
 
                         if (socket.isConnected()) {
                             dis = new DataInputStream(socket.getInputStream());
+
+//                            try {
+//                                gno = (GameNetworkObject) gdis.readObject();
+//                                System.out.println("Object Received");
+//                                
+//                            } catch (ClassNotFoundException ex) {
+//                                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+//                            }
                             readInput = dis.readUTF();
+                            System.out.println("B4: " + readInput.substring(0, 1));
+                            //readInput = "#{\"BulletList\":[{\"bullet\":[390,290]},{\"bullet\":[390,290]}]";
+                            // System.out.println(readInput);
                             if (readInput.substring(0, 1).equals("<")) {
                                 System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
@@ -74,15 +152,22 @@ public class ClientThread implements Runnable {
                                     if (gameStarted == true && clientStarted == true) {
 
                                         pLobby.setVisible(false);
-                                        gclient = new GameClient();
-                                        System.out.println("Game Client thread started");
                                         InitGamePaneClient(root);
-                                        System.out.println("Pane created");
-                                        new Thread(gclient).start();
                                     }
 
                                 });
                             }
+                            if (readInput.substring(0, 1).equals("#")) {
+
+                                System.out.println("Hello its me");
+                                String re = readInput.substring(1);
+                                System.out.println(re);
+
+                                //uppack the JSON and loop through to create the bulllets 
+                                UnpackJSON(re);
+                            }
+
+                            System.out.println("After: " + readInput.substring(0, 1));
                         } else {
                             break;
                         }
@@ -107,7 +192,7 @@ public class ClientThread implements Runnable {
                     } catch (IOException ex1) {
                         System.out.println("Cannot close connection.");
                     }
-                }//end of big try catch
+                }  //end of big try catch
             }
         }//end of client running block
     }//end of run method

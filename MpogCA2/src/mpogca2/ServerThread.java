@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,7 +27,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import static mpogca2.MpogCA2.*;
 
-
 /**
  *
  * @author tongliang
@@ -35,7 +35,7 @@ public class ServerThread implements Runnable {
 
     public volatile List<String> toSend = new ArrayList<>();//List for storing all player names
     public boolean outComplete = false;
-    
+
     //
     public final ExecutorService pool;
     private String readInput;
@@ -43,7 +43,7 @@ public class ServerThread implements Runnable {
     public String name;
     int id;
     //
-    
+
     public ServerThread(int port, int poolSize) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), port));
@@ -127,18 +127,30 @@ public class ServerThread implements Runnable {
             this.server = server;
         }//end of constructor
 
-        //
-        
         //message to all client
         public void updateClientChat(String msg) {
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(msg);
                 dos.flush();
+                System.out.println("JSON SENT");
             } catch (IOException ex) {
                 System.out.println("Failed to send messages to client");
             }
         }//end of updateClientChat
+
+        public void SendBullets(String son) {
+
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                dos.writeUTF(son);
+                dos.flush();
+                System.out.println("Sent JSON");
+            } catch (IOException ex) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
 
         //remove anyclients that dc at clients' side
         public void removeDc(String remove) {
@@ -156,10 +168,10 @@ public class ServerThread implements Runnable {
                 pool.shutdown();
                 socket.close();
             } catch (Exception ex) {
-                
+
             }
         }
-        
+
         //to be called when needed to update client
         public void updateClientLobby() {
             try {
@@ -199,11 +211,12 @@ public class ServerThread implements Runnable {
 
                         pCount++;
                         Platform.runLater(() -> {
-                            chatArea.appendText("\nA player has connected. Total player count: " + pCount +"\n");
+                            chatArea.appendText("\nA player has connected. Total player count: " + pCount + "\n");
                         });
 
                         //create a final list of players and send it to clients
                         readInput = dis.readUTF();
+
                         if (!readInput.substring(0, 1).equals("<")) {
                             name = readInput;
                             Platform.runLater(() -> {
@@ -226,9 +239,11 @@ public class ServerThread implements Runnable {
                                     h.updateClientChat(received);
                                 });
                             }
+
                         }//end of infinite loop
                     }
                 }
+
             } catch (IOException ex) {
                 hList.remove(this);//remove current handler from handler's list
                 synchronized (server) {
