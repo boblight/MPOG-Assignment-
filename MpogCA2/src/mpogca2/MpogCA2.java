@@ -385,38 +385,42 @@ public class MpogCA2 extends Application {
         startGame.setOnAction(e -> {
             bPush.play();
 
-            //send message to client with command 
-            //when client receive command change their own gameStarted=true
-            gameStarted = true; //change server gameStarted=true, client still not changed
-            System.out.println("server changed gameStarted=true");
-            startGame.setVisible(false);
-            //hide the playerList 
-            pLobby.setVisible(false);
-
-            //tell all clients that game has started
-            try {
-                dos = new DataOutputStream(socket.getOutputStream());
-                System.out.println("sending to clients to change gameStarted=true");
-                dos.writeUTF("+" + "changing gameStarted=true on client");
-                dos.flush();
-            } catch (IOException ex) {
-                System.out.println("error occured when changing client gameStarted=true");
+            if (clientList.isEmpty()) {
+                chatArea.appendText("\nYou need more players to start the game.");
             }
-            //changing on clientthread receive message starting with +
+            else {
+                //send message to client with command 
+                //when client receive command change their own gameStarted=true
+                gameStarted = true; //change server gameStarted=true, client still not changed
+                System.out.println("server changed gameStarted=true");
+                startGame.setVisible(false);
+                //hide the playerList 
+                pLobby.setVisible(false);
 
-            //Start the game area 
-            player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
-            player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
-            player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
-            player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
-            playerList.add(player1);
-            playerList.add(player2);
-            playerList.add(player3);
-            playerList.add(player4);
+                //tell all clients that game has started
+                try {
+                    dos = new DataOutputStream(socket.getOutputStream());
+                    System.out.println("sending to clients to change gameStarted=true");
+                    dos.writeUTF("+" + "changing gameStarted=true on client");
+                    dos.flush();
+                } catch (IOException ex) {
+                    System.out.println("error occured when changing client gameStarted=true");
+                }
+                //changing on clientthread receive message starting with +
 
-            InitGamePaneServer(root);
+                //Start the game area 
+                player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+                player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
+                player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
+                player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
+                playerList.add(player1);
+                playerList.add(player2);
+                playerList.add(player3);
+                playerList.add(player4);
 
-            
+                InitGamePaneServer(root);
+
+            }//end else (when there are players to start)
         });
 
         //when user enter msg
