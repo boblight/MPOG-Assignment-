@@ -127,6 +127,7 @@ public class ClientThread implements Runnable {
                                 System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
                                 chatArea.appendText("\n" + received);
+                                chatSound.play();
                             } else if (readInput.substring(0, 1).equals("-")) {
                                 String received = readInput.substring(1);
                                 namesReceived.remove(received);
@@ -187,6 +188,7 @@ public class ClientThread implements Runnable {
                         clientStarted = false;
                         Platform.runLater(() -> {
                             chatArea.appendText("\nDisconnected from host. Please exit to the menu.");
+                            chatSound.play();
                         });
                         System.out.println("Disconnected from server");
                     } catch (IOException ex1) {

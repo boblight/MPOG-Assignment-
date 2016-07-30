@@ -104,6 +104,7 @@ public class ServerThread implements Runnable {
                 });
                 pLobby.setItems(listData);
                 chatArea.appendText(message);
+                chatSound.play();
             }
         });
 
@@ -212,6 +213,7 @@ public class ServerThread implements Runnable {
                         pCount++;
                         Platform.runLater(() -> {
                             chatArea.appendText("\nA player has connected. Total player count: " + pCount + "\n");
+                            chatSound.play();
                         });
 
                         //create a final list of players and send it to clients
@@ -235,6 +237,7 @@ public class ServerThread implements Runnable {
                             if (!received.trim().equals("")) {
                                 System.out.println("Clients message: " + received);
                                 chatArea.appendText("\n" + received.substring(1));
+                                chatSound.play();
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);
                                 });

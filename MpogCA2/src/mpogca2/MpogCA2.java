@@ -190,6 +190,7 @@ public class MpogCA2 extends Application {
         root.getChildren().add(v);
 
         back.setOnAction(e -> {
+            gameStarted=false;
             bPush.play();
             Action(currentStage, createMainMenu(), "Main Menu");
         });
@@ -282,6 +283,7 @@ public class MpogCA2 extends Application {
         root.getChildren().add(v);
 
         back.setOnAction(e -> {
+            gameStarted=false;
             bPush.play();
             Action(currentStage, createMainMenu(), "Main Menu");
         });
@@ -366,6 +368,7 @@ public class MpogCA2 extends Application {
         root.setCenter(h);
 
         back.setOnAction(e -> {
+            gameStarted=false;
             bPush.play();
 
             listData.removeAll(listData);
@@ -439,12 +442,16 @@ public class MpogCA2 extends Application {
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
                     
-                    gamePane.requestFocus();
+                    if (gameStarted) {
+                        gamePane.requestFocus();
+                    }
+                    
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
                         if (serverRunning == true) {
                             chatArea.appendText("\n" + sendMsg);
+                            chatSound.play();
                             clientList.forEach((client) -> {
                                 client.updateClientChat("<" + sendMsg);
                                 //client.updateClientChat("#{\"BulletList\":[{\"bullet\":[390,290]},{\"bullet\":[390,290]}]");
@@ -459,6 +466,7 @@ public class MpogCA2 extends Application {
 
                             } catch (IOException ex) {
                                 chatArea.appendText("\nFailed to send message.");
+                                chatSound.play();
                             }
                         }
                     }
@@ -546,6 +554,7 @@ public class MpogCA2 extends Application {
         root.setCenter(h);
 
         back.setOnAction(e -> {
+            gameStarted=false;
             bPush.play();
 
             listData.removeAll(listData);
@@ -590,12 +599,16 @@ public class MpogCA2 extends Application {
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
                     
-                    gamePane.requestFocus();
+                    if (gameStarted) {
+                        gamePane.requestFocus();
+                    }
+                    
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
                         if (serverRunning == true) {
                             chatArea.appendText("\n" + sendMsg);
+                            chatSound.play();
                             clientList.forEach((client) -> {
                                 client.updateClientChat("<" + sendMsg);
                             });
@@ -607,6 +620,7 @@ public class MpogCA2 extends Application {
                                 dos.flush();
                             } catch (IOException ex) {
                                 chatArea.appendText("\nFailed to send message.");
+                                chatSound.play();
                             }
                         }
                     }
@@ -874,7 +888,11 @@ public class MpogCA2 extends Application {
     public void SpawnBullets(int time) {
 
         if (time == 150) {
-            shoot.play(); //play sound
+            
+            if (gameStarted) {
+                shoot.play(); //play sound
+            }
+            
             Random x = new Random();
             int randomNumber = x.nextInt(10) + 10;
             System.out.println("Math.random is : " + randomNumber);
