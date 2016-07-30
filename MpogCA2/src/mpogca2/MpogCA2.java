@@ -438,6 +438,8 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
+                    
+                    gamePane.requestFocus();
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
@@ -483,6 +485,7 @@ public class MpogCA2 extends Application {
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
         gamePane = new Pane();
+        gamePane.setMouseTransparent(false);
         gamePane.setMinHeight(600);
         gamePane.setMaxHeight(600);
         gamePane.setMinWidth(800);
@@ -586,6 +589,8 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
+                    
+                    gamePane.requestFocus();
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
@@ -618,6 +623,7 @@ public class MpogCA2 extends Application {
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
         gamePane = new Pane();
+        gamePane.setMouseTransparent(false);
         gamePane.setMinHeight(600);
         gamePane.setMaxHeight(600);
         gamePane.setMinWidth(800);
