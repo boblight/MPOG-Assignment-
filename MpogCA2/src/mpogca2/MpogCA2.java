@@ -135,7 +135,7 @@ public class MpogCA2 extends Application {
 
     public static HBox h;
     public static VBox v;
-    
+
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Orbs");
@@ -190,7 +190,7 @@ public class MpogCA2 extends Application {
         root.getChildren().add(v);
 
         back.setOnAction(e -> {
-            gameStarted=false;
+            gameStarted = false;
             bPush.play();
             Action(currentStage, createMainMenu(), "Main Menu");
         });
@@ -283,7 +283,7 @@ public class MpogCA2 extends Application {
         root.getChildren().add(v);
 
         back.setOnAction(e -> {
-            gameStarted=false;
+            gameStarted = false;
             bPush.play();
             Action(currentStage, createMainMenu(), "Main Menu");
         });
@@ -333,7 +333,7 @@ public class MpogCA2 extends Application {
         gameScene = new Scene(root, 1060, 600);
         gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
-        
+
         h = new HBox(75);
         h.setAlignment(Pos.CENTER);
         v = new VBox(15);
@@ -361,14 +361,14 @@ public class MpogCA2 extends Application {
         v.getChildren().add(chatMsg);
         v.getChildren().add(startGame);
         v.getChildren().add(back);
-        
+
         h.getChildren().add(pLobby);
         h.getChildren().add(v);
-        
+
         root.setCenter(h);
 
         back.setOnAction(e -> {
-            gameStarted=false;
+            gameStarted = false;
             bPush.play();
 
             listData.removeAll(listData);
@@ -397,8 +397,7 @@ public class MpogCA2 extends Application {
 
             if (clientList.isEmpty()) {
                 chatArea.appendText("\nYou need more players to start the game.\n");
-            }
-            else {
+            } else {
                 //send message to client with command 
                 //when client receive command change their own gameStarted=true
                 gameStarted = true; //change server gameStarted=true, client still not changed
@@ -408,14 +407,22 @@ public class MpogCA2 extends Application {
                 pLobby.setVisible(false);
 
                 //tell all clients that game has started
-                try {
-                    dos = new DataOutputStream(socket.getOutputStream());
-                    System.out.println("sending to clients to change gameStarted=true");
-                    dos.writeUTF("+" + "changing gameStarted=true on client");
-                    dos.flush();
-                } catch (IOException ex) {
-                    System.out.println("error occured when changing client gameStarted=true");
-                }
+//                try {
+
+//                    dos = new DataOutputStream(socket.getOutputStream());
+//                    System.out.println("sending to clients to change gameStarted=true");
+                    String s = "+" + "changing gameStarted=true on client";
+//
+//                    dos.writeUTF("+" + "changing gameStarted=true on client");
+//                    dos.flush();
+
+                    clientList.forEach((client) -> {
+                        client.updateClientChat(s);
+
+                    });
+//                } catch (IOException ex) {
+//                    System.out.println("error occured when changing client gameStarted=true");
+//                }
                 //changing on clientthread receive message starting with +
 
                 //Start the game area 
@@ -429,7 +436,7 @@ public class MpogCA2 extends Application {
                 playerList.add(player4);
 
                 InitGamePaneServer(h);
-                
+
             }//end else (when there are players to start)
         });
 
@@ -441,11 +448,11 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
-                    
+
                     if (gameStarted) {
                         gamePane.requestFocus();
                     }
-                    
+
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
@@ -489,7 +496,7 @@ public class MpogCA2 extends Application {
 
     public void InitGamePaneServer(HBox h) {
         longshoot.play(); //play sound
-        
+
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
 
         gamePane = new Pane();
@@ -513,7 +520,7 @@ public class MpogCA2 extends Application {
         h.setSpacing(0);
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
-        
+
         ServerTimeline();
 
     }
@@ -554,7 +561,7 @@ public class MpogCA2 extends Application {
         root.setCenter(h);
 
         back.setOnAction(e -> {
-            gameStarted=false;
+            gameStarted = false;
             bPush.play();
 
             listData.removeAll(listData);
@@ -580,7 +587,6 @@ public class MpogCA2 extends Application {
 
         try {
 
-
         } catch (Exception ex) {
 
         }
@@ -598,11 +604,11 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) {
-                    
+
                     if (gameStarted) {
                         gamePane.requestFocus();
                     }
-                    
+
                     if (!chatMsg.getText().trim().equals("")) {
                         String sendMsg = pLocal.getName() + ": " + chatMsg.getText();//replace statement to prevent confusion
                         //in outputstream logic
@@ -667,7 +673,7 @@ public class MpogCA2 extends Application {
         h.setSpacing(0);
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
-        
+
         ClientTimeline();
     }
 
@@ -717,15 +723,14 @@ public class MpogCA2 extends Application {
         HandleKeyboard();
         bulletSpawn++;
         //System.out.println(bulletSpawn);
-        
+
         SpawnBullets(bulletSpawn);
 
         player1.move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
-        
-        //send list of bullets to client 
 
+        //send list of bullets to client 
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
@@ -739,7 +744,7 @@ public class MpogCA2 extends Application {
 //
 //    }
     public static void ClientUpdate() {
-        
+
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
@@ -888,11 +893,11 @@ public class MpogCA2 extends Application {
     public void SpawnBullets(int time) {
 
         if (time == 150) {
-            
+
             if (gameStarted) {
                 shoot.play(); //play sound
             }
-            
+
             Random x = new Random();
             int randomNumber = x.nextInt(10) + 10;
             System.out.println("Math.random is : " + randomNumber);
@@ -938,7 +943,6 @@ public class MpogCA2 extends Application {
         gameData = "#" + x;
         System.out.println(gameData);
 
-        
         clientList.forEach((client) -> {
             client.updateClientChat(gameData);
 
@@ -968,7 +972,6 @@ public class MpogCA2 extends Application {
         exit = new Button("Exit");
         exit.getStyleClass().add("menubtn");
 
-        
         //for testing
         testGame = new Button("TestGame");
         testGame.getStyleClass().add("menubtn");
@@ -976,18 +979,16 @@ public class MpogCA2 extends Application {
         testGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                    bPush.play();
-                    Action(currentStage, endScreen(), "Game Over");
+                bPush.play();
+                Action(currentStage, endScreen(), "Game Over");
             }
         });
-        
-        
+
         vbCenter.getChildren().add(titleImv);
         vbCenter.getChildren().add(host);
         vbCenter.getChildren().add(join);
         vbCenter.getChildren().add(help);
         vbCenter.getChildren().add(exit);
-
 
         root.setCenter(vbCenter);
 
@@ -1023,10 +1024,8 @@ public class MpogCA2 extends Application {
 
         return scene;
     }//end of createMainMenu
-    
-    
-    
-        public Scene endScreen() {
+
+    public Scene endScreen() {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 800, 540);
         scene.getStylesheets().add("style.css");
@@ -1075,14 +1074,12 @@ public class MpogCA2 extends Application {
         root.getChildren().add(v);
 
         back.setOnAction(e -> {
-            gameStarted=false;
+            gameStarted = false;
             bPush.play();
             Action(currentStage, createMainMenu(), "Main Menu");
         });
         return scene;
-        }//end endScreen()
-    
-
+    }//end endScreen()
 
     //change screen
     public void Action(Stage stage, Scene scene, String title) {

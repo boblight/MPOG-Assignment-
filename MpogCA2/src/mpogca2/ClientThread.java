@@ -120,9 +120,6 @@ public class ClientThread implements Runnable {
 //                                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
 //                            }
                             readInput = dis.readUTF();
-                            System.out.println("B4: " + readInput.substring(0, 1));
-                            //readInput = "#{\"BulletList\":[{\"bullet\":[390,290]},{\"bullet\":[390,290]}]";
-                            // System.out.println(readInput);
                             if (readInput.substring(0, 1).equals("<")) {
                                 System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
@@ -160,7 +157,6 @@ public class ClientThread implements Runnable {
                             }
                             if (readInput.substring(0, 1).equals("#")) {
 
-                                System.out.println("Hello its me");
                                 String re = readInput.substring(1);
                                 System.out.println(re);
 
