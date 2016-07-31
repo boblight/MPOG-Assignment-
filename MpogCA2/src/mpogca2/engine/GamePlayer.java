@@ -25,6 +25,11 @@ public class GamePlayer extends GameObject{
         isAlive = true;
     }
     
+    public void setIsAlive(boolean temp)
+    {
+        isAlive = temp;
+    }
+    
     public boolean isAlive()
     {
         return isAlive;

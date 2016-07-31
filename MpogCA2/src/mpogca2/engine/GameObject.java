@@ -41,14 +41,21 @@ public class GameObject {
         return circle;
     }
 
+    public void updateLocation()
+    {
+        circle.setTranslateX(position.x);
+        circle.setTranslateY(position.y);
+    }
+    
     public void move(float x, float y, float speed) {
         Vector2D temp = new Vector2D(x, y);
         temp.normalize();
         temp.multiply(speed);
         position.add(temp);
         //circle.relocate(position.x, position.y);
-        circle.setTranslateX(position.x);
-        circle.setTranslateY(position.y);
+        //circle.setTranslateX(position.x);
+        //circle.setTranslateY(position.y);
+        updateLocation();
     }
 
     public boolean isCollided(GameObject temp) {

@@ -26,6 +26,10 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import static mpogca2.MpogCA2.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -52,7 +56,45 @@ public class ServerThread implements Runnable {
 
     public void ReceivedClientPos(String json) {
 
-       // JSONParser jP = new JSONParser();
+        JSONParser jP = new JSONParser();
+        JSONObject receivedObj = new JSONObject();
+        JSONObject updateClients = new JSONObject();
+        JSONArray pArray = new JSONArray();
+        JSONArray iArray = new JSONArray();
+        int tempID = 0, tempXPos = 0, tempYPos = 0;
+        boolean iA = false;
+        //System.out.println("Mah ID is: " + json);
+        try {
+            //we unpack the object received from the client and update them accoridngly
+            receivedObj = (JSONObject) jP.parse(json);
+
+            tempID = ((Long) receivedObj.get("playerID")).intValue(); //playerID
+            //System.out.println("converted ID is " + tempID);
+            pArray = (JSONArray) receivedObj.get("player"); //x and y of player
+            iA = (boolean) receivedObj.get("alive"); //status of player
+
+            //now we update the player accordingly 
+            for (int i = 0; i < pArray.size(); i++) {
+
+                if (i == 0) { //xPos                  
+
+                    //System.out.println("Converted x pos is:" + ((Long) pArray.get(i)).intValue());
+                    playerList.get(tempID - 1).position.x = ((Long) pArray.get(i)).intValue();
+
+                }
+                if (i == 1) { //yPos/
+                    //System.out.println("Converted y pos is: " + ((Long) pArray.get(i)).intValue());
+                    playerList.get(tempID - 1).position.y = ((Long) pArray.get(i)).intValue();
+                }
+                
+                playerList.get(tempID - 1).updateLocation();
+            }
+            //playerList.get(tempID - 1).setIsAlive(iA);
+            //System.out.println("playerList" + tempID + " X: " + playerList.get(tempID - 1).position.x);
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -249,7 +291,7 @@ public class ServerThread implements Runnable {
                             dis = new DataInputStream(socket.getInputStream());
                             String received = dis.readUTF();
 
-                            if (!received.trim().equals("")) {
+                            if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
                                 //System.out.println("Clients message: " + received);
                                 chatArea.appendText("\n" + received.substring(1));
                                 chatSound.play();
@@ -260,7 +302,8 @@ public class ServerThread implements Runnable {
 
                             //receive the client position 
                             if (received.substring(0, 1).equals("$")) {
-
+                                String x = received.substring(1);
+                                ReceivedClientPos(x);
                             }
 
                         }//end of infinite loop

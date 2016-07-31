@@ -898,10 +898,13 @@ public class MpogCA2 extends Application {
     public void ServerUpdate() {
 
         //update the positions 
+        refreshScreen();
         HandleServerKeyboard();
         bulletSpawn++;
         //System.out.println(bulletSpawn);
 
+        //System.out.println("playerList" + 2+ " X: " + playerList.get(2 - 1).position.x);
+        
         SpawnBullets(bulletSpawn);
 
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
@@ -919,10 +922,11 @@ public class MpogCA2 extends Application {
 
         }
 
+        
         UpdateClientBullets(bulletList);
     }
 
-    public void UpdatePlayer(int playerXPos, int playerYPos, boolean isAlive) {
+    public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
 
         JSONObject playerObj = new JSONObject();
         JSONArray playerPos = new JSONArray();
@@ -930,6 +934,7 @@ public class MpogCA2 extends Application {
         playerPos.add(playerXPos);
         playerPos.add(playerYPos);
 
+        playerObj.put("playerID", playerID);
         playerObj.put("player", playerPos);
         playerObj.put("alive", isAlive);
 
@@ -956,11 +961,33 @@ public class MpogCA2 extends Application {
 //    }
     public void ClientUpdate() {
 
+          refreshScreen();
+//        gamePane.getChildren().clear();
+//        gamePane.getChildren().add(middleObj.getCircle());
+//        bulletList = tempbList;
+//
+//        //System.out.println(bulletList.size());
+//        for (int t = 0; t < bulletList.size(); t++) {
+//
+//            gamePane.getChildren().add(bulletList.get(t).getCircle());
+//
+//        }
+//
+//        for (int i = 0; i < playerList.size(); i++) {
+//            gamePane.getChildren().add(playerList.get(i).getCircle());
+//        }
+
+        HandleClientKeyboard();
+        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
+        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
+    }
+
+    void refreshScreen()
+    {
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
-
-        //System.out.println(bulletList.size());
+        
         for (int t = 0; t < bulletList.size(); t++) {
 
             gamePane.getChildren().add(bulletList.get(t).getCircle());
@@ -970,17 +997,8 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
         }
-
-        HandleClientKeyboard();
-        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
-
-        //System.out.println("Client Update");
-//        for (int i = 0; i < bulletList.size(); i++) {
-//
-//            bulletList.get(i).bulletMove();
-//        }
     }
-
+    
     public void HandleServerKeyboard() {
 
         //this is to move the object 
