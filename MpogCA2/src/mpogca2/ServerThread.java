@@ -62,7 +62,7 @@ public class ServerThread implements Runnable {
         JSONArray pArray = new JSONArray();
         JSONArray iArray = new JSONArray();
         int tempID = 0, tempXPos = 0, tempYPos = 0;
-        boolean iA = false;
+        int iA = 0;
 
         try {
             //we unpack the object received from the client and update them accoridngly
@@ -71,7 +71,7 @@ public class ServerThread implements Runnable {
             //set the recevied object into the globalUpdate which will be sent to all clients 
             tempID = ((Long) receivedObj.get("playerID")).intValue(); //playerID
             pArray = (JSONArray) receivedObj.get("player"); //x and y of player
-            iA = (boolean) receivedObj.get("alive"); //status of player
+            iA = (int) receivedObj.get("alive"); //status of player
 
             //now we update the player accordingly 
             for (int i = 0; i < pArray.size(); i++) {

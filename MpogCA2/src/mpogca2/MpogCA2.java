@@ -131,8 +131,7 @@ public class MpogCA2 extends Application {
     public static HBox h;
     public static VBox v;
 
-    public static JSONObject globalUpdate; //used to update all the clients 
-    public static JSONArray globalUpdateArray;
+    int time = 0;
 
     @Override
     public void start(Stage primaryStage) {
@@ -414,8 +413,7 @@ public class MpogCA2 extends Application {
                     });
                     InitGamePaneServer(h);
                 }//end else (when there are players to start)
-            }
-            else {
+            } else {
                 chatArea.appendText("\nMax player count is 3. Current player count: " + pCount + "\n");
             }
         });
@@ -508,7 +506,7 @@ public class MpogCA2 extends Application {
                 playerList.add(player);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
-                playerList.get(1).dead();
+                //playerList.get(1).dead();
                 break;
 
             case 3:
@@ -779,19 +777,46 @@ public class MpogCA2 extends Application {
         }
         UpdateClientBullets(bulletList);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
-        System.out.println("playerID: " + playerID);
-        
-        if (gameStarted == true)
-        {
-            gameStarted = false;
+        //System.out.println("playerID: " + playerID);
+
+        if (gameStarted == true) {
             checkWinner();
         }
-        
-        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
-        System.out.println("playerID: " + playerID);
+
+        bulletCollision();
+        //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
+        //System.out.println("playerID: " + playerID);
+    }
+
+    public void GameTimer() {
+
+        Timeline timer = TimelineBuilder.create().keyFrames(
+                new KeyFrame(
+                        new Duration(1000),//This is how often it updates in milliseconds
+                        new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+
+                        time++;
+
+                        if (time == 180) {
+
+                            gameStarted = false;
+
+                        }
+                    }
+                }
+                )
+        ).cycleCount(Timeline.INDEFINITE).build();
+
+        timer.play();//Starts the timeline
+
     }
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
+
+        System.out.println("isAlive = " + isAlive);
+
+        int x = 0;
 
         JSONObject playerObj = new JSONObject();
         JSONArray playerPos = new JSONArray();
@@ -799,23 +824,18 @@ public class MpogCA2 extends Application {
         playerPos.add(playerXPos);
         playerPos.add(playerYPos);
 
+        if (isAlive == true) {
+            x = 1;
+        }
+
         playerObj.put("playerID", playerID);
         playerObj.put("player", playerPos);
-        playerObj.put("alive", isAlive);
+        playerObj.put("alive", x);
 
         String json = playerObj.toString();
         System.out.println(json);
         String j = "$" + json;
 
-        //System.out.println("rI: " + j);
-        //i just send my coordicates 
-//        try {
-//            dos = new DataOutputStream(socket.getOutputStream());
-//            dos.writeUTF(j);
-//            dos.flush();
-//        } catch (Exception ex) {
-//            System.out.println(ex.toString());
-//        }
         if (playerID == 1) {
             clientList.forEach((client) -> {
                 client.updateClientChat(j);
@@ -837,7 +857,12 @@ public class MpogCA2 extends Application {
         HandleClientKeyboard();
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
-        checkWinner();
+
+        if (gameStarted == true) {
+            checkWinner();
+        }
+
+        bulletCollision();
     }
 
     void refreshScreen() {
@@ -1149,6 +1174,25 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of createMainMenu
 
+    public void bulletCollision() {
+        for (int i = 0; i < playerList.size(); i++) {
+            for (int j = 0; j < bulletList.size(); j++) {
+                //try
+                //{
+                System.out.println("Iii: " + i);
+                if (playerList.get(i).isCollided(bulletList.get(j))) {
+                    playerList.get(i).dead();
+                    System.out.println("Collision" + i + ": " + playerList.get(i).isAlive());
+                }
+                //}
+                //catch (Exception e)
+                //{
+
+                //}
+            }
+        }
+    }
+
     public void checkWinner() {
         boolean haveWinner = false;
         int deathCount = 0;
@@ -1165,11 +1209,11 @@ public class MpogCA2 extends Application {
         }
 
         if (deathCount == playerList.size() - 1) {
-            
+            gameStarted = false;
             Action(currentStage, endScreen(playerList.get(lastPlayerAlive).playerName), "Game Over");
             System.out.println("Winner is Player " + lastPlayerAlive);
-        } else if (deathCount == playerList.size())
-        {
+        } else if (deathCount == playerList.size()) {
+            gameStarted = false;
             Action(currentStage, endScreen("its_a_draw"), "Game Over");
             //endScreen("its_a_draw");
         }

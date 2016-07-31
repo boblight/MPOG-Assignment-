@@ -90,7 +90,7 @@ public class ClientThread implements Runnable {
         JSONObject pObject = new JSONObject();
         JSONArray innerArray = new JSONArray();
         int tempXPos = 0, tempYPos = 0, tempID = 0;
-        boolean isAlive = false;
+        int isAlive = 0;
 
         //System.out.println(player);
         try {
@@ -106,7 +106,7 @@ public class ClientThread implements Runnable {
             //tempID = playerID;
             System.out.println("tempID: " + tempID);
 
-            isAlive = (boolean) pObject.get("alive");
+            isAlive = (int) pObject.get("alive");
 
             innerArray = (JSONArray) pObject.get("player"); //get the x and y pos
             for (int t = 0; t < innerArray.size(); t++) {
@@ -119,8 +119,11 @@ public class ClientThread implements Runnable {
                 }
             }
 
-            playerList.get(tempID - 1).setIsAlive(isAlive);
-
+            //playerList.get(tempID - 1).setIsAlive(isAlive);
+//            if (isAlive == false)
+//            {
+//                playerList.get(tempID - 1).dead();
+//            }
             playerList.get(tempID - 1).updateLocation();
 
         } catch (ParseException ex) {
