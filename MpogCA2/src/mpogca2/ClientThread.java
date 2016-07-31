@@ -104,19 +104,25 @@ public class ClientThread implements Runnable {
             tempID = ((Long) pObject.get("playerID")).intValue();
             //tempID = playerID;
 
-            isAlive = ((Long) pObject.get("alive")).intValue();
+            if (tempID == playerID) {
 
-            innerArray = (JSONArray) pObject.get("player"); //get the x and y pos
-            for (int t = 0; t < innerArray.size(); t++) {
+                isAlive = ((Long) pObject.get("alive")).intValue();
 
-                if (t == 0) {
-                    playerList.get(tempID - 1).position.x = ((Long) innerArray.get(t)).intValue();
-                }
-                if (t == 1) {
-                    playerList.get(tempID - 1).position.y = ((Long) innerArray.get(t)).intValue();
+            } else {
+
+                isAlive = ((Long) pObject.get("alive")).intValue();
+
+                innerArray = (JSONArray) pObject.get("player"); //get the x and y pos
+                for (int t = 0; t < innerArray.size(); t++) {
+
+                    if (t == 0) {
+                        playerList.get(tempID - 1).position.x = ((Long) innerArray.get(t)).intValue();
+                    }
+                    if (t == 1) {
+                        playerList.get(tempID - 1).position.y = ((Long) innerArray.get(t)).intValue();
+                    }
                 }
             }
-
             //playerList.get(tempID - 1).setIsAlive(isAlive);
 //            if (isAlive == 0) {
 //                playerList.get(tempID - 1).dead();
@@ -163,7 +169,6 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("$")) {
 
                                 //readInput=readInput.replace("/", "").replace("\\", "");
-
                                 //UpdateClients(received);
                                 UnpackPlayer(readInput);
                             }
