@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mpogca2;
 
 import java.io.ByteArrayOutputStream;
@@ -27,22 +22,16 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import static mpogca2.MpogCA2.*;
 
-/**
- *
- * @author tongliang
- */
 public class ServerThread implements Runnable {
 
     public volatile List<String> toSend = new ArrayList<>();//List for storing all player names
     public boolean outComplete = false;
 
-    //
     public final ExecutorService pool;
     private String readInput;
     public List<Handler> hList = new ArrayList<>();
     public String name;
     int id = 1;
-    //
 
     public ServerThread(int port, int poolSize) throws IOException {
         serverSocket = new ServerSocket();
@@ -52,8 +41,7 @@ public class ServerThread implements Runnable {
 
     public void ReceivedClientPos(String json) {
 
-       // JSONParser jP = new JSONParser();
-
+        // JSONParser jP = new JSONParser();
     }
 
     @Override
@@ -67,8 +55,7 @@ public class ServerThread implements Runnable {
                 //to keep accepting and updating client lobbies as long as game has not started
                 while (gameStarted == false) {
                     socket = serverSocket.accept();//accept client
-                    //id++; //identify handlers
-                    id++;
+                    id++; //identify handlers
                     Handler h = new Handler(socket, this);//create new handler class each time client joins
 
                     h.id = id; //set ids to handlers                 
@@ -77,7 +64,7 @@ public class ServerThread implements Runnable {
                     pool.execute(h);//run handler class in new Thread
 
                     clientList.add(h);
-                    //h.updateClientChat("@" + id);
+
                     //buffer time for network
                     try {
                         Thread.sleep(250);
@@ -85,14 +72,11 @@ public class ServerThread implements Runnable {
                         Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    System.out.println("Client lsit size is: " + clientList.size());
-                    System.out.println("Handler ID is " + id);
                     hList.forEach((o) -> {
                         o.updateClientLobby();
                     });
 
                     hList.forEach((r) -> {
-                        System.out.println(r.id);
                         h.updateClientChat("@" + id);
                     });
 
@@ -111,13 +95,13 @@ public class ServerThread implements Runnable {
     //reupdate all client's lobby whenever a client updates
     public void reUpdateClientLobby(String name) {
         String message = "\n" + name + " disconnected.\n";
-        //toSend.remove(name);
+
         Platform.runLater(() -> {
             synchronized (listData) {
                 listData.remove(name);
-                //System.out.println("Iterating over listData:");
+
                 listData.forEach((l) -> {
-                    //System.out.println(l);
+
                 });
                 pLobby.setItems(listData);
                 chatArea.appendText(message);
@@ -133,7 +117,6 @@ public class ServerThread implements Runnable {
 
     class Handler implements Runnable {
 
-        //
         private Socket socket;
         boolean running = true;
         int id;
@@ -152,7 +135,6 @@ public class ServerThread implements Runnable {
                 dos.writeUTF(msg);
                 dos.flush();
             } catch (IOException ex) {
-                //System.out.println("Failed to send messages to client");
             }
         }//end of updateClientChat
 
@@ -162,7 +144,6 @@ public class ServerThread implements Runnable {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(son);
                 dos.flush();
-                //System.out.println("Sent JSON");
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -234,7 +215,6 @@ public class ServerThread implements Runnable {
 
                         //create a final list of players and send it to clients
                         readInput = dis.readUTF();
-                        System.out.println("readInput: " + readInput);
 
                         name = readInput.substring(1);
                         Platform.runLater(() -> {
@@ -250,7 +230,6 @@ public class ServerThread implements Runnable {
                             String received = dis.readUTF();
 
                             if (!received.trim().equals("")) {
-                                //System.out.println("Clients message: " + received);
                                 chatArea.appendText("\n" + received.substring(1));
                                 chatSound.play();
                                 hList.forEach((h) -> {

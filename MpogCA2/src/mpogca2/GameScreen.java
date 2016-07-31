@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mpogca2;
 
 import java.util.ArrayList;
@@ -14,17 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.*;
 import javafx.util.Duration;
 import mpogca2.engine.*;
 
-/**
- *
- * @author Desti
- */
 public class GameScreen {
 
     Stage stage;
@@ -33,8 +22,8 @@ public class GameScreen {
     Circle player;
 
     GameObject testPlayer, testPlayer2, middleCircle, thisPlayer;
-    GamePlayer g; 
-    
+    GamePlayer g;
+
     ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
     ArrayList<Bullet> bulletList;
     GameNetworkObject gno; //this object is to be used to send data over object 
@@ -53,7 +42,6 @@ public class GameScreen {
     public GameScreen() {
 
         //default constructor
-        
     }
 
     public GameScreen(boolean isServer) {
@@ -62,13 +50,11 @@ public class GameScreen {
         this.isServer = isServer;
 
     }
-    
-    public GameScreen(Scene scene, GamePlayer g){
-        
-        this.scene = scene; 
-        this.g = g; 
-       // playerList.add(g); 
-        //TestTL();
+
+    public GameScreen(Scene scene, GamePlayer g) {
+
+        this.scene = scene;
+        this.g = g;
     }
 
     //this part is where we all play the game
@@ -86,15 +72,8 @@ public class GameScreen {
 
         playerList = new ArrayList<GamePlayer>();
         InitPlayers();
-        
-        //Test GameObject Class
-//        testPlayer = new GamePlayer(300, 100, 50, "#3498db", "PlayerOne", 0);
-//        testPlayer2 = new GamePlayer(100, 100, 50, "#e74c3c", "PlayerTwo", 1);
-//        pane.getChildren().add(testPlayer.getCircle());
-//        pane.getChildren().add(testPlayer2.getCircle());
-        
-        //create the player 
 
+        //create the player 
         bulletList = new ArrayList<Bullet>();
 
         stage.setScene(scene);
@@ -125,8 +104,6 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-                        //System.out.println("time " + time);
-                        //get the bullet and set on the client
 
                     }
                 }
@@ -147,9 +124,7 @@ public class GameScreen {
                     public void handle(ActionEvent t) {
                         //You put what you want to update here
                         Update();
-                        //System.out.println("time " + time);
                         SpawnBullets(time);
-                        //send the bullet over the network
                     }
                 }
                 )
@@ -159,44 +134,20 @@ public class GameScreen {
 
     }
 
-    
-    public void TestTL(){
-                //creates the Timeline that updates the screen 
-        Timeline tick = TimelineBuilder.create().keyFrames(
-                new KeyFrame(
-                        new Duration(10),//This is how often it updates in milliseconds
-                        new EventHandler<ActionEvent>() {
-                    public void handle(ActionEvent t) {
-                   TestUpdate();
-                    }
-                }
-                )
-        ).cycleCount(Timeline.INDEFINITE).build();
-
-        tick.play();//Starts the timeline
-
-        
-        
-    }
     //to init all the other players that are connected
     public void InitPlayers() {
 
-        //initialize players
-        //for (int i = 0; i < playerList.size(); i++) {
+        //loop through the list and init the players 
+        testPlayer2 = new GamePlayer(100, 100, 50, "#e74c3c", "PlayerTwo", 1);
+        GamePlayer gamePlayer = new GamePlayer(100, 100, 50, "#3498db", "PlayerOne", 1);
+        GamePlayer gamePlayer2 = new GamePlayer(100, 300, 50, "#e74c3c", "PlayerTwo", 2);
 
-            //loop through the list and init the players 
-            //Bullet bullet = new Bullet(695, 435, 20, 5, "#9b59b6", xPos, yPos);
-            testPlayer2 = new GamePlayer(100, 100, 50, "#e74c3c", "PlayerTwo", 1);
-            GamePlayer gamePlayer = new GamePlayer(100, 100, 50, "#3498db", "PlayerOne", 1);
-            GamePlayer gamePlayer2 = new GamePlayer(100, 300, 50, "#e74c3c", "PlayerTwo", 2);
-            
-            playerList.add(gamePlayer);
-            playerList.add(gamePlayer2);
-            
-            pane.getChildren().add(gamePlayer.getCircle());
-            pane.getChildren().add(gamePlayer2.getCircle());
-            
-            
+        playerList.add(gamePlayer);
+        playerList.add(gamePlayer2);
+
+        pane.getChildren().add(gamePlayer.getCircle());
+        pane.getChildren().add(gamePlayer2.getCircle());
+
         //}
     }
 
@@ -206,41 +157,30 @@ public class GameScreen {
         //timer for the spawnbullet
         time++;
         //this is to move the object
-        //added another comment to test git 
+
         handleKeyboard();
 
-        //testPlayer.move(xDirection, yDirection, 3);
-        //testPlayer2.move(xDirection1, yDirection1, 3);
-
         playerList.get(0).move(xDirection, yDirection, 3);
-        //playerList.get(1).move(xDirection1, yDirection1, 3);
-        
-        //this is for when collide players
-//        if (testPlayer.isCollided(testPlayer2)) {
-//            System.out.println("Collision Success");
-//        }
 
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
-        
+
         BulletCollision();
 
     }
 
-    public void TestUpdate(){
-        handleKeyboard(); 
+    public void TestUpdate() {
+        handleKeyboard();
         playerList.get(0).move(xDirection, yDirection, 3);
     }
-    
+
     public void UpdateClient() {
 
         //update for client 
         handleKeyboard();
-
-        //receive the network object and set all the other players 
     }
-   
+
     public void handleKeyboard() {
 
         //this is to move the object 
@@ -262,26 +202,12 @@ public class GameScreen {
                     xDirection = 1;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 1;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 1;
-                }
             }
         });
 
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-
-                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
 
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
@@ -296,36 +222,20 @@ public class GameScreen {
                     xDirection = 0;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 0;
-                }
             }
         });
     }
 
-    public void BulletCollision()
-    {
-        for (int i = 0; i < playerList.size(); i++)
-        {
-            for (int j = 0; j < bulletList.size(); j++)
-            {
-                if(playerList.get(i).isCollided(bulletList.get(j))){
-                     playerList.get(i).dead();
-                    System.out.println(playerList.get(i).isAlive());
+    public void BulletCollision() {
+        for (int i = 0; i < playerList.size(); i++) {
+            for (int j = 0; j < bulletList.size(); j++) {
+                if (playerList.get(i).isCollided(bulletList.get(j))) {
+                    playerList.get(i).dead();
                 }
             }
         }
     }
-    
+
     public void SpawnBullets(int counterTime) {
 
         //timer method to spawn the bullets 
@@ -335,7 +245,6 @@ public class GameScreen {
 
             Random x = new Random();
             int randomNumber = x.nextInt(20);
-            System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
@@ -355,11 +264,4 @@ public class GameScreen {
 
     }
 
-    public void CheckBoundries(){
-        
-        //check if the player has reached the edge of the screen
-        
-        
-    }
-    
 }

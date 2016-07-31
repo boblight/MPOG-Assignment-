@@ -1,19 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mpogca2;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,10 +15,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-/**
- *
- * @author tongliang
- */
 public class ClientThread implements Runnable {
 
     //update list of players
@@ -37,16 +23,14 @@ public class ClientThread implements Runnable {
     List<String> namesReceived = new ArrayList<>();
     public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
     MpogCA2 main;
-    
-    public ClientThread (MpogCA2 main2)
-    {
+
+    public ClientThread(MpogCA2 main2) {
         main = main2;
     }
-    
+
     public void UnpackJSON(String bulletString) {
 
         int bulSize = 0;
-        //ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
         JSONParser jParser = new JSONParser();
         JSONObject outerObj = new JSONObject(); //entire object
         JSONObject innerObj = new JSONObject(); //one bullet
@@ -55,7 +39,6 @@ public class ClientThread implements Runnable {
         JSONArray posArray = new JSONArray();
 
         try {
-            //System.out.println(bulletString);
             outerObj = (JSONObject) jParser.parse(bulletString);
             outerArray = (JSONArray) outerObj.get("BulletList");
             bulSize = outerArray.size();
@@ -77,24 +60,14 @@ public class ClientThread implements Runnable {
                     if (q == 1) {
                         yPos = Integer.parseInt(posArray.get(q).toString());
 
-                        //System.out.println("Position: " + p);
                     }
                 }
-                //System.out.println("xPos: " + xPos);
-                //System.out.println("yPos: " + yPos);
+
                 Bullet b = new Bullet(xPos, yPos, 20, 5, "#9b59b6", xPos, yPos);
 
                 tempbList.add(b);
-                //System.out.println("Bullet added");
             }
 
-//            if (tempbList.size() == bulSize) {
-//
-//                System.out.println("tempbList size is: " + tempbList.size());
-//                System.out.println("bulSize is " + bulSize);
-//                //bulletList = tempbList;
-//                System.out.println("bulletSize is " + bulletList.size());
-//            }
         } catch (ParseException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -140,19 +113,10 @@ public class ClientThread implements Runnable {
                         if (socket.isConnected()) {
                             dis = new DataInputStream(socket.getInputStream());
 
-//                            try {
-//                                gno = (GameNetworkObject) gdis.readObject();
-//                                System.out.println("Object Received");
-//                                
-//                            } catch (ClassNotFoundException ex) {
-//                                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
-//                            }
                             readInput = dis.readUTF();
-                            //System.out.println("readInput:" + readInput);
 
                             //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
-                                //System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
                                 chatArea.appendText("\n" + received);
                                 chatSound.play();
@@ -177,10 +141,7 @@ public class ClientThread implements Runnable {
                             } //for GAME START        
                             else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
 
-                                //System.out.println("received from network: " + readInput);
                                 gameStarted = true;
-                                //System.out.println("client has changed gamestarted=true");
-                                //System.out.println("gameStarted:" + gameStarted);
 
                                 Platform.runLater(() -> {
 
@@ -196,7 +157,6 @@ public class ClientThread implements Runnable {
                             //for ID
                             if (readInput.substring(0, 1).equals("@")) {
                                 String re = readInput.substring(1);
-                                System.out.println("My number is " + re);
                                 playerID = Integer.parseInt(re);
 
                             }
@@ -205,9 +165,8 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("#")) {
 
                                 String re = readInput.substring(1);
-                                //System.out.println(re);
 
-                                //uppack the JSON and loop through to create the bulllets 
+                                //unpack the JSON and loop through to create the bulllets 
                                 UnpackJSON(re);
 
                             }
@@ -216,7 +175,6 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("?")) {
 
                                 pCount = Integer.parseInt(readInput.substring(1));
-                                System.out.println("pCount on client is: " + pCount);
                             }
 
                         } else {
@@ -228,7 +186,7 @@ public class ClientThread implements Runnable {
                     dos.close();
                     clientRunning = false;
                     clientStarted = false;
-                    //System.out.println("Disconnected from server");
+
                 } catch (IOException ex) {
                     try {
                         socket.close();
@@ -240,7 +198,6 @@ public class ClientThread implements Runnable {
                             chatArea.appendText("\nDisconnected from host. You may now exit.");
                             chatSound.play();
                         });
-                        //System.out.println("Disconnected from server");
                     } catch (IOException ex1) {
                         System.out.println("Cannot close connection.");
                     }
