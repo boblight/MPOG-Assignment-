@@ -333,7 +333,7 @@ public class MpogCA2 extends Application {
     public Scene createServerLobby() {
 
         BorderPane root = new BorderPane();
-        gameScene = new Scene(root, 1080, 600);
+        gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
@@ -584,7 +584,7 @@ public class MpogCA2 extends Application {
 
         //root.setLeft(gamePane);
         h.setSpacing(10);
-        h.setPadding(new Insets(0, 0, 0, 10));
+        h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
 
@@ -595,7 +595,7 @@ public class MpogCA2 extends Application {
     //create client lobby
     public Scene createClientLobby() {
         //BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1080, 600);
+        Scene scene = new Scene(root, 1140, 640);
         scene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
@@ -740,7 +740,7 @@ public class MpogCA2 extends Application {
 
         //root.setLeft(gamePane);
         h.setSpacing(10);
-        h.setPadding(new Insets(0, 0, 0, 10));
+        h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
 
