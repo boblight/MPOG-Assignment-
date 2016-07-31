@@ -1167,6 +1167,7 @@ public class MpogCA2 extends Application {
     }
 
     public void checkWinner() {
+        
         boolean haveWinner = false;
         int deathCount = 0;
         int lastPlayerAlive = 0;
@@ -1181,7 +1182,7 @@ public class MpogCA2 extends Application {
 
         if (deathCount == playerList.size() - 1) {
             gameStarted = false;
-            Action(currentStage, endScreen(playerList.get(lastPlayerAlive).playerName), "Game Over");
+            Action(currentStage, endScreen(pLocal.getName()), "Game Over");
         } else if (deathCount == playerList.size()) {
             gameStarted = false;
             Action(currentStage, endScreen("its_a_draw"), "Game Over");
