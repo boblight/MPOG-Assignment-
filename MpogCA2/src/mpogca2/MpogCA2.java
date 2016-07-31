@@ -311,7 +311,7 @@ public class MpogCA2 extends Application {
                         }
                     }
                 } catch (IOException ex) {
-                    error.setText("Host IP could not be found. Please enter a proper IP address.");
+                    error.setText("Host IP could not be found.");
                 }
             }
         });
@@ -1103,18 +1103,6 @@ public class MpogCA2 extends Application {
         help.getStyleClass().add("menubtn");
         exit = new Button("Exit");
         exit.getStyleClass().add("menubtn");
-
-        //for testing
-        testGame = new Button("Test Button");
-        testGame.getStyleClass().add("menubtn");
-        vbCenter.getChildren().add(testGame);
-        testGame.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                bPush.play();
-                Action(currentStage, endScreen("its_a_draw"), "Game Over");
-            }
-        });
 
         vbCenter.getChildren().add(titleImv);
         vbCenter.getChildren().add(host);

@@ -331,8 +331,11 @@ public class ServerThread implements Runnable {
 //                                ReceivedClientPos(x);
 //                            }
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
-                                chatArea.appendText("\n" + received.substring(1));
-
+                                
+                                if (!received.contains("playerID")) {
+                                    chatArea.appendText("\n" + received.substring(1));
+                                }
+                                
                                 chatSound.play();
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);
