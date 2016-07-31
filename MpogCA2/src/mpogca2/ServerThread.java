@@ -300,11 +300,11 @@ public class ServerThread implements Runnable {
                             String received = dis.readUTF();
 
                             if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
-                                received.replace("\\", "").replace("/", "");
-                                System.out.println(received);
+                                final String t = received.replace("\\", "").replace("/", "");
+                                System.out.println(t);
                                 //UpdateClients(received);
                                 hList.forEach((h) -> {
-                                    h.updateClientChat(received);
+                                    h.updateClientChat(t);
                                 });
                                 System.out.println(received);
                                 String x = received.substring(1);
@@ -312,11 +312,11 @@ public class ServerThread implements Runnable {
                             }
 
                             if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
-                                received.replace("/", "").replace("\\", "");
-                                System.out.println(received);
+                                final String t = received.replace("/", "").replace("\\", "");
+                                System.out.println(t);
                                 //UpdateClients(received);
                                 hList.forEach((h) -> {
-                                    h.updateClientChat(received);
+                                    h.updateClientChat(t);
                                 });
                                 System.out.println(received);
                                 String x = received.substring(1);

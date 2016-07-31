@@ -1065,6 +1065,9 @@ public class MpogCA2 extends Application {
             client.updateClientChat(gameData);
 
         });
+        
+       
+        
     }
 
     //end of methods essential for the game to work ////////////////////////////
