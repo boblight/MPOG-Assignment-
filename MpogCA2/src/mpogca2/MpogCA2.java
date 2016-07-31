@@ -127,7 +127,8 @@ public class MpogCA2 extends Application {
 
     public static ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     public static ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
-    public static GamePlayer player1, player2, player3, player4;
+    //public static GamePlayer player1, player2, player3, player4;
+    public static GamePlayer player;
     public static GameObject middleObj;
     public static BorderPane root = new BorderPane();
     public static GameNetworkObject gno = new GameNetworkObject();
@@ -146,7 +147,7 @@ public class MpogCA2 extends Application {
         mediaPlay.setAutoPlay(true);
         mediaPlay.setVolume(0.8);
 
-    }//end of main javafx class
+    }//end of main javafx class_
 
     //create the screen for inputting name (host)
     public Scene hostScreen() {
@@ -408,32 +409,64 @@ public class MpogCA2 extends Application {
 
                 //tell all clients that game has started
 //                try {
-
 //                    dos = new DataOutputStream(socket.getOutputStream());
 //                    System.out.println("sending to clients to change gameStarted=true");
-                    String s = "+" + "changing gameStarted=true on client";
+                String s = "+" + "changing gameStarted=true on client";
 //
 //                    dos.writeUTF("+" + "changing gameStarted=true on client");
 //                    dos.flush();
 
-                    clientList.forEach((client) -> {
-                        client.updateClientChat(s);
+                clientList.forEach((client) -> {
+                    client.updateClientChat(s);
 
-                    });
+                });
 //                } catch (IOException ex) {
 //                    System.out.println("error occured when changing client gameStarted=true");
 //                }
                 //changing on clientthread receive message starting with +
 
                 //Start the game area 
-                player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
-                player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
-                player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
-                player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
-                playerList.add(player1);
-                playerList.add(player2);
-                playerList.add(player3);
-                playerList.add(player4);
+//                player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+//                player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
+//                player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
+//                player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
+//                playerList.add(player1);
+//                playerList.add(player2);
+//                playerList.add(player3);
+//                playerList.add(player4);
+                //this is the server 
+                player = new GamePlayer(100, 100, 25, "#3498db", "player1", 0);
+                playerList.add(player);
+
+                //now we dynamically generate the other players 
+                clientList.forEach((t) -> {
+
+                    switch (t.id) {
+                        case 0:
+                            player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+                            playerList.add(player);
+                            break;
+
+                        case 1:
+                            player = new GamePlayer(500, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+                            playerList.add(player);
+                            break;
+
+                        case 2:
+                            player = new GamePlayer(100, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
+                            playerList.add(player);
+                            break;
+
+                        case 3:
+                            player = new GamePlayer(500, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
+                            playerList.add(player);
+                            break;
+
+                    }
+
+//                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+//                    playerList.add(player);
+                });
 
                 InitGamePaneServer(h);
 
@@ -461,7 +494,6 @@ public class MpogCA2 extends Application {
                             chatSound.play();
                             clientList.forEach((client) -> {
                                 client.updateClientChat("<" + sendMsg);
-                                //client.updateClientChat("#{\"BulletList\":[{\"bullet\":[390,290]},{\"bullet\":[390,290]}]");
                                 //client.TestJSON(TestJson());
                             });
                         } else if (clientRunning == true) {
@@ -492,6 +524,27 @@ public class MpogCA2 extends Application {
         String g = "#" + obj.toString();
 
         return g;
+    }
+
+    //player colour 
+    public String SwitchColour(int num) {
+
+        String colour = "";
+
+        switch (num) {
+            case 1:
+                colour = "#2ecc71";
+                break;
+
+            case 2:
+                colour = "#e74c3c";
+                break;
+            case 3:
+                colour = "#e74c3c";
+                break;
+        }
+
+        return colour;
     }
 
     public void InitGamePaneServer(HBox h) {
@@ -624,6 +677,7 @@ public class MpogCA2 extends Application {
                                 System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
+
                             } catch (IOException ex) {
                                 chatArea.appendText("\nFailed to send message.");
                                 chatSound.play();
@@ -650,15 +704,14 @@ public class MpogCA2 extends Application {
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
 
-        player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
-        player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
-        player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
-        player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
-        playerList.add(player1);
-        playerList.add(player2);
-        playerList.add(player3);
-        playerList.add(player4);
-
+//        player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
+//        player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
+//        player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
+//        player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
+//        playerList.add(player1);
+//        playerList.add(player2);
+//        playerList.add(player3);
+//        playerList.add(player4);
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
         }
@@ -726,7 +779,7 @@ public class MpogCA2 extends Application {
 
         SpawnBullets(bulletSpawn);
 
-        player1.move(xDirection, yDirection, 3);
+        player.move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
 
@@ -833,19 +886,19 @@ public class MpogCA2 extends Application {
         });
 
         // Prevents player from moving out of screen
-        if (0 > player1.position.x && xDirection == -1) {
+        if (0 > player.position.x && xDirection == -1) {
             xDirection = 0;
         }
 
-        if (player1.position.x > 800 && xDirection == 1) {
+        if (player.position.x > 800 && xDirection == 1) {
             xDirection = 0;
         }
 
-        if (0 > player1.position.y && yDirection == -1) {
+        if (0 > player.position.y && yDirection == -1) {
             yDirection = 0;
         }
 
-        if (player1.position.y > 600 && yDirection == 1) {
+        if (player.position.y > 600 && yDirection == 1) {
             yDirection = 0;
         }
 
