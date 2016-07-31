@@ -324,7 +324,6 @@ public class MpogCA2 extends Application {
 
     //create server lobby
     public Scene createServerLobby() {
-
         BorderPane root = new BorderPane();
         gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
@@ -336,7 +335,7 @@ public class MpogCA2 extends Application {
         v.setAlignment(Pos.CENTER);
 
         pLobby.setPrefWidth(400);
-        pLobby.setPrefHeight(100);
+        pLobby.setPrefHeight(3 * 24 + 2);
         chatMsg = new TextField();
         chatMsg.getStyleClass().add("chatbox");
         chatMsg.setFocusTraversable(false);
@@ -387,34 +386,38 @@ public class MpogCA2 extends Application {
 
             Platform.exit();
             System.exit(0);
-
         });
 
         startGame.setOnAction(e -> {
-            bPush.play();
+            if (pCount <= 3) {
 
-            if (clientList.isEmpty()) {
-                chatArea.appendText("\nYou need more players to start the game.\n");
-            } else {
-                //send message to client with command 
-                //when client receive command change their own gameStarted=true
-                gameStarted = true; //change server gameStarted=true, client still not changed
-                startGame.setVisible(false);
-                v.getChildren().remove(startGame);
-                //hide the playerList 
-                pLobby.setVisible(false);
+                bPush.play();
 
-                //tell all clients that game has started
-                String s = "+" + "changing gameStarted=true on client";
-                String tP = "?" + Integer.toString(pCount);
+                if (clientList.isEmpty()) {
+                    chatArea.appendText("\nYou need more players to start the game.\n");
+                } else {
+                    //send message to client with command 
+                    //when client receive command change their own gameStarted=true
+                    gameStarted = true; //change server gameStarted=true, client still not changed
+                    startGame.setVisible(false);
+                    v.getChildren().remove(startGame);
+                    //hide the playerList 
+                    pLobby.setVisible(false);
 
-                clientList.forEach((client) -> {
-                    client.updateClientChat(s);
-                    client.updateClientChat(tP);
-                });
-                InitGamePaneServer(h);
+                    //tell all clients that game has started
+                    String s = "+" + "changing gameStarted=true on client";
+                    String tP = "?" + Integer.toString(pCount);
 
-            }//end else (when there are players to start)
+                    clientList.forEach((client) -> {
+                        client.updateClientChat(s);
+                        client.updateClientChat(tP);
+                    });
+                    InitGamePaneServer(h);
+                }//end else (when there are players to start)
+            }
+            else {
+                chatArea.appendText("\nMax player count is 3. Current player count: " + pCount + "\n");
+            }
         });
 
         //when user enter msg
@@ -458,7 +461,6 @@ public class MpogCA2 extends Application {
 
     //player colour 
     public static String SwitchColour(int num) {
-
         String colour = "";
 
         switch (num) {
@@ -776,7 +778,7 @@ public class MpogCA2 extends Application {
         }
         UpdateClientBullets(bulletList);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
-        System.out.println ("playerID: " + playerID);
+        System.out.println("playerID: " + playerID);
     }
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
@@ -790,7 +792,7 @@ public class MpogCA2 extends Application {
         playerObj.put("playerID", playerID);
         playerObj.put("player", playerPos);
         playerObj.put("alive", isAlive);
-        
+
         String json = playerObj.toString();
         System.out.println(json);
         String j = "$" + json;
@@ -804,15 +806,11 @@ public class MpogCA2 extends Application {
 //        } catch (Exception ex) {
 //            System.out.println(ex.toString());
 //        }
-        
-        if (playerID == 1)
-        {
+        if (playerID == 1) {
             clientList.forEach((client) -> {
                 client.updateClientChat(j);
             });
-        }
-        else
-        {
+        } else {
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(j);
@@ -821,8 +819,6 @@ public class MpogCA2 extends Application {
                 System.out.println(ex.toString());
             }
         }
-        
-
     }
 
     public void ClientUpdate() {

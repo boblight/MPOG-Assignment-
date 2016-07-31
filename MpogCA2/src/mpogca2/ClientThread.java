@@ -93,14 +93,12 @@ public class ClientThread implements Runnable {
         boolean isAlive = false;
 
         //System.out.println(player);
-
         try {
             //convert string to JSON
             try {
-            pObject = (JSONObject) p.parse(player);
-            }
-            catch(Exception e) {
-                pObject = (JSONObject) p.parse("{"+player);
+                pObject = (JSONObject) p.parse(player);
+            } catch (Exception e) {
+                pObject = (JSONObject) p.parse("{" + player);
             }
             //get player details
             tempID = ((Long) pObject.get("playerID")).intValue();
@@ -161,16 +159,14 @@ public class ClientThread implements Runnable {
 //                                }
 //                                
 //                            }
-                            
- 
-                                if (readInput.substring(0,1).equals("$")) {
+                            if (readInput.substring(0, 1).equals("$")) {
 
-                                    //readInput=readInput.replace("/", "").replace("\\", "");
-                                    System.out.println("After: " +readInput);                                
+                                //readInput=readInput.replace("/", "").replace("\\", "");
+                                System.out.println("After: " + readInput);
 
-                                    //UpdateClients(received);
-                                    UnpackPlayer(readInput);
-                                }
+                                //UpdateClients(received);
+                                UnpackPlayer(readInput);
+                            }
 
 //                            if (readInput.substring(0, 1).equals("/") && readInput.substring(0, 2).equals("$")) {
 //                                readInput=readInput.replace("/", "").replace("\\", "");
@@ -183,7 +179,6 @@ public class ClientThread implements Runnable {
 //                                //UpdateClients(received);
 //                                UnpackPlayer(readInput);
 //                            }
-
                             //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
                                 String received = readInput.substring(1);

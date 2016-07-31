@@ -98,9 +98,7 @@ public class ServerThread implements Runnable {
 
     //this is to update all clients 
     public void UpdateClients(String update) {
-
         clientList.forEach((client) -> {
-
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(update);
@@ -108,9 +106,7 @@ public class ServerThread implements Runnable {
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         });
-
     }
 
     @Override
@@ -119,17 +115,13 @@ public class ServerThread implements Runnable {
         if (serverRunning == true) {
             toSend.add(pLocal.getName());
             acceptClients();
-
-//            pool.shutdownNow();
-//            serverRunning = false;
-//            serverStarted = false;
         }
     }//end of run
 
     public void acceptClients() {
         try {
             //to keep accepting and updating client lobbies as long as game has not started
-            while (gameStarted == false && pCount < 3) {
+            while (gameStarted == false) {
                 socket = serverSocket.accept();//accept client
                 id++; //identify handlers
                 Handler h = new Handler(socket, this);//create new handler class each time client joins
@@ -155,16 +147,14 @@ public class ServerThread implements Runnable {
                 hList.forEach((r) -> {
                     h.updateClientChat("@" + id);
                 });
-
             }//end of infinite loop
-            serverSocket.close();
         } catch (Exception ex) {
-
         }
     }
 
     //reupdate all client's lobby whenever a client updates
     public void reUpdateClientLobby(String name) {
+
         String message = "\n" + name + " disconnected.\n";
 
         Platform.runLater(() -> {
@@ -299,11 +289,11 @@ public class ServerThread implements Runnable {
                         while (true) {
                             dis = new DataInputStream(socket.getInputStream());
 
-                             String received = dis.readUTF().replace("/", "").replace("\\", "");
+                            String received = dis.readUTF().replace("/", "").replace("\\", "");
 
 //                            if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
 //                                received.replace("\\", "").replace("/", "");
-//                                System.out.println(received);
+//                                //System.out.println(received);
 //                                //UpdateClients(received);
 //                                hList.forEach((h) -> {
 //                                    h.updateClientChat(received);
@@ -315,12 +305,12 @@ public class ServerThread implements Runnable {
 //
 //                            if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
 //                                received.replace("/", "").replace("\\", "");
-//                                System.out.println(received);
+//                                //System.out.println(received);
 //                                //UpdateClients(received);
 //                                hList.forEach((h) -> {
 //                                    h.updateClientChat(received);
 //                                });
-//                                System.out.println(received);
+//                                //System.out.println(received);
 //                                String x = received.substring(1);
 //                                ReceivedClientPos(x);
 //                            }
@@ -343,20 +333,15 @@ public class ServerThread implements Runnable {
                                 String x = received.substring(1);
                                 ReceivedClientPos(x);
                             }
-
                         }//end of infinite loop
                     }
                 }
-
             } catch (IOException ex) {
-                hList.remove(this);//remove current handler from handler's list
                 pCount--;
+                hList.remove(this);//remove current handler from handler's list
                 synchronized (server) {
                     try {
-                        serverSocket = new ServerSocket();
-                        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), 8000));
                         server.reUpdateClientLobby(name);
-                        server.acceptClients();
                     } catch (Exception exc) {
                     }
                 }
