@@ -477,6 +477,7 @@ public class MpogCA2 extends Application {
         return colour;
     }
 
+    //start game area (server)
     public void InitGamePaneServer(HBox h) {
         longshoot.play(); //play sound
 
@@ -647,6 +648,7 @@ public class MpogCA2 extends Application {
         return gameScene;
     }//end of create client lobby
 
+    //start game area (client)
     public void InitGamePaneClient(HBox h) {
         longshoot.play(); //play sound
 
@@ -707,6 +709,7 @@ public class MpogCA2 extends Application {
         ClientTimeline();
     }
 
+    //timeline to update the 
     public void ServerTimeline() {
 
         //creates the Timeline that updates the screen 

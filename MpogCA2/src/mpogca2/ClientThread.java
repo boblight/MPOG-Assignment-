@@ -72,7 +72,6 @@ public class ClientThread implements Runnable {
 
                     }
                 }
-
                 Bullet b = new Bullet(xPos, yPos, 20, 5, "#9b59b6", xPos, yPos);
 
                 tempbList.add(b);
@@ -81,7 +80,6 @@ public class ClientThread implements Runnable {
         } catch (ParseException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public void UnpackPlayer(String player) {
@@ -102,7 +100,6 @@ public class ClientThread implements Runnable {
             }
             //get player details
             tempID = ((Long) pObject.get("playerID")).intValue();
-            //tempID = playerID;
 
             isAlive = ((Long) pObject.get("alive")).intValue();
 
@@ -116,17 +113,11 @@ public class ClientThread implements Runnable {
                     playerList.get(tempID - 1).position.y = ((Long) innerArray.get(t)).intValue();
                 }
             }
-
-            //playerList.get(tempID - 1).setIsAlive(isAlive);
-//            if (isAlive == 0) {
-//                playerList.get(tempID - 1).dead();
-//            }
             playerList.get(tempID - 1).updateLocation();
 
         } catch (ParseException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     @Override
@@ -148,37 +139,10 @@ public class ClientThread implements Runnable {
 
                             readInput = dis.readUTF().replace("/", "").replace("\\", "");
 
-//                            if (readInput.substring(0, 1).equals("/") || readInput.substring(0, 1).equals("\\") || readInput.substring(0, 2).equals("/") || readInput.substring(0, 2).equals("\\")) {
-//                                
-//                                
-//                                if (readInput.substring(0,1).equals("$") || readInput.substring(0,2).equals("$") || readInput.substring(0,3).equals("$")) {
-//
-//                                    //readInput=readInput.replace("/", "").replace("\\", "");                         
-//
-//                                    //UpdateClients(received);
-//                                    UnpackPlayer(readInput);
-//                                }
-//                                
-//                            }
                             if (readInput.substring(0, 1).equals("$")) {
-
-                                //readInput=readInput.replace("/", "").replace("\\", "");
-
-                                //UpdateClients(received);
                                 UnpackPlayer(readInput);
                             }
 
-//                            if (readInput.substring(0, 1).equals("/") && readInput.substring(0, 2).equals("$")) {
-//                                readInput=readInput.replace("/", "").replace("\\", "");
-//                                //UpdateClients(received);
-//                                UnpackPlayer(readInput);
-//                            }
-//
-//                            if (readInput.substring(0, 1).equals("\\") && readInput.substring(0, 2).equals("$")) {
-//                                readInput=readInput.replace("\\", "").replace("/", "");
-//                                //UpdateClients(received);
-//                                UnpackPlayer(readInput);
-//                            }
                             //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
                                 String received = readInput.substring(1);
@@ -221,7 +185,6 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("@")) {
                                 String re = readInput.substring(1);
                                 playerID = Integer.parseInt(re);
-
                             }
 
                             //for BULLETS 
