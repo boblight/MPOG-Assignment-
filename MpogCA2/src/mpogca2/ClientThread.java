@@ -106,7 +106,7 @@ public class ClientThread implements Runnable {
             //tempID = playerID;
             System.out.println("tempID: " + tempID);
 
-            isAlive = (int) pObject.get("alive");
+            isAlive = ((Long) pObject.get("alive")).intValue();
 
             innerArray = (JSONArray) pObject.get("player"); //get the x and y pos
             for (int t = 0; t < innerArray.size(); t++) {
@@ -120,8 +120,7 @@ public class ClientThread implements Runnable {
             }
 
             //playerList.get(tempID - 1).setIsAlive(isAlive);
-//            if (isAlive == false)
-//            {
+//            if (isAlive == 0) {
 //                playerList.get(tempID - 1).dead();
 //            }
             playerList.get(tempID - 1).updateLocation();

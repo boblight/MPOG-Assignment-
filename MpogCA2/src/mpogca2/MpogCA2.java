@@ -218,7 +218,6 @@ public class MpogCA2 extends Application {
                             server = new ServerThread(8000, Runtime.getRuntime().availableProcessors() + 1);
                             new Thread(server).start();
                         } catch (IOException ex) {
-                            //System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
                         }//end of trycatch
                     }//end of if server start
                 }//end of if server running
@@ -300,7 +299,6 @@ public class MpogCA2 extends Application {
                             chatArea.setText("Connected to Host Player.\n");
                         });
                     }
-
                     //run client
                     if (clientRunning == false) {
                         clientRunning = true;
@@ -443,7 +441,6 @@ public class MpogCA2 extends Application {
                                 dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
-
                             } catch (IOException ex) {
                                 chatArea.appendText("\nFailed to send message.");
                                 chatSound.play();
@@ -476,9 +473,7 @@ public class MpogCA2 extends Application {
             case 4:
                 colour = "#f1c40f";
                 break;
-
         }
-
         return colour;
     }
 
@@ -528,9 +523,7 @@ public class MpogCA2 extends Application {
                 player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
                 playerList.add(player);
                 break;
-
         }
-
         //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
@@ -606,7 +599,6 @@ public class MpogCA2 extends Application {
             } catch (IOException ex) {
                 //System.out.println("Failed to close socket");
             }
-
             Platform.exit();
             System.exit(0);
         });
@@ -702,7 +694,6 @@ public class MpogCA2 extends Application {
                 break;
 
         }
-
         //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
@@ -714,7 +705,6 @@ public class MpogCA2 extends Application {
         h.getChildren().add(gamePane);
 
         ClientTimeline();
-
     }
 
     public void ServerTimeline() {
@@ -727,7 +717,6 @@ public class MpogCA2 extends Application {
                     public void handle(ActionEvent t) {
 
                         ServerUpdate();
-
                     }
                 }
                 )
@@ -777,39 +766,11 @@ public class MpogCA2 extends Application {
         }
         UpdateClientBullets(bulletList);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
-        //System.out.println("playerID: " + playerID);
 
         if (gameStarted == true) {
             checkWinner();
         }
-
         bulletCollision();
-        //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
-        //System.out.println("playerID: " + playerID);
-    }
-
-    public void GameTimer() {
-
-        Timeline timer = TimelineBuilder.create().keyFrames(
-                new KeyFrame(
-                        new Duration(1000),//This is how often it updates in milliseconds
-                        new EventHandler<ActionEvent>() {
-                    public void handle(ActionEvent t) {
-
-                        time++;
-
-                        if (time == 180) {
-
-                            gameStarted = false;
-
-                        }
-                    }
-                }
-                )
-        ).cycleCount(Timeline.INDEFINITE).build();
-
-        timer.play();//Starts the timeline
-
     }
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
@@ -1179,10 +1140,14 @@ public class MpogCA2 extends Application {
             for (int j = 0; j < bulletList.size(); j++) {
                 //try
                 //{
-                System.out.println("Iii: " + i);
                 if (playerList.get(i).isCollided(bulletList.get(j))) {
-                    playerList.get(i).dead();
-                    System.out.println("Collision" + i + ": " + playerList.get(i).isAlive());
+                    if(playerList.get(i).isAlive() == true)
+                    {
+                        pop.play();
+                        playerList.get(i).dead();
+                    }
+                    
+                   // System.out.println("Collision" + i + ": " + playerList.get(i).isAlive());
                 }
                 //}
                 //catch (Exception e)

@@ -36,6 +36,7 @@ public class GamePlayer extends GameObject {
 
     public void dead() {
         isAlive = false;
+        circle.setRadius(0);
     }
 
 }

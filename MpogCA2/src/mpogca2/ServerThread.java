@@ -71,7 +71,7 @@ public class ServerThread implements Runnable {
             //set the recevied object into the globalUpdate which will be sent to all clients 
             tempID = ((Long) receivedObj.get("playerID")).intValue(); //playerID
             pArray = (JSONArray) receivedObj.get("player"); //x and y of player
-            iA = (int) receivedObj.get("alive"); //status of player
+            iA = ((Long) receivedObj.get("alive")).intValue(); //status of player
 
             //now we update the player accordingly 
             for (int i = 0; i < pArray.size(); i++) {
@@ -86,6 +86,9 @@ public class ServerThread implements Runnable {
                     playerList.get(tempID - 1).position.y = ((Long) pArray.get(i)).intValue();
                 }
 
+//                if (iA == 0) {
+//                    playerList.get(tempID - 1).dead();
+//                }
                 playerList.get(tempID - 1).updateLocation();
             }
             //playerList.get(tempID - 1).setIsAlive(iA);
