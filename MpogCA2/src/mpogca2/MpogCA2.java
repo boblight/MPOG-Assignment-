@@ -218,7 +218,7 @@ public class MpogCA2 extends Application {
                             server = new ServerThread(8000, Runtime.getRuntime().availableProcessors() + 1);
                             new Thread(server).start();
                         } catch (IOException ex) {
-                            //System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
+                            
                         }//end of trycatch
                     }//end of if server start
                 }//end of if server running
@@ -380,7 +380,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                //System.out.println("Failed to close socket");
+                
             }
 
             Platform.exit();
@@ -604,7 +604,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                //System.out.println("Failed to close socket");
+                
             }
 
             Platform.exit();
@@ -777,7 +777,6 @@ public class MpogCA2 extends Application {
         }
         UpdateClientBullets(bulletList);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
-        //System.out.println("playerID: " + playerID);
 
         if (gameStarted == true) {
             checkWinner();
@@ -785,7 +784,6 @@ public class MpogCA2 extends Application {
 
         bulletCollision();
         //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
-        //System.out.println("playerID: " + playerID);
     }
 
     public void GameTimer() {
@@ -814,8 +812,6 @@ public class MpogCA2 extends Application {
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
 
-        System.out.println("isAlive = " + isAlive);
-
         int x = 0;
 
         JSONObject playerObj = new JSONObject();
@@ -833,7 +829,6 @@ public class MpogCA2 extends Application {
         playerObj.put("alive", x);
 
         String json = playerObj.toString();
-        System.out.println(json);
         String j = "$" + json;
 
         if (playerID == 1) {
@@ -846,7 +841,7 @@ public class MpogCA2 extends Application {
                 dos.writeUTF(j);
                 dos.flush();
             } catch (Exception ex) {
-                System.out.println(ex.toString());
+                
             }
         }
     }
@@ -1179,10 +1174,8 @@ public class MpogCA2 extends Application {
             for (int j = 0; j < bulletList.size(); j++) {
                 //try
                 //{
-                System.out.println("Iii: " + i);
                 if (playerList.get(i).isCollided(bulletList.get(j))) {
                     playerList.get(i).dead();
-                    System.out.println("Collision" + i + ": " + playerList.get(i).isAlive());
                 }
                 //}
                 //catch (Exception e)
@@ -1204,14 +1197,11 @@ public class MpogCA2 extends Application {
             } else {
                 lastPlayerAlive = i;
             }
-
-            System.out.println("PlayerList(" + ").isAlive() == " + playerList.get(i).isAlive());
         }
 
         if (deathCount == playerList.size() - 1) {
             gameStarted = false;
             Action(currentStage, endScreen(playerList.get(lastPlayerAlive).playerName), "Game Over");
-            System.out.println("Winner is Player " + lastPlayerAlive);
         } else if (deathCount == playerList.size()) {
             gameStarted = false;
             Action(currentStage, endScreen("its_a_draw"), "Game Over");

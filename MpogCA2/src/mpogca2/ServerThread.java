@@ -89,7 +89,6 @@ public class ServerThread implements Runnable {
                 playerList.get(tempID - 1).updateLocation();
             }
             //playerList.get(tempID - 1).setIsAlive(iA);
-            //System.out.println("playerList" + tempID + " X: " + playerList.get(tempID - 1).position.x);
         } catch (ParseException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -218,7 +217,6 @@ public class ServerThread implements Runnable {
                 dos.writeUTF("-" + remove);
                 dos.flush();
             } catch (IOException ex) {
-                //System.out.println("Failed to update client's list view:\n " + ex.getMessage());
             }
         }//end of removeDc
 
@@ -245,15 +243,12 @@ public class ServerThread implements Runnable {
                             try {
                                 Thread.sleep(250);
                             } catch (InterruptedException ex) {
-                                //System.out.println("Failed to sleep");
                             }
                         } catch (IOException ex) {
-                            //System.out.println("Failed to update client's list view:\n " + ex.getMessage());
                         }
                     });
                 }
             } catch (IOException ex) {
-                //System.out.println("CLIENT UPDATE PART: " + ex.getMessage());
             }
         }//end of lient update
 
@@ -293,24 +288,20 @@ public class ServerThread implements Runnable {
 
                             if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
                                 final String t = received.replace("\\", "").replace("/", "");
-                                System.out.println(t);
                                 //UpdateClients(received);
                                 hList.forEach((h) -> {
                                     h.updateClientChat(t);
                                 });
-                                System.out.println(received);
                                 String x = received.substring(1);
                                 ReceivedClientPos(x);
                             }
 
                             if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
                                 final String t = received.replace("/", "").replace("\\", "");
-                                System.out.println(t);
                                 //UpdateClients(received);
                                 hList.forEach((h) -> {
                                     h.updateClientChat(t);
                                 });
-                                System.out.println(received);
                                 String x = received.substring(1);
                                 ReceivedClientPos(x);
                             }
@@ -319,24 +310,20 @@ public class ServerThread implements Runnable {
 
 //                            if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
 //                                received.replace("\\", "").replace("/", "");
-//                                //System.out.println(received);
 //                                //UpdateClients(received);
 //                                hList.forEach((h) -> {
 //                                    h.updateClientChat(received);
 //                                });
-//                                System.out.println(received);
 //                                String x = received.substring(1);
 //                                ReceivedClientPos(x);
 //                            }
 //
 //                            if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
 //                                received.replace("/", "").replace("\\", "");
-//                                //System.out.println(received);
 //                                //UpdateClients(received);
 //                                hList.forEach((h) -> {
 //                                    h.updateClientChat(received);
 //                                });
-//                                //System.out.println(received);
 //                                String x = received.substring(1);
 //                                ReceivedClientPos(x);
 //                            }
@@ -354,7 +341,6 @@ public class ServerThread implements Runnable {
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);
                                 });
-                                System.out.println(received);
                                 String x = received.substring(1);
                                 ReceivedClientPos(x);
                             }
