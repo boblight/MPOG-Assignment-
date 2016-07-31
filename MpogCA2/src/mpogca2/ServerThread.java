@@ -115,51 +115,53 @@ public class ServerThread implements Runnable {
 
     @Override
     public void run() {
-        try {
-            serverStarted = true;
+        serverStarted = true;
+        if (serverRunning == true) {
+            toSend.add(pLocal.getName());
+            acceptClients();
 
-            if (serverRunning == true) {
-                toSend.add(pLocal.getName());
-
-                //to keep accepting and updating client lobbies as long as game has not started
-                while (gameStarted == false) {
-                    socket = serverSocket.accept();//accept client
-                    id++; //identify handlers
-                    Handler h = new Handler(socket, this);//create new handler class each time client joins
-
-                    h.id = id; //set ids to handlers                 
-
-                    hList.add(h);//add handler to list of handler
-                    pool.execute(h);//run handler class in new Thread
-
-                    clientList.add(h);
-
-                    //buffer time for network
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    hList.forEach((o) -> {
-                        o.updateClientLobby();
-                    });
-
-                    hList.forEach((r) -> {
-                        h.updateClientChat("@" + id);
-                    });
-
-                }//end of infinite loop
-                pool.shutdownNow();
-                serverRunning = false;
-                serverStarted = false;
-            }//end of server running
-        } catch (IOException ex) {
-            pool.shutdownNow();
-            serverRunning = false;
-            serverStarted = false;
+//            pool.shutdownNow();
+//            serverRunning = false;
+//            serverStarted = false;
         }
     }//end of run
+
+    public void acceptClients() {
+        try {
+            //to keep accepting and updating client lobbies as long as game has not started
+            while (gameStarted == false && pCount < 3) {
+                socket = serverSocket.accept();//accept client
+                id++; //identify handlers
+                Handler h = new Handler(socket, this);//create new handler class each time client joins
+
+                h.id = id; //set ids to handlers                 
+
+                hList.add(h);//add handler to list of handler
+                pool.execute(h);//run handler class in new Thread
+
+                clientList.add(h);
+
+                //buffer time for network
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                hList.forEach((o) -> {
+                    o.updateClientLobby();
+                });
+
+                hList.forEach((r) -> {
+                    h.updateClientChat("@" + id);
+                });
+
+            }//end of infinite loop
+            serverSocket.close();
+        } catch (Exception ex) {
+
+        }
+    }
 
     //reupdate all client's lobby whenever a client updates
     public void reUpdateClientLobby(String name) {
@@ -348,8 +350,15 @@ public class ServerThread implements Runnable {
 
             } catch (IOException ex) {
                 hList.remove(this);//remove current handler from handler's list
+                pCount--;
                 synchronized (server) {
-                    server.reUpdateClientLobby(name);
+                    try {
+                        serverSocket = new ServerSocket();
+                        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), 8000));
+                        server.reUpdateClientLobby(name);
+                        server.acceptClients();
+                    } catch (Exception exc) {
+                    }
                 }
             }
         }//end of run method
