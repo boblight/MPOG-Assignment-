@@ -66,7 +66,7 @@ public class MpogCA2 extends Application {
 
     public static int latestId = 1;//store latest id of players
 
-    private Button host, join, help, exit, startGame, testGame, confirm, back; //buttons for menu interactions
+    private Button host, join, help, exit, startGame, confirm, back; //buttons for menu interactions
 
     public static ListView<String> pLobby;
     public static ObservableList<String> listData = FXCollections.observableArrayList();
@@ -107,7 +107,6 @@ public class MpogCA2 extends Application {
     final static AudioClip endSound = new AudioClip(new File("src/end.wav").toURI().toString());
     final Media bgm = new Media(new File("src/BGM.mp3").toURI().toString());
 
-    //game area UI elements
     public static Pane gamePane;
     Scene gameScene;
 
@@ -131,8 +130,6 @@ public class MpogCA2 extends Application {
     public static HBox h;
     public static VBox v;
 
-    int time = 0;
-
     @Override
     public void start(Stage primaryStage) {
         Action(primaryStage, createMainMenu(), "Orbs");
@@ -147,6 +144,7 @@ public class MpogCA2 extends Application {
 
     //create the screen for inputting name (host)
     public Scene hostScreen() {
+
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 800, 540);
         scene.getStylesheets().add("style.css");
@@ -229,6 +227,7 @@ public class MpogCA2 extends Application {
 
     //create screen for inputing name + IP (client)
     public Scene joinScreen() {
+
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 800, 540);
         scene.getStylesheets().add("style.css");
@@ -321,6 +320,7 @@ public class MpogCA2 extends Application {
 
     //create server lobby
     public Scene createServerLobby() {
+
         BorderPane root = new BorderPane();
         gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
@@ -454,97 +454,9 @@ public class MpogCA2 extends Application {
         return gameScene;
     }//end of create server lobby
 
-    //player colour 
-    public static String SwitchColour(int num) {
-        String colour = "";
-
-        switch (num) {
-            case 1:
-                colour = "#2ecc71";
-                break;
-
-            case 2:
-                colour = "#e74c3c";
-                break;
-
-            case 3:
-                colour = "#3498db";
-                break;
-            case 4:
-                colour = "#f1c40f";
-                break;
-        }
-        return colour;
-    }
-
-    //start game area (server)
-    public void InitGamePaneServer(HBox h) {
-        longshoot.play(); //play sound
-
-        middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
-
-        gamePane = new Pane();
-        gamePane.setMouseTransparent(false);
-        gamePane.setMinHeight(600);
-        gamePane.setMaxHeight(600);
-        gamePane.setMinWidth(800);
-        gamePane.setMaxWidth(800);
-        gamePane.setStyle("-fx-background-color: #34495e");
-
-        switch (pCount) {
-            case 1:
-                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
-                playerList.add(player);
-                break;
-
-            case 2:
-                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
-                playerList.add(player);
-                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
-                playerList.add(player);
-                //playerList.get(1).dead();
-                break;
-
-            case 3:
-                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
-                playerList.add(player);
-                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
-                playerList.add(player);
-                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
-                playerList.add(player);
-                break;
-
-            case 4:
-                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
-                playerList.add(player);
-                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
-                playerList.add(player);
-                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
-                playerList.add(player);
-                player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
-                playerList.add(player);
-                break;
-        }
-        //add current player
-        for (int i = 0; i < playerList.size(); i++) {
-            gamePane.getChildren().add(playerList.get(i).getCircle());
-        }
-
-        //get all the other player
-        //the middle circle 
-        gamePane.getChildren().add(middleObj.getCircle());
-
-        h.setSpacing(10);
-        h.setPadding(new Insets(0, 0, 0, 0));
-        h.getChildren().remove(pLobby);
-        h.getChildren().add(gamePane);
-
-        ServerTimeline();
-
-    }
-
     //create client lobby
     public Scene createClientLobby() {
+
         gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
 
@@ -648,6 +560,123 @@ public class MpogCA2 extends Application {
         return gameScene;
     }//end of create client lobby
 
+    //help screen at main menu
+    public static void createHelpScreen() {
+        Stage helpStage = new Stage();
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add("style.css");
+
+        VBox vbCenter = new VBox(15);
+        vbCenter.setAlignment(Pos.CENTER);
+
+        root.setCenter(vbCenter);
+        root.getStyleClass().add("mainbg");
+
+        helpDiagram = new Image("instructions.png");
+        helpDiagramImv = new ImageView(helpDiagram);
+        helpDiagramImv.setPreserveRatio(true);
+        helpDiagramImv.fitWidthProperty().bind(scene.widthProperty());
+        helpDiagramImv.fitHeightProperty().bind(scene.heightProperty());
+
+        vbCenter.getChildren().add(helpDiagramImv);
+
+        helpStage.setTitle("How to Play");
+        helpStage.setScene(scene);
+        helpStage.getIcons().add(new Image("logo.png"));
+        helpStage.show();
+    }//end of create help screen
+
+    //player colour 
+    public static String SwitchColour(int num) {
+        String colour = "";
+
+        switch (num) {
+            case 1:
+                colour = "#2ecc71";
+                break;
+
+            case 2:
+                colour = "#e74c3c";
+                break;
+
+            case 3:
+                colour = "#3498db";
+                break;
+            case 4:
+                colour = "#f1c40f";
+                break;
+        }
+        return colour;
+    }
+
+    //start game area (server)
+    public void InitGamePaneServer(HBox h) {
+
+        longshoot.play(); //play sound
+
+        middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
+
+        gamePane = new Pane();
+        gamePane.setMouseTransparent(false);
+        gamePane.setMinHeight(600);
+        gamePane.setMaxHeight(600);
+        gamePane.setMinWidth(800);
+        gamePane.setMaxWidth(800);
+        gamePane.setStyle("-fx-background-color: #34495e");
+
+        switch (pCount) {
+            case 1:
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                break;
+
+            case 2:
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+                break;
+
+            case 3:
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+                break;
+
+            case 4:
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+                player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
+                playerList.add(player);
+                break;
+        }
+        //add current player
+        for (int i = 0; i < playerList.size(); i++) {
+            gamePane.getChildren().add(playerList.get(i).getCircle());
+        }
+
+        //get all the other player
+        //the middle circle 
+        gamePane.getChildren().add(middleObj.getCircle());
+
+        h.setSpacing(10);
+        h.setPadding(new Insets(0, 0, 0, 0));
+        h.getChildren().remove(pLobby);
+        h.getChildren().add(gamePane);
+
+        //start the animation
+        ServerTimeline();
+
+    }
+
     //start game area (client)
     public void InitGamePaneClient(HBox h) {
         longshoot.play(); //play sound
@@ -661,9 +690,9 @@ public class MpogCA2 extends Application {
         gamePane.setMinWidth(800);
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
-        
+
         System.out.println("pCount = " + pCount);
-        
+
         switch (pCount) {
             case 1:
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
@@ -711,7 +740,6 @@ public class MpogCA2 extends Application {
         ClientTimeline();
     }
 
-    //timeline to update the 
     public void ServerTimeline() {
 
         //creates the Timeline that updates the screen 
@@ -780,29 +808,21 @@ public class MpogCA2 extends Application {
         //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
     }
 
-    public void GameTimer() {
+    public void ClientUpdate() {
 
-        Timeline timer = TimelineBuilder.create().keyFrames(
-                new KeyFrame(
-                        new Duration(1000),//This is how often it updates in milliseconds
-                        new EventHandler<ActionEvent>() {
-                    public void handle(ActionEvent t) {
+        refreshScreen();
+        HandleClientKeyboard();
+        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
+        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
 
-                        time++;
+        if (gameStarted == true) {
+            checkWinner();
+        }
 
-                        if (time == 180) {
-
-                            gameStarted = false;
-
-                        }
-                    }
-                }
-                )
-        ).cycleCount(Timeline.INDEFINITE).build();
-
-        timer.play();//Starts the timeline
+        bulletCollision();
     }
 
+    //package the gamedata of the player and send over network
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
 
         int x = 0;
@@ -837,20 +857,6 @@ public class MpogCA2 extends Application {
 
             }
         }
-    }
-
-    public void ClientUpdate() {
-
-        refreshScreen();
-        HandleClientKeyboard();
-        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
-        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
-
-        if (gameStarted == true) {
-            checkWinner();
-        }
-
-        //bulletCollision();
     }
 
     void refreshScreen() {
@@ -1003,6 +1009,33 @@ public class MpogCA2 extends Application {
         }
     }
 
+    public void SpawnBullets(int time) {
+
+        if (time == 150) {
+
+            if (gameStarted) {
+                shoot.play(); //play sound
+            }
+
+            Random x = new Random();
+            int randomNumber = x.nextInt(10) + 10;
+
+            //spawn bullets 
+            for (int i = 0; i < randomNumber; i++) {
+
+                int xPos = x.nextInt(21) - 10;
+
+                int yPos = x.nextInt(21) - 10;
+
+                Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
+                gamePane.getChildren().add(bullet.getCircle());
+                bulletList.add(bullet);
+
+            }
+            bulletSpawn = 0;
+        }
+    }
+
     void destroyBullets() {
         for (int i = 0; i < bulletList.size(); i++) {
 
@@ -1029,33 +1062,6 @@ public class MpogCA2 extends Application {
             }
         }
 
-    }
-
-    public void SpawnBullets(int time) {
-
-        if (time == 150) {
-
-            if (gameStarted) {
-                shoot.play(); //play sound
-            }
-
-            Random x = new Random();
-            int randomNumber = x.nextInt(10) + 10;
-
-            //spawn bullets 
-            for (int i = 0; i < randomNumber; i++) {
-
-                int xPos = x.nextInt(21) - 10;
-
-                int yPos = x.nextInt(21) - 10;
-
-                Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
-                gamePane.getChildren().add(bullet.getCircle());
-                bulletList.add(bullet);
-
-            }
-            bulletSpawn = 0;
-        }
     }
 
     public void UpdateClientBullets(ArrayList<Bullet> bList) {
@@ -1086,7 +1092,6 @@ public class MpogCA2 extends Application {
 
     }
 
-    //end of methods essential for the game to work ////////////////////////////
     //create main menu ui
     public Scene createMainMenu() {
         BorderPane root = new BorderPane();
@@ -1150,6 +1155,7 @@ public class MpogCA2 extends Application {
         return scene;
     }//end of createMainMenu
 
+    //check for players colliding with bullets
     public void bulletCollision() {
         for (int i = 0; i < playerList.size(); i++) {
             for (int j = 0; j < bulletList.size(); j++) {
@@ -1166,8 +1172,9 @@ public class MpogCA2 extends Application {
         }
     }
 
+    //check for whos the winner
     public void checkWinner() {
-        
+
         boolean haveWinner = false;
         int deathCount = 0;
         int lastPlayerAlive = 0;
@@ -1190,6 +1197,7 @@ public class MpogCA2 extends Application {
         }
     }
 
+    //to display at the end of the game
     public Scene endScreen(String winnerName) {
         endSound.play();
 
@@ -1272,31 +1280,5 @@ public class MpogCA2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }//end of main method
-
-    public static void createHelpScreen() {
-        Stage helpStage = new Stage();
-        BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add("style.css");
-
-        VBox vbCenter = new VBox(15);
-        vbCenter.setAlignment(Pos.CENTER);
-
-        root.setCenter(vbCenter);
-        root.getStyleClass().add("mainbg");
-
-        helpDiagram = new Image("instructions.png");
-        helpDiagramImv = new ImageView(helpDiagram);
-        helpDiagramImv.setPreserveRatio(true);
-        helpDiagramImv.fitWidthProperty().bind(scene.widthProperty());
-        helpDiagramImv.fitHeightProperty().bind(scene.heightProperty());
-
-        vbCenter.getChildren().add(helpDiagramImv);
-
-        helpStage.setTitle("How to Play");
-        helpStage.setScene(scene);
-        helpStage.getIcons().add(new Image("logo.png"));
-        helpStage.show();
-    }//end of create help screen
 
 }
