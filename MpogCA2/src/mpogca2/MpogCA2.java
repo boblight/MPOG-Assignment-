@@ -391,7 +391,10 @@ public class MpogCA2 extends Application {
                 System.out.println("Failed to close socket");
             }
 
-            Action(currentStage, createMainMenu(), "Main Menu");
+            //Action(currentStage, createMainMenu(), "Main Menu");
+            Platform.exit();
+            System.exit(0);
+        
         });
 
         startGame.setOnAction(e -> {
@@ -403,7 +406,7 @@ public class MpogCA2 extends Application {
                 //send message to client with command 
                 //when client receive command change their own gameStarted=true
                 gameStarted = true; //change server gameStarted=true, client still not changed
-                System.out.println("server changed gameStarted=true");
+                //System.out.println("server changed gameStarted=true");
                 startGame.setVisible(false);
                 //hide the playerList 
                 pLobby.setVisible(false);
@@ -469,7 +472,7 @@ public class MpogCA2 extends Application {
                         } else if (clientRunning == true) {
                             try {
                                 dos = new DataOutputStream(socket.getOutputStream());
-                                System.out.println(sendMsg);
+                                //System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
 
@@ -585,7 +588,9 @@ public class MpogCA2 extends Application {
                 System.out.println("Failed to close socket");
             }
 
-            Action(currentStage, createMainMenu(), "Main Menu");
+            //Action(currentStage, createMainMenu(), "Main Menu");
+            Platform.exit();
+            System.exit(0);
         });
 
         try {
@@ -594,8 +599,8 @@ public class MpogCA2 extends Application {
 
         }
 
-        System.out.println("gamestarted:" + gameStarted);
-        System.out.println("clientStarted" + clientStarted);
+        //System.out.println("gamestarted:" + gameStarted);
+        //System.out.println("clientStarted" + clientStarted);
         //connect to game server when gamestarted is true
         //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
 
@@ -624,7 +629,7 @@ public class MpogCA2 extends Application {
                         } else if (clientRunning == true) {
                             try {
                                 dos = new DataOutputStream(socket.getOutputStream());
-                                System.out.println(sendMsg);
+                                //System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
                             } catch (IOException ex) {
@@ -753,14 +758,14 @@ public class MpogCA2 extends Application {
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
 
-        System.out.println(bulletList.size());
+        //System.out.println(bulletList.size());
         for (int t = 0; t < bulletList.size(); t++) {
 
             gamePane.getChildren().add(bulletList.get(t).getCircle());
 
         }
 
-        System.out.println("Client Update");
+        //System.out.println("Client Update");
 //        for (int i = 0; i < bulletList.size(); i++) {
 //
 //            bulletList.get(i).bulletMove();
@@ -883,7 +888,7 @@ public class MpogCA2 extends Application {
             //}
         }
 
-        System.out.println("Bullets Destroyed");
+        //System.out.println("Bullets Destroyed");
     }
 
 //    public void SendBullets(String bList) {
@@ -904,16 +909,16 @@ public class MpogCA2 extends Application {
 
             Random x = new Random();
             int randomNumber = x.nextInt(10) + 10;
-            System.out.println("Math.random is : " + randomNumber);
+            //System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
                 int xPos = x.nextInt(21) - 10;
-                System.out.println(xPos);
+                //System.out.println(xPos);
                 int yPos = x.nextInt(21) - 10;
-                System.out.println(yPos);
-                System.out.println("myrntfenrbfvdhmnbfv");
+                //System.out.println(yPos);
+                //System.out.println("myrntfenrbfvdhmnbfv");
 
                 Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
                 gamePane.getChildren().add(bullet.getCircle());
@@ -945,7 +950,7 @@ public class MpogCA2 extends Application {
 
         String x = r.toString();
         gameData = "#" + x;
-        System.out.println(gameData);
+        //System.out.println(gameData);
 
         clientList.forEach((client) -> {
             client.updateClientChat(gameData);
@@ -1100,22 +1105,24 @@ public class MpogCA2 extends Application {
             currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent t) {
-                    try {
-                        if (serverRunning == true) {
-                            serverSocket.close();
-                            socket.close();
-                            serverRunning = false;
-                        } else if (clientRunning == true) {
-                            socket.close();
-                            clientRunning = false;
-                        }
-                    } catch (IOException ex) {
-                        System.out.println("Failed to close socket");
-                    }
+//                    try {
+//                        if (serverRunning == true) {
+//                            serverSocket.close();
+//                            socket.close();
+//                            serverRunning = false;
+//                        } else if (clientRunning == true) {
+//                            socket.close();
+//                            clientRunning = false;
+//                        }
+//                    } catch (IOException ex) {
+//                        System.out.println("Failed to close socket");
+//                    }
                     bPush.play();
 
-                    t.consume();
-                    Action(currentStage, createMainMenu(), "Main Menu");
+//                    t.consume();
+//                    //Action(currentStage, createMainMenu(), "Main Menu");
+                    Platform.exit();
+                    System.exit(0);
                 }
             });
         }

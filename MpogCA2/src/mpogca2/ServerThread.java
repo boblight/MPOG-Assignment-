@@ -98,9 +98,9 @@ public class ServerThread implements Runnable {
         Platform.runLater(() -> {
             synchronized (listData) {
                 listData.remove(name);
-                System.out.println("Iterating over listData:");
+                //System.out.println("Iterating over listData:");
                 listData.forEach((l) -> {
-                    System.out.println(l);
+                    //System.out.println(l);
                 });
                 pLobby.setItems(listData);
                 chatArea.appendText(message);
@@ -134,9 +134,9 @@ public class ServerThread implements Runnable {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(msg);
                 dos.flush();
-                System.out.println("JSON SENT");
+                //System.out.println("JSON SENT");
             } catch (IOException ex) {
-                System.out.println("Failed to send messages to client");
+                //System.out.println("Failed to send messages to client");
             }
         }//end of updateClientChat
 
@@ -146,7 +146,7 @@ public class ServerThread implements Runnable {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(son);
                 dos.flush();
-                System.out.println("Sent JSON");
+                //System.out.println("Sent JSON");
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -235,7 +235,7 @@ public class ServerThread implements Runnable {
                             String received = dis.readUTF();
 
                             if (!received.trim().equals("")) {
-                                System.out.println("Clients message: " + received);
+                                //System.out.println("Clients message: " + received);
                                 chatArea.appendText("\n" + received.substring(1));
                                 chatSound.play();
                                 hList.forEach((h) -> {
