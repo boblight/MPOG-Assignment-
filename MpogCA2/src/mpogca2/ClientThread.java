@@ -104,6 +104,15 @@ public class ClientThread implements Runnable {
             if (tempID == playerID) {
 
                 isAlive = ((Long) pObject.get("alive")).intValue();
+                if (isAlive == 0)
+                {
+                    playerList.get(tempID - 1).setIsAlive(false);
+                }
+                
+                if (isAlive == 0)
+                {
+                    playerList.get(tempID - 1).setIsAlive(true);
+                }
 
             } else {
 

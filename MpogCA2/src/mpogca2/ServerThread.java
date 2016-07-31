@@ -80,6 +80,17 @@ public class ServerThread implements Runnable {
 
                     playerList.get(tempID - 1).position.x = ((Long) pArray.get(i)).intValue();
 
+                    iA = ((Long) receivedObj.get("alive")).intValue();
+                    if (iA == 0)
+                    {
+                        playerList.get(tempID - 1).setIsAlive(false);
+                    }
+
+                    if (iA == 0)
+                    {
+                        playerList.get(tempID - 1).setIsAlive(true);
+                    }
+                    
                 }
                 if (i == 1) { //yPos/
 

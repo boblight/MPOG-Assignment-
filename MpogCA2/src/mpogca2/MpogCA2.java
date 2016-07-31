@@ -850,7 +850,7 @@ public class MpogCA2 extends Application {
             checkWinner();
         }
 
-        bulletCollision();
+        //bulletCollision();
     }
 
     void refreshScreen() {
