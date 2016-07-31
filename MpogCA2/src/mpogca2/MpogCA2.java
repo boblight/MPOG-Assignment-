@@ -30,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -110,6 +111,7 @@ public class MpogCA2 extends Application {
     final static AudioClip pop = new AudioClip(new File("src/pop.wav").toURI().toString());
     final static AudioClip shoot = new AudioClip(new File("src/shoot.wav").toURI().toString());
     final static AudioClip longshoot = new AudioClip(new File("src/oldshoot.wav").toURI().toString());
+    final static AudioClip endSound = new AudioClip(new File("src/end.wav").toURI().toString());
     final Media bgm = new Media(new File("src/BGM.mp3").toURI().toString());
 
     //game area UI elements
@@ -330,7 +332,7 @@ public class MpogCA2 extends Application {
     public Scene createServerLobby() {
 
         BorderPane root = new BorderPane();
-        gameScene = new Scene(root, 1060, 600);
+        gameScene = new Scene(root, 1080, 600);
         gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
         
@@ -510,7 +512,8 @@ public class MpogCA2 extends Application {
         gamePane.getChildren().add(middleObj.getCircle());
 
         //root.setLeft(gamePane);
-        h.setSpacing(0);
+        h.setSpacing(10);
+        h.setPadding(new Insets(0, 0, 0, 10));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
         
@@ -521,7 +524,7 @@ public class MpogCA2 extends Application {
     //create client lobby
     public Scene createClientLobby() {
         //BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1060, 600);
+        Scene scene = new Scene(root, 1080, 600);
         scene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
@@ -664,7 +667,8 @@ public class MpogCA2 extends Application {
         gamePane.getChildren().add(middleObj.getCircle());
 
         //root.setLeft(gamePane);
-        h.setSpacing(0);
+        h.setSpacing(10);
+        h.setPadding(new Insets(0, 0, 0, 10));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
         
@@ -970,14 +974,14 @@ public class MpogCA2 extends Application {
 
         
         //for testing
-        testGame = new Button("TestGame");
+        testGame = new Button("Test Button");
         testGame.getStyleClass().add("menubtn");
         vbCenter.getChildren().add(testGame);
         testGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                     bPush.play();
-                    Action(currentStage, endScreen(), "Game Over");
+                    Action(currentStage, endScreen("its_a_draw"), "Game Over");
             }
         });
         
@@ -1025,60 +1029,45 @@ public class MpogCA2 extends Application {
     }//end of createMainMenu
     
     
-    
-        public Scene endScreen() {
-        StackPane root = new StackPane();
-        Scene scene = new Scene(root, 800, 540);
+        public Scene endScreen(String winnerName) {
+        endSound.play();
+        
+        gameStarted=false;
+        gameClientRunning=false;
+        gameClientStarted=false;
+        gameServerRunning=false;
+        gameServerStarted=false;
+        
+        BorderPane root = new BorderPane();
+        VBox vbox = new VBox(35);
+        Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add("style.css");
+
+        Label info=new Label();
+        if (winnerName=="its_a_draw") {
+            info = new Label("It's a draw!");
+        }
+        else {
+            info = new Label(winnerName +" wins!");
+        }
+        
+        info.getStyleClass().add("labeltextextralarge");
+        Button exit = new Button();
+        exit.setText("Exit");
+        exit.getStyleClass().add("menubtn");
+
+        ImageView endImg = new ImageView(new Image("logo.png", 300, 300, true, true));
+        
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().add(endImg);
+        vbox.getChildren().add(info);
+        vbox.getChildren().add(exit);
+
+        root.setCenter(vbox);
         root.getStyleClass().add("mainbg");
 
-        VBox v = new VBox(15);
-        v.setAlignment(Pos.CENTER);
-        HBox h = new HBox(10);
-        h.setAlignment(Pos.CENTER);
-        HBox h2 = new HBox(10);
-        h2.setAlignment(Pos.CENTER);
-        HBox h3 = new HBox(10);
-        h3.setAlignment(Pos.CENTER);
+        exit.setOnAction(e -> System.exit(0));
 
-        inputPName = new TextField();
-        inputPName.getStyleClass().add("chatbox");
-        inputPName.setMaxWidth(700);
-        inputIp = new TextField();
-        inputIp.getStyleClass().add("chatbox");
-        inputIp.setMaxWidth(700);
-        confirm = new Button("Confirm");
-        confirm.getStyleClass().add("menubtn");
-        back = new Button("Back");
-        back.getStyleClass().add("menubtn");
-        nameLbl = new Label("Player Name: ");
-        nameLbl.getStyleClass().add("labeltextlarge");
-        ipLbl = new Label("Host IP: ");
-        ipLbl.getStyleClass().add("labeltextlarge");
-        error = new Label();
-        error.getStyleClass().add("labeltext");
-
-        h.getChildren().add(back);
-        h.getChildren().add(confirm);
-        h2.getChildren().add(nameLbl);
-        h2.getChildren().add(inputPName);
-        h3.getChildren().add(ipLbl);
-        h3.getChildren().add(inputIp);
-        v.getChildren().add(h2);
-        v.getChildren().add(h3);
-        v.getChildren().add(error);
-        v.getChildren().add(h);
-
-        //instantiate listview before networking starts
-        pLobby = new ListView<>();
-
-        root.getChildren().add(v);
-
-        back.setOnAction(e -> {
-            gameStarted=false;
-            bPush.play();
-            Action(currentStage, createMainMenu(), "Main Menu");
-        });
         return scene;
         }//end endScreen()
     
@@ -1132,7 +1121,7 @@ public class MpogCA2 extends Application {
             });
         }
     }//end of generic button listener
-
+    
     /**
      * @param args the command line arguments
      */
