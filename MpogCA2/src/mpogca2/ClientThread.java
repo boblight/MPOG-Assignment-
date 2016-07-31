@@ -19,7 +19,6 @@ public class ClientThread implements Runnable {
 
     //update list of players
     String readInput = "";
-    GameNetworkObject gnr;
     List<String> namesReceived = new ArrayList<>();
     public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
     MpogCA2 main;
@@ -74,45 +73,39 @@ public class ClientThread implements Runnable {
 
     }
 
-    public void UnpackPlayers(String playerList) {
+    public void UnpackPlayer(String player) {
 
         JSONParser p = new JSONParser();
-        JSONObject outerObject = new JSONObject();
-        JSONObject innerObject = new JSONObject();
-        JSONArray outerArray = new JSONArray();
+        JSONObject pObject = new JSONObject();
         JSONArray innerArray = new JSONArray();
         int tempXPos = 0, tempYPos = 0, tempID = 0;
         boolean isAlive = false;
 
-        System.out.println(playerList);
+        System.out.println(player);
 
         try {
             //convert string to JSON
-            outerObject = (JSONObject) p.parse(playerList);
-            outerArray = (JSONArray) outerObject.get("PlayerList");
+            pObject = (JSONObject) p.parse(player);
 
-            //get all the player object
-            for (int i = 0; i < outerArray.size(); i++) {
+            //get player details
+            tempID = ((Long) pObject.get("playerID")).intValue();
+            //tempID = playerID;
+            System.out.println("tempID: " + tempID);
 
-                //get the individual player object
-                innerObject = (JSONObject) outerArray.get(i);
-                //get player details
-                tempID = ((Long) innerObject.get("playerID")).intValue();
+            isAlive = (boolean) pObject.get("alive");
 
-                isAlive = (boolean) innerObject.get("alive");
+            innerArray = (JSONArray) pObject.get("player"); //get the x and y pos
+            for (int t = 0; t < innerArray.size(); t++) {
 
-                innerArray = (JSONArray) innerObject.get("player"); //get the x and y pos
-                for (int t = 0; t < innerArray.size(); t++) {
-
-                    if (t == 0) {
-                        tempXPos = ((Long) innerArray.get(i)).intValue();
-                    }
-                    if (t == 1) {
-                        tempYPos = ((Long) innerArray.get(i)).intValue();
-                    }
+                if (t == 0) {
+                    playerList.get(tempID - 1).position.x = ((Long) innerArray.get(t)).intValue();
                 }
-
+                if (t == 1) {
+                    playerList.get(tempID - 1).position.y = ((Long) innerArray.get(t)).intValue();
+                }
             }
+
+            playerList.get(tempID - 1).updateLocation();
 
         } catch (ParseException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,6 +131,18 @@ public class ClientThread implements Runnable {
                             dis = new DataInputStream(socket.getInputStream());
 
                             readInput = dis.readUTF();
+
+                            if (readInput.substring(0, 1).equals("/") && readInput.substring(0, 2).equals("$")) {
+                                readInput.replace("/", "").replace("\\", "");
+                                //UpdateClients(received);
+                                UnpackPlayer(readInput);
+                            }
+
+                            if (readInput.substring(0, 1).equals("\\") && readInput.substring(0, 2).equals("$")) {
+                                readInput.replace("\\", "").replace("/", "");
+                                //UpdateClients(received);
+                                UnpackPlayer(readInput);
+                            }
 
                             //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
@@ -198,7 +203,7 @@ public class ClientThread implements Runnable {
                             //this is to receive the inputs from the server and update alllll players on the screen
                             if (readInput.substring(0, 1).equals("$")) {
                                 String s = readInput.substring(1);
-                                // UnpackPlayers(s);
+                                UnpackPlayer(s);
                             }
 
                         } else {
@@ -223,7 +228,7 @@ public class ClientThread implements Runnable {
                             chatSound.play();
                         });
                     } catch (IOException ex1) {
-                        System.out.println("Cannot close connection.");
+                        //System.out.println("Cannot close connection.");
                     }
                 }  //end of big try catch
             }
