@@ -79,6 +79,14 @@ public class ServerThread implements Runnable {
                     hList.forEach((o) -> {
                         o.updateClientLobby();
                     });
+
+                    hList.forEach((i) -> {
+                    
+                    System.out.println("Player ID: " + i.id);
+                    });
+
+             
+
                 }//end of infinite loop
                 pool.shutdownNow();
                 serverRunning = false;
@@ -134,7 +142,6 @@ public class ServerThread implements Runnable {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(msg);
                 dos.flush();
-                //System.out.println("JSON SENT");
             } catch (IOException ex) {
                 //System.out.println("Failed to send messages to client");
             }
