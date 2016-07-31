@@ -1,19 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-//test
+
+
+
+
+
+
+*/
+
 package mpogca2;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -51,23 +50,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import static mpogca2.ClientThread.tempbList;
-import mpogca2.ServerThread.*;
 import mpogca2.engine.Bullet;
 import mpogca2.engine.GameObject;
 import mpogca2.engine.GamePlayer;
 import org.json.simple.JSONObject;
-import org.json.*;
 import org.json.simple.JSONArray;
 
-/**
- *
- * @author tongliang
- */
 public class MpogCA2 extends Application {
 
     public static int latestId = 1;//store latest id of players
@@ -81,7 +73,6 @@ public class MpogCA2 extends Application {
     private static Label nameLbl, ipLbl;
     public static Label error;
     private static TextField chatMsg, inputPName, inputIp;
-    private Label mainTitle;
     private Stage currentStage;
 
     public static boolean isServer = false, gameStart = false, switchTurn = false, btnDisable = true,
@@ -129,7 +120,7 @@ public class MpogCA2 extends Application {
 
     public static ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     public static ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
-    //public static GamePlayer player1, player2, player3, player4;
+
     public static GamePlayer player;
     public static GameObject middleObj;
     public static BorderPane root = new BorderPane();
@@ -149,7 +140,7 @@ public class MpogCA2 extends Application {
         mediaPlay.setAutoPlay(true);
         mediaPlay.setVolume(0.8);
 
-    }//end of main javafx class_
+    }//end of main javafx class
 
     //create the screen for inputting name (host)
     public Scene hostScreen() {
@@ -370,13 +361,6 @@ public class MpogCA2 extends Application {
 
         root.setCenter(h);
 
-//        if (pCount == 1) {
-//
-//            playerID = 0;
-//
-//        }
-        System.out.println("Server ID is: " + playerID);
-
         back.setOnAction(e -> {
             gameStarted = false;
             bPush.play();
@@ -399,7 +383,6 @@ public class MpogCA2 extends Application {
                 System.out.println("Failed to close socket");
             }
 
-            //Action(currentStage, createMainMenu(), "Main Menu");
             Platform.exit();
             System.exit(0);
 
@@ -414,15 +397,12 @@ public class MpogCA2 extends Application {
                 //send message to client with command 
                 //when client receive command change their own gameStarted=true
                 gameStarted = true; //change server gameStarted=true, client still not changed
-                //System.out.println("server changed gameStarted=true");
                 startGame.setVisible(false);
+                v.getChildren().remove(startGame);
                 //hide the playerList 
                 pLobby.setVisible(false);
 
                 //tell all clients that game has started
-//                try {
-//                    dos = new DataOutputStream(socket.getOutputStream());
-//                    System.out.println("sending to clients to change gameStarted=true");
                 String s = "+" + "changing gameStarted=true on client";
                 String tP = "?" + Integer.toString(pCount);
 
@@ -431,23 +411,6 @@ public class MpogCA2 extends Application {
                     client.updateClientChat(tP);
                 });
 
-//                } catch (IOException ex) {
-//                    System.out.println("error occured when changing client gameStarted=true");
-//                }
-                //changing on clientthread receive message starting with +
-                //Start the game area 
-//                player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
-//                player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
-//                player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
-//                player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
-//                playerList.add(player1);
-//                playerList.add(player2);
-//                playerList.add(player3);
-//                playerList.add(player4);
-                //this is the server 
-//                player = new GamePlayer(100, 100, 25, "#3498db", "player1", 0);
-//                playerList.add(player);
-                //now we dynamically generate the other players 
                 InitGamePaneServer(h);
 
             }//end else (when there are players to start)
@@ -474,12 +437,10 @@ public class MpogCA2 extends Application {
                             chatSound.play();
                             clientList.forEach((client) -> {
                                 client.updateClientChat("<" + sendMsg);
-                                //client.TestJSON(TestJson());
                             });
                         } else if (clientRunning == true) {
                             try {
                                 dos = new DataOutputStream(socket.getOutputStream());
-                                //System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
 
@@ -495,16 +456,6 @@ public class MpogCA2 extends Application {
         });
         return gameScene;
     }//end of create server lobby
-
-    public String TestJson() {
-
-        JSONObject obj = new JSONObject();
-        obj.put("Hello", "test");
-
-        String g = "#" + obj.toString();
-
-        return g;
-    }
 
     //player colour 
     public static String SwitchColour(int num) {
@@ -540,95 +491,41 @@ public class MpogCA2 extends Application {
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
 
-//        player = new GamePlayer(100, 100, 25, SwitchColour(1), "player1", 1);
-//        playerList.add(player);
-//
-//        clientList.forEach((t) -> {
-//
-//            switch (t.id) {
-//                case 1:
-//                    System.out.println("playerList ID is " + t.id);
-//                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-//                    playerList.add(player);
-//                    break;
-//
-//                case 2:
-//                    System.out.println("playerList ID is " + t.id);
-//                    player = new GamePlayer(500, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-//                    playerList.add(player);
-//                    break;
-//
-//                case 3:
-//                    System.out.println("playerList ID is " + t.id);
-//                    player = new GamePlayer(100, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
-//                    playerList.add(player);
-//                    break;
-//
-//                case 4:
-//                    System.out.println("playerList ID is " + t.id);
-//                    player = new GamePlayer(500, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
-//                    playerList.add(player);
-//                    break;
-//
-//            }
-//
-////                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-////                    playerList.add(player);
-//        });
-        System.out.println("My pCount is " + pCount);
-
         switch (pCount) {
             case 1:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
                 break;
 
             case 2:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
                 break;
 
             case 3:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 3);
                 player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
                 playerList.add(player);
                 break;
 
             case 4:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 3);
                 player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 4);
                 player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
                 playerList.add(player);
                 break;
 
         }
 
-        System.out.println("My PLayerlist is " + playerList.size());
         //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
@@ -638,7 +535,6 @@ public class MpogCA2 extends Application {
         //the middle circle 
         gamePane.getChildren().add(middleObj.getCircle());
 
-        //root.setLeft(gamePane);
         h.setSpacing(10);
         h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
@@ -650,8 +546,7 @@ public class MpogCA2 extends Application {
 
     //create client lobby
     public Scene createClientLobby() {
-        //BorderPane root = new BorderPane();
-        gameScene = new Scene(root, 1080, 600);
+        gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
 
         root.getStyleClass().add("mainbg");
@@ -707,7 +602,6 @@ public class MpogCA2 extends Application {
                 System.out.println("Failed to close socket");
             }
 
-            //Action(currentStage, createMainMenu(), "Main Menu");
             Platform.exit();
             System.exit(0);
         });
@@ -718,13 +612,6 @@ public class MpogCA2 extends Application {
 
         }
 
-        //System.out.println("gamestarted:" + gameStarted);
-        //System.out.println("clientStarted" + clientStarted);
-        //connect to game server when gamestarted is true
-        //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
-        //You put what you want to update here
-        //System.out.println("time " + time);
-        //get the bullet and set on the client
         //when user enter msg
         chatMsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -747,7 +634,6 @@ public class MpogCA2 extends Application {
                         } else if (clientRunning == true) {
                             try {
                                 dos = new DataOutputStream(socket.getOutputStream());
-                                //System.out.println(sendMsg);
                                 dos.writeUTF("<" + sendMsg);
                                 dos.flush();
 
@@ -777,75 +663,46 @@ public class MpogCA2 extends Application {
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
 
-//        player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
-//        player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
-//        player3 = new GamePlayer(100, 600, 25, "#e74c3c", "Player3", 3);
-//        player4 = new GamePlayer(600, 600, 25, "#f1c40f", "Player4", 4);
-//        playerList.add(player1);
-//        playerList.add(player2);
-//        playerList.add(player3);
-//        playerList.add(player4);
-        //this is the player 
-        System.out.println("My pCount is " + pCount);
-
         switch (pCount) {
             case 1:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
                 break;
 
             case 2:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
                 break;
 
             case 3:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 3);
                 player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
                 playerList.add(player);
                 break;
 
             case 4:
-                System.out.println("playerList ID is " + 1);
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 2);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 3);
                 player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
                 playerList.add(player);
-
-                System.out.println("playerList ID is " + 4);
                 player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
                 playerList.add(player);
                 break;
 
         }
 
-        System.out.println("My playerID is " + playerID);
         //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
         }
 
-        //root.setLeft(gamePane);
         h.setSpacing(10);
         h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
@@ -854,7 +711,6 @@ public class MpogCA2 extends Application {
         ClientTimeline();
 
     }
-    //Methods essential for the game to work ///////////////////////////////////
 
     public void ServerTimeline() {
 
@@ -864,10 +720,9 @@ public class MpogCA2 extends Application {
                         new Duration(20),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
-                        //You put what you want to update here
+
                         ServerUpdate();
-                        //System.out.println("time " + time);
-                        //get the bullet and set on the client
+
                     }
                 }
                 )
@@ -901,7 +756,6 @@ public class MpogCA2 extends Application {
         refreshScreen();
         HandleServerKeyboard();
         bulletSpawn++;
-        //System.out.println(bulletSpawn);
 
         //System.out.println("playerList" + 2+ " X: " + playerList.get(2 - 1).position.x);
         
@@ -944,7 +798,7 @@ public class MpogCA2 extends Application {
         try {
 
             dos = new DataOutputStream(socket.getOutputStream());
-            //System.out.println(sendMsg);
+
             dos.writeUTF(j);
             dos.flush();
 
@@ -954,11 +808,6 @@ public class MpogCA2 extends Application {
         }
     }
 
-//   // public static void SetBullets(GameNetworkObject gno) {
-//
-//        MpogCA2.gno = gno;
-//
-//    }
     public void ClientUpdate() {
 
           refreshScreen();
@@ -988,6 +837,7 @@ public class MpogCA2 extends Application {
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
         
+
         for (int t = 0; t < bulletList.size(); t++) {
 
             gamePane.getChildren().add(bulletList.get(t).getCircle());
@@ -997,6 +847,10 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
         }
+
+        HandleClientKeyboard();
+        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
+
     }
     
     public void HandleServerKeyboard() {
@@ -1020,18 +874,6 @@ public class MpogCA2 extends Application {
                     xDirection = 1;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 1;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 1;
-                }
             }
         });
 
@@ -1039,7 +881,6 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent event) {
 
-                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
                 }
@@ -1053,18 +894,6 @@ public class MpogCA2 extends Application {
                     xDirection = 0;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 0;
-                }
             }
         });
 
@@ -1110,18 +939,6 @@ public class MpogCA2 extends Application {
                     xDirection = 1;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 1;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = -1;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 1;
-                }
             }
         });
 
@@ -1129,7 +946,6 @@ public class MpogCA2 extends Application {
             @Override
             public void handle(KeyEvent event) {
 
-                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
                 if (event.getCode() == KeyCode.UP) {
                     yDirection = 0;
                 }
@@ -1143,18 +959,6 @@ public class MpogCA2 extends Application {
                     xDirection = 0;
                 }
 
-                if (event.getCode() == KeyCode.W) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.S) {
-                    yDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.A) {
-                    xDirection1 = 0;
-                }
-                if (event.getCode() == KeyCode.D) {
-                    xDirection1 = 0;
-                }
             }
         });
 
@@ -1179,7 +983,6 @@ public class MpogCA2 extends Application {
     void destroyBullets() {
         for (int i = 0; i < bulletList.size(); i++) {
 
-            //if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
             if (bulletList.get(i).position.x > 800 - bulletList.get(i).getCircle().getRadius()) {
                 gamePane.getChildren().remove(bulletList.get(i).getCircle());
                 bulletList.remove(i);
@@ -1201,20 +1004,10 @@ public class MpogCA2 extends Application {
 
                 bulletList.remove(i);
             }
-            //}
         }
 
-        //System.out.println("Bullets Destroyed");
     }
 
-//    public void SendBullets(String bList) {
-//
-//        clientList.forEach((client) -> {
-//            client.SendBullets("#" + bList);
-//
-//        });
-//
-//    }
     public void SpawnBullets(int time) {
 
         if (time == 150) {
@@ -1225,16 +1018,13 @@ public class MpogCA2 extends Application {
 
             Random x = new Random();
             int randomNumber = x.nextInt(10) + 10;
-            //System.out.println("Math.random is : " + randomNumber);
 
             //spawn bullets 
             for (int i = 0; i < randomNumber; i++) {
 
                 int xPos = x.nextInt(21) - 10;
-                //System.out.println(xPos);
+
                 int yPos = x.nextInt(21) - 10;
-                //System.out.println(yPos);
-                //System.out.println("myrntfenrbfvdhmnbfv");
 
                 Bullet bullet = new Bullet(400 - 10, 300 - 10, 20, 5, "#9b59b6", xPos, yPos);
                 gamePane.getChildren().add(bullet.getCircle());
@@ -1262,11 +1052,9 @@ public class MpogCA2 extends Application {
         }
 
         r.put("BulletList", bulletListJ);
-        //System.out.println(r.toString());
 
         String x = r.toString();
         gameData = "#" + x;
-        //System.out.println(gameData);
 
         clientList.forEach((client) -> {
             client.updateClientChat(gameData);
@@ -1419,22 +1207,9 @@ public class MpogCA2 extends Application {
             currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent t) {
-//                    try {
-//                        if (serverRunning == true) {
-//                            serverSocket.close();
-//                            socket.close();
-//                            serverRunning = false;
-//                        } else if (clientRunning == true) {
-//                            socket.close();
-//                            clientRunning = false;
-//                        }
-//                    } catch (IOException ex) {
-//                        System.out.println("Failed to close socket");
-//                    }
+
                     bPush.play();
 
-//                    t.consume();
-//                    //Action(currentStage, createMainMenu(), "Main Menu");
                     Platform.exit();
                     System.exit(0);
                 }
@@ -1442,9 +1217,6 @@ public class MpogCA2 extends Application {
         }
     }//end of generic button listener
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
     }//end of main method
