@@ -13,7 +13,7 @@ package mpogca2.engine;
 
 public class GamePlayer extends GameObject {
 
-    String playerName;
+    public String playerName;
     int playerNum;
 
     boolean isAlive;

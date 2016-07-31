@@ -92,12 +92,15 @@ public class ClientThread implements Runnable {
         int tempXPos = 0, tempYPos = 0, tempID = 0;
         boolean isAlive = false;
 
-        System.out.println(player);
-
+        //System.out.println(player);
         try {
             //convert string to JSON
-            pObject = (JSONObject) p.parse(player);
-
+            try {
+                player = player.replace("$", "");
+                pObject = (JSONObject) p.parse(player);
+            } catch (Exception e) {
+                pObject = (JSONObject) p.parse("{" + player);
+            }
             //get player details
             tempID = ((Long) pObject.get("playerID")).intValue();
             //tempID = playerID;
@@ -115,6 +118,8 @@ public class ClientThread implements Runnable {
                     playerList.get(tempID - 1).position.y = ((Long) innerArray.get(t)).intValue();
                 }
             }
+
+            playerList.get(tempID - 1).setIsAlive(isAlive);
 
             playerList.get(tempID - 1).updateLocation();
 
@@ -141,20 +146,42 @@ public class ClientThread implements Runnable {
                         if (socket.isConnected()) {
                             dis = new DataInputStream(socket.getInputStream());
 
-                            readInput = dis.readUTF();
+                            readInput = dis.readUTF().replace("/", "").replace("\\", "");
 
-                            if (readInput.substring(0, 1).equals("/") && readInput.substring(0, 2).equals("$")) {
-                                readInput.replace("/", "").replace("\\", "");
+//                            if (readInput.substring(0, 1).equals("/") || readInput.substring(0, 1).equals("\\") || readInput.substring(0, 2).equals("/") || readInput.substring(0, 2).equals("\\")) {
+//                                
+//                                System.out.println("Before: " +readInput);
+//                                
+//                                if (readInput.substring(0,1).equals("$") || readInput.substring(0,2).equals("$") || readInput.substring(0,3).equals("$")) {
+//
+//                                    //readInput=readInput.replace("/", "").replace("\\", "");
+//                                    System.out.println("After: " +readInput);                                
+//
+//                                    //UpdateClients(received);
+//                                    UnpackPlayer(readInput);
+//                                }
+//                                
+//                            }
+                            if (readInput.substring(0, 1).equals("$")) {
+
+                                //readInput=readInput.replace("/", "").replace("\\", "");
+                                System.out.println("After: " + readInput);
+
                                 //UpdateClients(received);
                                 UnpackPlayer(readInput);
                             }
 
-                            if (readInput.substring(0, 1).equals("\\") && readInput.substring(0, 2).equals("$")) {
-                                readInput.replace("\\", "").replace("/", "");
-                                //UpdateClients(received);
-                                UnpackPlayer(readInput);
-                            }
-
+//                            if (readInput.substring(0, 1).equals("/") && readInput.substring(0, 2).equals("$")) {
+//                                readInput=readInput.replace("/", "").replace("\\", "");
+//                                //UpdateClients(received);
+//                                UnpackPlayer(readInput);
+//                            }
+//
+//                            if (readInput.substring(0, 1).equals("\\") && readInput.substring(0, 2).equals("$")) {
+//                                readInput=readInput.replace("\\", "").replace("/", "");
+//                                //UpdateClients(received);
+//                                UnpackPlayer(readInput);
+//                            }
                             //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
                                 String received = readInput.substring(1);

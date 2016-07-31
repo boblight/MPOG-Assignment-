@@ -213,8 +213,6 @@ public class MpogCA2 extends Application {
                     serverRunning = true;
                     if (serverStarted == false) {
                         try {
-                            serverSocket = new ServerSocket();
-
                             chatArea.setText("Server Started. \nYour IP is: " + InetAddress.getLocalHost().getHostAddress()
                                     + "\nWaiting for other players to connect.");
 
@@ -508,6 +506,7 @@ public class MpogCA2 extends Application {
                 playerList.add(player);
                 player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
                 playerList.add(player);
+                playerList.get(1).dead();
                 break;
 
             case 3:
@@ -723,7 +722,7 @@ public class MpogCA2 extends Application {
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
                 new KeyFrame(
-                        new Duration(20),//This is how often it updates in milliseconds
+                        new Duration(40),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
 
@@ -743,7 +742,7 @@ public class MpogCA2 extends Application {
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
                 new KeyFrame(
-                        new Duration(20),//This is how often it updates in milliseconds
+                        new Duration(40),//This is how often it updates in milliseconds
                         new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {
                         ClientUpdate();
@@ -777,8 +776,15 @@ public class MpogCA2 extends Application {
 
         }
         UpdateClientBullets(bulletList);
-        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
-        System.out.println ("playerID: " + playerID);
+        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
+        System.out.println("playerID: " + playerID);
+        
+        if (gameStarted == true)
+        {
+            gameStarted = false;
+            checkWinner();
+        }
+        
     }
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
@@ -792,7 +798,7 @@ public class MpogCA2 extends Application {
         playerObj.put("playerID", playerID);
         playerObj.put("player", playerPos);
         playerObj.put("alive", isAlive);
-        
+
         String json = playerObj.toString();
         System.out.println(json);
         String j = "$" + json;
@@ -806,15 +812,11 @@ public class MpogCA2 extends Application {
 //        } catch (Exception ex) {
 //            System.out.println(ex.toString());
 //        }
-        
-        if (playerID == 1)
-        {
+        if (playerID == 1) {
             clientList.forEach((client) -> {
                 client.updateClientChat(j);
             });
-        }
-        else
-        {
+        } else {
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(j);
@@ -823,7 +825,6 @@ public class MpogCA2 extends Application {
                 System.out.println(ex.toString());
             }
         }
-        
 
     }
 
@@ -832,7 +833,8 @@ public class MpogCA2 extends Application {
         refreshScreen();
         HandleClientKeyboard();
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
-        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
+        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
+        checkWinner();
     }
 
     void refreshScreen() {
@@ -1065,9 +1067,7 @@ public class MpogCA2 extends Application {
             client.updateClientChat(gameData);
 
         });
-        
-       
-        
+
     }
 
     //end of methods essential for the game to work ////////////////////////////
@@ -1145,6 +1145,32 @@ public class MpogCA2 extends Application {
 
         return scene;
     }//end of createMainMenu
+
+    public void checkWinner() {
+        boolean haveWinner = false;
+        int deathCount = 0;
+        int lastPlayerAlive = 0;
+
+        for (int i = 0; i < playerList.size(); i++) {
+            if (playerList.get(i).isAlive() == false) {
+                deathCount++;
+            } else {
+                lastPlayerAlive = i;
+            }
+
+            System.out.println("PlayerList(" + ").isAlive() == " + playerList.get(i).isAlive());
+        }
+
+        if (deathCount == playerList.size() - 1) {
+            
+            Action(currentStage, endScreen(playerList.get(lastPlayerAlive).playerName), "Game Over");
+            System.out.println("Winner is Player " + lastPlayerAlive);
+        } else if (deathCount == playerList.size())
+        {
+            Action(currentStage, endScreen("its_a_draw"), "Game Over");
+            //endScreen("its_a_draw");
+        }
+    }
 
     public Scene endScreen(String winnerName) {
         endSound.play();
