@@ -36,7 +36,13 @@ public class ClientThread implements Runnable {
     GameNetworkObject gnr;
     List<String> namesReceived = new ArrayList<>();
     public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
-
+    MpogCA2 main;
+    
+    public ClientThread (MpogCA2 main2)
+    {
+        main = main2;
+    }
+    
     public void UnpackJSON(String bulletString) {
 
         int bulSize = 0;
@@ -142,16 +148,16 @@ public class ClientThread implements Runnable {
 //                                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
 //                            }
                             readInput = dis.readUTF();
-                            System.out.println("readInput:" + readInput);
+                            //System.out.println("readInput:" + readInput);
 
-                            // < is for CHAT
+                            //for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
                                 //System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
                                 chatArea.appendText("\n" + received);
                                 chatSound.play();
 
-                                //- is for DC
+                                //for DC
                             } else if (readInput.substring(0, 1).equals("-")) {
                                 String received = readInput.substring(1);
                                 namesReceived.remove(received);
@@ -159,6 +165,7 @@ public class ClientThread implements Runnable {
                                     listData.remove(received);
                                     pLobby.setItems(listData);
                                 });
+
                             } //this is for lobby NAME
                             else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+") && !readInput.substring(0, 1).equals("#") && !readInput.substring(0, 1).equals("@")) { //+ for startgame, # for gamedata
                                 Platform.runLater(() -> {
@@ -167,7 +174,7 @@ public class ClientThread implements Runnable {
                                 });
                                 namesReceived.add(readInput);
 
-                            } //+ is for GAME START        
+                            } //for GAME START        
                             else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
 
                                 //System.out.println("received from network: " + readInput);
@@ -180,13 +187,13 @@ public class ClientThread implements Runnable {
                                     if (gameStarted == true && clientStarted == true) {
 
                                         pLobby.setVisible(false);
-                                        InitGamePaneClient(h);
+                                        main.InitGamePaneClient(h);
                                     }
 
                                 });
                             }
 
-                            //@ sign is for ID
+                            //for ID
                             if (readInput.substring(0, 1).equals("@")) {
                                 String re = readInput.substring(1);
                                 System.out.println("My number is " + re);
@@ -204,7 +211,13 @@ public class ClientThread implements Runnable {
                                 UnpackJSON(re);
 
                             }
-                            System.out.println("After: " + readInput.substring(0, 1));
+
+                            //for the total player count -> used to generate players 
+                            if (readInput.substring(0, 1).equals("?")) {
+
+                                pCount = Integer.parseInt(readInput.substring(1));
+                                System.out.println("pCount on client is: " + pCount);
+                            }
 
                         } else {
                             break;

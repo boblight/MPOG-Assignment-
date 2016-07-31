@@ -50,6 +50,12 @@ public class ServerThread implements Runnable {
         pool = Executors.newFixedThreadPool(poolSize);
     }//end of constructor
 
+    public void ReceivedClientPos(String json) {
+
+       // JSONParser jP = new JSONParser();
+
+    }
+
     @Override
     public void run() {
         try {
@@ -250,6 +256,11 @@ public class ServerThread implements Runnable {
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);
                                 });
+                            }
+
+                            //receive the client position 
+                            if (received.substring(0, 1).equals("$")) {
+
                             }
 
                         }//end of infinite loop

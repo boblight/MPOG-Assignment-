@@ -314,7 +314,7 @@ public class MpogCA2 extends Application {
                         clientRunning = true;
 
                         if (clientStarted == false) {
-                            client = new ClientThread();
+                            client = new ClientThread(this);
                             new Thread(client).start();
 
                             Action(currentStage, createClientLobby(), "Orbs");
@@ -375,7 +375,6 @@ public class MpogCA2 extends Application {
 //            playerID = 0;
 //
 //        }
-
         System.out.println("Server ID is: " + playerID);
 
         back.setOnAction(e -> {
@@ -403,7 +402,7 @@ public class MpogCA2 extends Application {
             //Action(currentStage, createMainMenu(), "Main Menu");
             Platform.exit();
             System.exit(0);
-        
+
         });
 
         startGame.setOnAction(e -> {
@@ -425,19 +424,17 @@ public class MpogCA2 extends Application {
 //                    dos = new DataOutputStream(socket.getOutputStream());
 //                    System.out.println("sending to clients to change gameStarted=true");
                 String s = "+" + "changing gameStarted=true on client";
-//
-//                    dos.writeUTF("+" + "changing gameStarted=true on client");
-//                    dos.flush();
+                String tP = "?" + Integer.toString(pCount);
 
                 clientList.forEach((client) -> {
                     client.updateClientChat(s);
-
+                    client.updateClientChat(tP);
                 });
+
 //                } catch (IOException ex) {
 //                    System.out.println("error occured when changing client gameStarted=true");
 //                }
                 //changing on clientthread receive message starting with +
-
                 //Start the game area 
 //                player1 = new GamePlayer(100, 100, 25, "#3498db", "Player1", 1);
 //                player2 = new GamePlayer(600, 100, 25, "#2ecc71", "Player2", 2);
@@ -448,39 +445,9 @@ public class MpogCA2 extends Application {
 //                playerList.add(player3);
 //                playerList.add(player4);
                 //this is the server 
-                player = new GamePlayer(100, 100, 25, "#3498db", "player1", 0);
-                playerList.add(player);
-
+//                player = new GamePlayer(100, 100, 25, "#3498db", "player1", 0);
+//                playerList.add(player);
                 //now we dynamically generate the other players 
-                clientList.forEach((t) -> {
-
-                    switch (t.id) {
-                        case 0:
-                            player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-                            playerList.add(player);
-                            break;
-
-                        case 1:
-                            player = new GamePlayer(500, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-                            playerList.add(player);
-                            break;
-
-                        case 2:
-                            player = new GamePlayer(100, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
-                            playerList.add(player);
-                            break;
-
-                        case 3:
-                            player = new GamePlayer(500, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
-                            playerList.add(player);
-                            break;
-
-                    }
-
-//                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
-//                    playerList.add(player);
-                });
-
                 InitGamePaneServer(h);
 
             }//end else (when there are players to start)
@@ -540,7 +507,7 @@ public class MpogCA2 extends Application {
     }
 
     //player colour 
-    public String SwitchColour(int num) {
+    public static String SwitchColour(int num) {
 
         String colour = "";
 
@@ -573,6 +540,95 @@ public class MpogCA2 extends Application {
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
 
+//        player = new GamePlayer(100, 100, 25, SwitchColour(1), "player1", 1);
+//        playerList.add(player);
+//
+//        clientList.forEach((t) -> {
+//
+//            switch (t.id) {
+//                case 1:
+//                    System.out.println("playerList ID is " + t.id);
+//                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+//                    playerList.add(player);
+//                    break;
+//
+//                case 2:
+//                    System.out.println("playerList ID is " + t.id);
+//                    player = new GamePlayer(500, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+//                    playerList.add(player);
+//                    break;
+//
+//                case 3:
+//                    System.out.println("playerList ID is " + t.id);
+//                    player = new GamePlayer(100, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
+//                    playerList.add(player);
+//                    break;
+//
+//                case 4:
+//                    System.out.println("playerList ID is " + t.id);
+//                    player = new GamePlayer(500, 500, 25, SwitchColour(t.id), "player" + t.id, t.id);
+//                    playerList.add(player);
+//                    break;
+//
+//            }
+//
+////                    player = new GamePlayer(100, 100, 25, SwitchColour(t.id), "player" + t.id, t.id);
+////                    playerList.add(player);
+//        });
+        System.out.println("My pCount is " + pCount);
+
+        switch (pCount) {
+            case 1:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                break;
+
+            case 2:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+                break;
+
+            case 3:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 3);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+                break;
+
+            case 4:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 3);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 4);
+                player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
+                playerList.add(player);
+                break;
+
+        }
+
+        System.out.println("My PLayerlist is " + playerList.size());
         //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
@@ -595,8 +651,8 @@ public class MpogCA2 extends Application {
     //create client lobby
     public Scene createClientLobby() {
         //BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1080, 600);
-        scene.getStylesheets().add("style.css");
+        gameScene = new Scene(root, 1080, 600);
+        gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
         h = new HBox(75);
@@ -615,6 +671,7 @@ public class MpogCA2 extends Application {
         chatArea.setPrefHeight(400);
         chatArea.setPrefWidth(300);
         chatArea.setEditable(false);
+        chatArea.setFocusTraversable(false);
         back = new Button("Exit");
         back.getStyleClass().add("smallbtn");
 
@@ -664,7 +721,6 @@ public class MpogCA2 extends Application {
         //System.out.println("clientStarted" + clientStarted);
         //connect to game server when gamestarted is true
         //gamestarted=true is set when server startbutton is pressed and sent to client, clent will change gamestarted to true
-
         //You put what you want to update here
         //System.out.println("time " + time);
         //get the bullet and set on the client
@@ -704,10 +760,10 @@ public class MpogCA2 extends Application {
                 }//end of keypressed events
             }
         });
-        return scene;
+        return gameScene;
     }//end of create client lobby
 
-    public static void InitGamePaneClient(HBox h) {
+    public void InitGamePaneClient(HBox h) {
         longshoot.play(); //play sound
 
         middleObj = new GameObject(400 - 25, 300 - 25, 50, "#8e44ad");
@@ -728,15 +784,65 @@ public class MpogCA2 extends Application {
 //        playerList.add(player2);
 //        playerList.add(player3);
 //        playerList.add(player4);
+        //this is the player 
+        System.out.println("My pCount is " + pCount);
+
+        switch (pCount) {
+            case 1:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+                break;
+
+            case 2:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+                break;
+
+            case 3:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 3);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+                break;
+
+            case 4:
+                System.out.println("playerList ID is " + 1);
+                player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 2);
+                player = new GamePlayer(500, 100, 25, SwitchColour(2), "player" + 2, 2);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 3);
+                player = new GamePlayer(100, 500, 25, SwitchColour(3), "player" + 3, 3);
+                playerList.add(player);
+
+                System.out.println("playerList ID is " + 4);
+                player = new GamePlayer(500, 500, 25, SwitchColour(4), "player" + 4, 4);
+                playerList.add(player);
+                break;
+
+        }
+
+        System.out.println("My playerID is " + playerID);
+        //add current player
         for (int i = 0; i < playerList.size(); i++) {
             gamePane.getChildren().add(playerList.get(i).getCircle());
         }
-
-        //add current player
-        // gamePane.getChildren().add(player1.getCircle());
-//get all the other player
-        //the middle circle 
-        gamePane.getChildren().add(middleObj.getCircle());
 
         //root.setLeft(gamePane);
         h.setSpacing(10);
@@ -745,9 +851,10 @@ public class MpogCA2 extends Application {
         h.getChildren().add(gamePane);
 
         ClientTimeline();
-    }
 
+    }
     //Methods essential for the game to work ///////////////////////////////////
+
     public void ServerTimeline() {
 
         //creates the Timeline that updates the screen 
@@ -769,7 +876,7 @@ public class MpogCA2 extends Application {
 
     }
 
-    public static void ClientTimeline() {
+    public void ClientTimeline() {
 
         //creates the Timeline that updates the screen 
         Timeline tick = TimelineBuilder.create().keyFrames(
@@ -790,13 +897,13 @@ public class MpogCA2 extends Application {
     public void ServerUpdate() {
 
         //update the positions 
-        HandleKeyboard();
+        HandleServerKeyboard();
         bulletSpawn++;
         //System.out.println(bulletSpawn);
 
         SpawnBullets(bulletSpawn);
 
-        player.move(xDirection, yDirection, 3);
+        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
 
         gno.SetBulletList(bulletList);
 
@@ -808,12 +915,39 @@ public class MpogCA2 extends Application {
         UpdateClientBullets(bulletList);
     }
 
+    public void UpdatePlayer(int playerXPos, int playerYPos, boolean isAlive) {
+
+        JSONObject playerObj = new JSONObject();
+        JSONArray playerPos = new JSONArray();
+
+        playerPos.add(playerXPos);
+        playerPos.add(playerYPos);
+
+        playerObj.put("player", playerPos);
+        playerObj.put("alive", isAlive);
+
+        String json = playerObj.toString();
+        String j = "$" + json;
+
+        try {
+
+            dos = new DataOutputStream(socket.getOutputStream());
+            //System.out.println(sendMsg);
+            dos.writeUTF(j);
+            dos.flush();
+
+        } catch (Exception ex) {
+
+            System.out.println(ex.toString());
+        }
+    }
+
 //   // public static void SetBullets(GameNetworkObject gno) {
 //
 //        MpogCA2.gno = gno;
 //
 //    }
-    public static void ClientUpdate() {
+    public void ClientUpdate() {
 
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
@@ -826,6 +960,13 @@ public class MpogCA2 extends Application {
 
         }
 
+        for (int i = 0; i < playerList.size(); i++) {
+            gamePane.getChildren().add(playerList.get(i).getCircle());
+        }
+
+        HandleClientKeyboard();
+        playerList.get(playerID - 1).move(xDirection, yDirection, 3);
+
         //System.out.println("Client Update");
 //        for (int i = 0; i < bulletList.size(); i++) {
 //
@@ -833,7 +974,7 @@ public class MpogCA2 extends Application {
 //        }
     }
 
-    public void HandleKeyboard() {
+    public void HandleServerKeyboard() {
 
         //this is to move the object 
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -903,22 +1044,108 @@ public class MpogCA2 extends Application {
         });
 
         // Prevents player from moving out of screen
-        if (0 > player.position.x && xDirection == -1) {
+        if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 10) > playerList.get(playerID - 1).position.x && xDirection == -1) {
             xDirection = 0;
         }
 
-        if (player.position.x > 800 && xDirection == 1) {
+        if (playerList.get(playerID - 1).position.x > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && xDirection == 1) {
             xDirection = 0;
         }
 
-        if (0 > player.position.y && yDirection == -1) {
+        if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 12) > playerList.get(playerID - 1).position.y && yDirection == -1) {
             yDirection = 0;
         }
 
-        if (player.position.y > 600 && yDirection == 1) {
+        if (playerList.get(playerID - 1).position.y > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
             yDirection = 0;
         }
 
+    }
+
+    public void HandleClientKeyboard() {
+        //this is to move the object 
+        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+
+                if (event.getCode() == KeyCode.UP) {
+                    yDirection = -1;
+                }
+                if (event.getCode() == KeyCode.DOWN) {
+                    yDirection = 1;
+                }
+                if (event.getCode() == KeyCode.LEFT) {
+                    xDirection = -1;
+                }
+                if (event.getCode() == KeyCode.RIGHT) {
+                    xDirection = 1;
+                }
+
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 1;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = -1;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 1;
+                }
+            }
+        });
+
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+
+                //System.out.println("x: " + testPlayer.position.x + " y: " + testPlayer.position.y);
+                if (event.getCode() == KeyCode.UP) {
+                    yDirection = 0;
+                }
+                if (event.getCode() == KeyCode.DOWN) {
+                    yDirection = 0;
+                }
+                if (event.getCode() == KeyCode.LEFT) {
+                    xDirection = 0;
+                }
+                if (event.getCode() == KeyCode.RIGHT) {
+                    xDirection = 0;
+                }
+
+                if (event.getCode() == KeyCode.W) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.S) {
+                    yDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.A) {
+                    xDirection1 = 0;
+                }
+                if (event.getCode() == KeyCode.D) {
+                    xDirection1 = 0;
+                }
+            }
+        });
+
+        // Prevents player from moving out of screen
+        if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 10) > playerList.get(playerID - 1).position.x && xDirection == -1) {
+            xDirection = 0;
+        }
+
+        if (playerList.get(playerID - 1).position.x > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && xDirection == 1) {
+            xDirection = 0;
+        }
+
+        if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 12) > playerList.get(playerID - 1).position.y && yDirection == -1) {
+            yDirection = 0;
+        }
+
+        if (playerList.get(playerID - 1).position.y > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
+            yDirection = 0;
+        }
     }
 
     void destroyBullets() {
