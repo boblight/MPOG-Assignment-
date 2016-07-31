@@ -92,7 +92,6 @@ public class ClientThread implements Runnable {
         int tempXPos = 0, tempYPos = 0, tempID = 0;
         int isAlive = 0;
 
-        //System.out.println(player);
         try {
             //convert string to JSON
             try {
@@ -104,7 +103,6 @@ public class ClientThread implements Runnable {
             //get player details
             tempID = ((Long) pObject.get("playerID")).intValue();
             //tempID = playerID;
-            System.out.println("tempID: " + tempID);
 
             isAlive = ((Long) pObject.get("alive")).intValue();
 
@@ -152,12 +150,10 @@ public class ClientThread implements Runnable {
 
 //                            if (readInput.substring(0, 1).equals("/") || readInput.substring(0, 1).equals("\\") || readInput.substring(0, 2).equals("/") || readInput.substring(0, 2).equals("\\")) {
 //                                
-//                                System.out.println("Before: " +readInput);
 //                                
 //                                if (readInput.substring(0,1).equals("$") || readInput.substring(0,2).equals("$") || readInput.substring(0,3).equals("$")) {
 //
-//                                    //readInput=readInput.replace("/", "").replace("\\", "");
-//                                    System.out.println("After: " +readInput);                                
+//                                    //readInput=readInput.replace("/", "").replace("\\", "");                         
 //
 //                                    //UpdateClients(received);
 //                                    UnpackPlayer(readInput);
@@ -167,7 +163,6 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("$")) {
 
                                 //readInput=readInput.replace("/", "").replace("\\", "");
-                                System.out.println("After: " + readInput);
 
                                 //UpdateClients(received);
                                 UnpackPlayer(readInput);
@@ -268,7 +263,6 @@ public class ClientThread implements Runnable {
                             chatSound.play();
                         });
                     } catch (IOException ex1) {
-                        //System.out.println("Cannot close connection.");
                     }
                 }  //end of big try catch
             }

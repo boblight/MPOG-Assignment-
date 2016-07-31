@@ -378,7 +378,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                //System.out.println("Failed to close socket");
+
             }
 
             Platform.exit();
@@ -597,7 +597,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                //System.out.println("Failed to close socket");
+
             }
             Platform.exit();
             System.exit(0);
@@ -771,11 +771,34 @@ public class MpogCA2 extends Application {
             checkWinner();
         }
         bulletCollision();
+
+        //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
+    }
+
+    public void GameTimer() {
+
+        Timeline timer = TimelineBuilder.create().keyFrames(
+                new KeyFrame(
+                        new Duration(1000),//This is how often it updates in milliseconds
+                        new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+
+                        time++;
+
+                        if (time == 180) {
+
+                            gameStarted = false;
+
+                        }
+                    }
+                }
+                )
+        ).cycleCount(Timeline.INDEFINITE).build();
+
+        timer.play();//Starts the timeline
     }
 
     public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
-
-        System.out.println("isAlive = " + isAlive);
 
         int x = 0;
 
@@ -794,7 +817,6 @@ public class MpogCA2 extends Application {
         playerObj.put("alive", x);
 
         String json = playerObj.toString();
-        System.out.println(json);
         String j = "$" + json;
 
         if (playerID == 1) {
@@ -807,7 +829,7 @@ public class MpogCA2 extends Application {
                 dos.writeUTF(j);
                 dos.flush();
             } catch (Exception ex) {
-                System.out.println(ex.toString());
+
             }
         }
     }
@@ -1141,19 +1163,12 @@ public class MpogCA2 extends Application {
                 //try
                 //{
                 if (playerList.get(i).isCollided(bulletList.get(j))) {
-                    if(playerList.get(i).isAlive() == true)
-                    {
+
+                    if (playerList.get(i).isAlive() == true) {
                         pop.play();
                         playerList.get(i).dead();
                     }
-                    
-                   // System.out.println("Collision" + i + ": " + playerList.get(i).isAlive());
                 }
-                //}
-                //catch (Exception e)
-                //{
-
-                //}
             }
         }
     }
@@ -1169,14 +1184,11 @@ public class MpogCA2 extends Application {
             } else {
                 lastPlayerAlive = i;
             }
-
-            System.out.println("PlayerList(" + ").isAlive() == " + playerList.get(i).isAlive());
         }
 
         if (deathCount == playerList.size() - 1) {
             gameStarted = false;
             Action(currentStage, endScreen(playerList.get(lastPlayerAlive).playerName), "Game Over");
-            System.out.println("Winner is Player " + lastPlayerAlive);
         } else if (deathCount == playerList.size()) {
             gameStarted = false;
             Action(currentStage, endScreen("its_a_draw"), "Game Over");
