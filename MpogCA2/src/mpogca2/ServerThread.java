@@ -297,31 +297,31 @@ public class ServerThread implements Runnable {
                         while (true) {
                             dis = new DataInputStream(socket.getInputStream());
 
-                            String received = dis.readUTF();
+                             String received = dis.readUTF().replace("/", "").replace("\\", "");
 
-                            if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
-                                received.replace("\\", "").replace("/", "");
-                                System.out.println(received);
-                                //UpdateClients(received);
-                                hList.forEach((h) -> {
-                                    h.updateClientChat(received);
-                                });
-                                System.out.println(received);
-                                String x = received.substring(1);
-                                ReceivedClientPos(x);
-                            }
-
-                            if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
-                                received.replace("/", "").replace("\\", "");
-                                System.out.println(received);
-                                //UpdateClients(received);
-                                hList.forEach((h) -> {
-                                    h.updateClientChat(received);
-                                });
-                                System.out.println(received);
-                                String x = received.substring(1);
-                                ReceivedClientPos(x);
-                            }
+//                            if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
+//                                received.replace("\\", "").replace("/", "");
+//                                System.out.println(received);
+//                                //UpdateClients(received);
+//                                hList.forEach((h) -> {
+//                                    h.updateClientChat(received);
+//                                });
+//                                System.out.println(received);
+//                                String x = received.substring(1);
+//                                ReceivedClientPos(x);
+//                            }
+//
+//                            if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
+//                                received.replace("/", "").replace("\\", "");
+//                                System.out.println(received);
+//                                //UpdateClients(received);
+//                                hList.forEach((h) -> {
+//                                    h.updateClientChat(received);
+//                                });
+//                                System.out.println(received);
+//                                String x = received.substring(1);
+//                                ReceivedClientPos(x);
+//                            }
 
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
                                 chatArea.appendText("\n" + received.substring(1));
