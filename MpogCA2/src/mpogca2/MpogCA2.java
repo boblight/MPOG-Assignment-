@@ -5,8 +5,7 @@
 
 
 
-*/
-
+ */
 package mpogca2;
 
 import java.io.DataInputStream;
@@ -124,7 +123,6 @@ public class MpogCA2 extends Application {
     public static GamePlayer player;
     public static GameObject middleObj;
     public static BorderPane root = new BorderPane();
-    public static GameNetworkObject gno = new GameNetworkObject();
     public static String gameData = "";
 
     public static HBox h;
@@ -217,7 +215,7 @@ public class MpogCA2 extends Application {
                             server = new ServerThread(8000, Runtime.getRuntime().availableProcessors() + 1);
                             new Thread(server).start();
                         } catch (IOException ex) {
-                            System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
+                            //System.out.println("SERVER RUNNING EXCEPTION: \n" + ex.getMessage());
                         }//end of trycatch
                     }//end of if server start
                 }//end of if server running
@@ -380,7 +378,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                System.out.println("Failed to close socket");
+                //System.out.println("Failed to close socket");
             }
 
             Platform.exit();
@@ -418,8 +416,6 @@ public class MpogCA2 extends Application {
 
         //when user enter msg
         chatMsg.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-            GameNetworkObject g = new GameNetworkObject();
 
             @Override
             public void handle(KeyEvent ke) {
@@ -470,9 +466,15 @@ public class MpogCA2 extends Application {
             case 2:
                 colour = "#e74c3c";
                 break;
+                
             case 3:
-                colour = "#e74c3c";
-                break;
+                colour = "#3498db";
+                break
+                        ;
+             case 4:
+                colour = "#f1c40f";
+                break;   
+             
         }
 
         return colour;
@@ -599,7 +601,7 @@ public class MpogCA2 extends Application {
                     clientRunning = false;
                 }
             } catch (IOException ex) {
-                System.out.println("Failed to close socket");
+                //System.out.println("Failed to close socket");
             }
 
             Platform.exit();
@@ -757,13 +759,9 @@ public class MpogCA2 extends Application {
         HandleServerKeyboard();
         bulletSpawn++;
 
-        //System.out.println("playerList" + 2+ " X: " + playerList.get(2 - 1).position.x);
-        
         SpawnBullets(bulletSpawn);
 
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
-
-        gno.SetBulletList(bulletList);
 
         //send list of bullets to client 
         for (int i = 0; i < bulletList.size(); i++) {
@@ -776,7 +774,6 @@ public class MpogCA2 extends Application {
 
         }
 
-        
         UpdateClientBullets(bulletList);
     }
 
@@ -803,14 +800,13 @@ public class MpogCA2 extends Application {
             dos.flush();
 
         } catch (Exception ex) {
-
-            System.out.println(ex.toString());
+            //System.out.println(ex.toString());
         }
     }
 
     public void ClientUpdate() {
 
-          refreshScreen();
+        refreshScreen();
 //        gamePane.getChildren().clear();
 //        gamePane.getChildren().add(middleObj.getCircle());
 //        bulletList = tempbList;
@@ -831,16 +827,17 @@ public class MpogCA2 extends Application {
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
     }
 
-    void refreshScreen()
-    {
+    void refreshScreen() {
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
-        
 
         for (int t = 0; t < bulletList.size(); t++) {
 
-            gamePane.getChildren().add(bulletList.get(t).getCircle());
+            try {
+                gamePane.getChildren().add(bulletList.get(t).getCircle());
+            } catch (NullPointerException e) {
+            }
 
         }
 
@@ -852,7 +849,7 @@ public class MpogCA2 extends Application {
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
 
     }
-    
+
     public void HandleServerKeyboard() {
 
         //this is to move the object 
@@ -912,7 +909,7 @@ public class MpogCA2 extends Application {
             yDirection = 0;
         } //top wall
 
-        if (playerList.get(playerID - 1).position.y > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
+        if (playerList.get(playerID - 1).position.y > (600 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
 
             yDirection = 0;
         } //bottom wall
@@ -975,7 +972,7 @@ public class MpogCA2 extends Application {
             yDirection = 0;
         }
 
-        if (playerList.get(playerID - 1).position.y > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
+        if (playerList.get(playerID - 1).position.y > (600 - playerList.get(playerID - 1).getCircle().getRadius() - 12) && yDirection == 1) {
             yDirection = 0;
         }
     }

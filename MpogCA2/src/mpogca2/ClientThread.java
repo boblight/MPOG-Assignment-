@@ -19,7 +19,6 @@ public class ClientThread implements Runnable {
 
     //update list of players
     String readInput = "";
-    GameNetworkObject gnr;
     List<String> namesReceived = new ArrayList<>();
     public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
     MpogCA2 main;
@@ -199,7 +198,7 @@ public class ClientThread implements Runnable {
                             chatSound.play();
                         });
                     } catch (IOException ex1) {
-                        System.out.println("Cannot close connection.");
+                        //System.out.println("Cannot close connection.");
                     }
                 }  //end of big try catch
             }

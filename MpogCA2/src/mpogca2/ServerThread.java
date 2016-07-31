@@ -52,13 +52,12 @@ public class ServerThread implements Runnable {
         JSONArray iArray = new JSONArray();
         int tempID = 0, tempXPos = 0, tempYPos = 0;
         boolean iA = false;
-        //System.out.println("Mah ID is: " + json);
+
         try {
             //we unpack the object received from the client and update them accoridngly
             receivedObj = (JSONObject) jP.parse(json);
 
             tempID = ((Long) receivedObj.get("playerID")).intValue(); //playerID
-            //System.out.println("converted ID is " + tempID);
             pArray = (JSONArray) receivedObj.get("player"); //x and y of player
             iA = (boolean) receivedObj.get("alive"); //status of player
 
@@ -67,20 +66,18 @@ public class ServerThread implements Runnable {
 
                 if (i == 0) { //xPos                  
 
-                    //System.out.println("Converted x pos is:" + ((Long) pArray.get(i)).intValue());
                     playerList.get(tempID - 1).position.x = ((Long) pArray.get(i)).intValue();
 
                 }
                 if (i == 1) { //yPos/
-                    //System.out.println("Converted y pos is: " + ((Long) pArray.get(i)).intValue());
+
                     playerList.get(tempID - 1).position.y = ((Long) pArray.get(i)).intValue();
                 }
-                
+
                 playerList.get(tempID - 1).updateLocation();
             }
             //playerList.get(tempID - 1).setIsAlive(iA);
-            //System.out.println("playerList" + tempID + " X: " + playerList.get(tempID - 1).position.x);
-            
+
         } catch (ParseException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -200,7 +197,7 @@ public class ServerThread implements Runnable {
                 dos.writeUTF("-" + remove);
                 dos.flush();
             } catch (IOException ex) {
-                System.out.println("Failed to update client's list view:\n " + ex.getMessage());
+                //System.out.println("Failed to update client's list view:\n " + ex.getMessage());
             }
         }//end of removeDc
 
@@ -227,15 +224,15 @@ public class ServerThread implements Runnable {
                             try {
                                 Thread.sleep(250);
                             } catch (InterruptedException ex) {
-                                System.out.println("Failed to sleep");
+                                //System.out.println("Failed to sleep");
                             }
                         } catch (IOException ex) {
-                            System.out.println("Failed to update client's list view:\n " + ex.getMessage());
+                            //System.out.println("Failed to update client's list view:\n " + ex.getMessage());
                         }
                     });
                 }
             } catch (IOException ex) {
-                System.out.println("CLIENT UPDATE PART: " + ex.getMessage());
+                //System.out.println("CLIENT UPDATE PART: " + ex.getMessage());
             }
         }//end of lient update
 
@@ -272,9 +269,7 @@ public class ServerThread implements Runnable {
                             dis = new DataInputStream(socket.getInputStream());
                             String received = dis.readUTF();
 
-
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
-                                //System.out.println("Clients message: " + received);
                                 chatArea.appendText("\n" + received.substring(1));
                                 chatSound.play();
                                 hList.forEach((h) -> {
@@ -309,7 +304,7 @@ public class ServerThread implements Runnable {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                    System.err.println("Pool did not terminate");
+                    //System.err.println("Pool did not terminate");
                 }
             }
         } catch (InterruptedException ie) {
