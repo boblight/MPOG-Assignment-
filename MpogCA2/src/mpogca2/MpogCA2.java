@@ -808,8 +808,8 @@ public class MpogCA2 extends Application {
         try {
         destroyBullets();
         }
-        catch (IndexOutOfBoundsException e) {
-        System.out.println("destroy bullets indexoutofboundsexception");
+        catch (Exception e) {
+
         }
         
         UpdateClientBullets(bulletList);
