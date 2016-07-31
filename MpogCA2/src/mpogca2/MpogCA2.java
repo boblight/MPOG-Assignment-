@@ -333,7 +333,7 @@ public class MpogCA2 extends Application {
     public Scene createServerLobby() {
 
         BorderPane root = new BorderPane();
-        gameScene = new Scene(root, 1080, 600);
+        gameScene = new Scene(root, 1140, 640);
         gameScene.getStylesheets().add("style.css");
         root.getStyleClass().add("mainbg");
 
@@ -640,7 +640,7 @@ public class MpogCA2 extends Application {
 
         //root.setLeft(gamePane);
         h.setSpacing(10);
-        h.setPadding(new Insets(0, 0, 0, 10));
+        h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
 
@@ -653,6 +653,7 @@ public class MpogCA2 extends Application {
         //BorderPane root = new BorderPane();
         gameScene = new Scene(root, 1080, 600);
         gameScene.getStylesheets().add("style.css");
+
         root.getStyleClass().add("mainbg");
 
         h = new HBox(75);
@@ -846,7 +847,7 @@ public class MpogCA2 extends Application {
 
         //root.setLeft(gamePane);
         h.setSpacing(10);
-        h.setPadding(new Insets(0, 0, 0, 10));
+        h.setPadding(new Insets(0, 0, 0, 0));
         h.getChildren().remove(pLobby);
         h.getChildren().add(gamePane);
 
@@ -911,7 +912,13 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
-        destroyBullets();
+
+        try {
+            destroyBullets();
+        } catch (Exception e) {
+
+        }
+
         UpdateClientBullets(bulletList);
     }
 
@@ -1045,20 +1052,23 @@ public class MpogCA2 extends Application {
 
         // Prevents player from moving out of screen
         if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 10) > playerList.get(playerID - 1).position.x && xDirection == -1) {
+
             xDirection = 0;
-        }
+        } //left wall
 
         if (playerList.get(playerID - 1).position.x > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && xDirection == 1) {
+
             xDirection = 0;
-        }
+        } //right wall
 
         if ((0 + playerList.get(playerID - 1).getCircle().getRadius() - 12) > playerList.get(playerID - 1).position.y && yDirection == -1) {
             yDirection = 0;
-        }
+        } //top wall
 
         if (playerList.get(playerID - 1).position.y > (800 - playerList.get(playerID - 1).getCircle().getRadius() + 12 - 25) && yDirection == 1) {
+
             yDirection = 0;
-        }
+        } //bottom wall
 
     }
 
