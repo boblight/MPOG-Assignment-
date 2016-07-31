@@ -1,3 +1,14 @@
+/*
+DIT/FT/3A/52
+============
+(1431632) Tan Yi Kang
+
+DIT/FT/3A/34
+============
+(1431421) Quek Wen Qian
+(1431476) Koh Tong Liang
+(1431489) Jeremiah Chan Sheng En
+ */
 package mpogca2.engine;
 
 public class Bullet extends GameObject {
