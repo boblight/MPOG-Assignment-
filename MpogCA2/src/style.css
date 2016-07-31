@@ -3,14 +3,20 @@
 }
 
 .labeltext{
-    -fx-font-family: Cambria;
+    -fx-font-family: Arial;
     -fx-font-size: 30;
     -fx-text-fill: #f1c40f;
 }
 
 .labeltextlarge{
-    -fx-font-family: Cambria;
+    -fx-font-family: Arial;
     -fx-font-size: 36;
+    -fx-text-fill: #f1c40f;
+}
+
+.labeltextextralarge{
+    -fx-font-family: Arial;
+    -fx-font-size: 46;
     -fx-text-fill: #f1c40f;
 }
 
@@ -45,19 +51,6 @@
     -fx-min-width: 280;
 }
 
-.healthLbl {
-    -fx-font-family: Cambria;
-    -fx-text-fill: #2ecc71;
-    -fx-font-size: 32;
-    -fx-font-weight: bold;
-    -fx-padding: 0 300px 0 300px;
-}
-
-.timerLbl {
-    -fx-font-family: Cambria;
-    -fx-font-size: 64;
-    -fx-text-fill: #f1c40f;
-}
 
 .chathistory {
     -fx-font-family: Arial;
