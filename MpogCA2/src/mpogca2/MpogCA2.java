@@ -661,7 +661,9 @@ public class MpogCA2 extends Application {
         gamePane.setMinWidth(800);
         gamePane.setMaxWidth(800);
         gamePane.setStyle("-fx-background-color: #34495e");
-
+        
+        System.out.println("pCount = " + pCount);
+        
         switch (pCount) {
             case 1:
                 player = new GamePlayer(100, 100, 25, SwitchColour(1), "player" + 1, 1);
