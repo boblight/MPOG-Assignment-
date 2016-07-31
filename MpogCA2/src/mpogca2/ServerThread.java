@@ -41,7 +41,7 @@ public class ServerThread implements Runnable {
     private String readInput;
     public List<Handler> hList = new ArrayList<>();
     public String name;
-    int id;
+    int id = 1;
     //
 
     public ServerThread(int port, int poolSize) throws IOException {
@@ -61,14 +61,17 @@ public class ServerThread implements Runnable {
                 //to keep accepting and updating client lobbies as long as game has not started
                 while (gameStarted == false) {
                     socket = serverSocket.accept();//accept client
-                    id++; //identify handlers
+                    //id++; //identify handlers
+                    id++;
                     Handler h = new Handler(socket, this);//create new handler class each time client joins
-                    h.id = id; //set ids to handlers
+
+                    h.id = id; //set ids to handlers                 
+
                     hList.add(h);//add handler to list of handler
                     pool.execute(h);//run handler class in new Thread
 
                     clientList.add(h);
-
+                    //h.updateClientChat("@" + id);
                     //buffer time for network
                     try {
                         Thread.sleep(250);
@@ -76,16 +79,16 @@ public class ServerThread implements Runnable {
                         Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
+                    System.out.println("Client lsit size is: " + clientList.size());
+                    System.out.println("Handler ID is " + id);
                     hList.forEach((o) -> {
                         o.updateClientLobby();
                     });
 
-                    hList.forEach((i) -> {
-                    
-                    System.out.println("Player ID: " + i.id);
+                    hList.forEach((r) -> {
+                        System.out.println(r.id);
+                        h.updateClientChat("@" + id);
                     });
-
-             
 
                 }//end of infinite loop
                 pool.shutdownNow();
@@ -225,14 +228,13 @@ public class ServerThread implements Runnable {
 
                         //create a final list of players and send it to clients
                         readInput = dis.readUTF();
+                        System.out.println("readInput: " + readInput);
 
-                        if (!readInput.substring(0, 1).equals("<")) {
-                            name = readInput;
-                            Platform.runLater(() -> {
-                                listData.add(name);
-                                pLobby.setItems(listData);
-                            });
-                        }
+                        name = readInput.substring(1);
+                        Platform.runLater(() -> {
+                            listData.add(name);
+                            pLobby.setItems(listData);
+                        });
 
                         dos.writeUTF(pLocal.getName());
                         dos.flush();

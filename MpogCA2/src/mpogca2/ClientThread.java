@@ -49,7 +49,7 @@ public class ClientThread implements Runnable {
         JSONArray posArray = new JSONArray();
 
         try {
-            // System.out.println(bulletString);
+            //System.out.println(bulletString);
             outerObj = (JSONObject) jParser.parse(bulletString);
             outerArray = (JSONArray) outerObj.get("BulletList");
             bulSize = outerArray.size();
@@ -95,6 +95,28 @@ public class ClientThread implements Runnable {
 
     }
 
+    public int AssignPlayerID(int pID) {
+
+        int id = 0;
+
+        switch (pID) {
+
+            case 2:
+                id = 1;
+                break;
+
+            case 3:
+                id = 2;
+                break;
+
+            case 4:
+                id = 3;
+                break;
+
+        }
+        return id;
+    }
+
     @Override
     public void run() {
         clientStarted = true;
@@ -104,7 +126,7 @@ public class ClientThread implements Runnable {
                     dis = new DataInputStream(socket.getInputStream());
                     dos = new DataOutputStream(socket.getOutputStream());
 
-                    dos.writeUTF(pLocal.getName());
+                    dos.writeUTF("!" + pLocal.getName());
                     dos.flush();
 
                     while (clientRunning == true) {
@@ -120,11 +142,16 @@ public class ClientThread implements Runnable {
 //                                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
 //                            }
                             readInput = dis.readUTF();
+                            System.out.println("readInput:" + readInput);
+
+                            // < is for CHAT
                             if (readInput.substring(0, 1).equals("<")) {
                                 System.out.println("Yes" + readInput);
                                 String received = readInput.substring(1);
                                 chatArea.appendText("\n" + received);
                                 chatSound.play();
+
+                                //- is for DC
                             } else if (readInput.substring(0, 1).equals("-")) {
                                 String received = readInput.substring(1);
                                 namesReceived.remove(received);
@@ -132,13 +159,16 @@ public class ClientThread implements Runnable {
                                     listData.remove(received);
                                     pLobby.setItems(listData);
                                 });
-                            } else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+") && !readInput.substring(0, 1).equals("#")) { //+ for startgame, # for gamedata
+                            } //this is for lobby NAME
+                            else if (!namesReceived.contains(readInput) && !readInput.substring(0, 1).equals("+") && !readInput.substring(0, 1).equals("#") && !readInput.substring(0, 1).equals("@")) { //+ for startgame, # for gamedata
                                 Platform.runLater(() -> {
                                     listData.add(readInput);
                                     pLobby.setItems(listData);
                                 });
                                 namesReceived.add(readInput);
-                            } else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
+
+                            } //+ is for GAME START        
+                            else if (readInput.substring(0, 1).equals("+")) { //create server lobby gamestart button pressed, changing gamestarted boolean
 
                                 System.out.println("received from network: " + readInput);
                                 gameStarted = true;
@@ -155,6 +185,16 @@ public class ClientThread implements Runnable {
 
                                 });
                             }
+
+                            //@ sign is for ID
+                            if (readInput.substring(0, 1).equals("@")) {
+                                String re = readInput.substring(1);
+                                System.out.println("My number is " + re);
+                                playerID = Integer.parseInt(re);
+
+                            }
+
+                            //for BULLETS 
                             if (readInput.substring(0, 1).equals("#")) {
 
                                 String re = readInput.substring(1);
@@ -162,8 +202,8 @@ public class ClientThread implements Runnable {
 
                                 //uppack the JSON and loop through to create the bulllets 
                                 UnpackJSON(re);
-                            }
 
+                            }
                             System.out.println("After: " + readInput.substring(0, 1));
                         } else {
                             break;

@@ -84,14 +84,14 @@ public class MpogCA2 extends Application {
     private Label mainTitle;
     private Stage currentStage;
 
-    public static boolean isServer, gameStart = false, switchTurn = false, btnDisable = true,
+    public static boolean isServer = false, gameStart = false, switchTurn = false, btnDisable = true,
             serverStarted = false, gameServerStarted = false, serverRunning = false, gameServerRunning = false,
             clientStarted = false, gameClientStarted = false, clientRunning = false, gameClientRunning = false,
             gameStarted = false;
 
     public static Player pLocal;
     public static List<Player> pList = new ArrayList<>(); //store list of players and assign them IDs to distinguish them
-    public static int pCount = 0;
+    public static int pCount = 1;
     public static InetAddress ipAddress;
 
     public static List<ServerThread.Handler> clientList = new ArrayList<>();
@@ -125,7 +125,7 @@ public class MpogCA2 extends Application {
     int xDirection1 = 0;
     int yDirection1 = 0;
 
-    int playerCount = 1; //this is to help assign the player their numbers 
+    public static int playerID = 1; //this is to help assign the player their numbers 
 
     public static ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     public static ArrayList<GamePlayer> playerList = new ArrayList<GamePlayer>();
@@ -369,6 +369,14 @@ public class MpogCA2 extends Application {
         h.getChildren().add(v);
 
         root.setCenter(h);
+
+//        if (pCount == 1) {
+//
+//            playerID = 0;
+//
+//        }
+
+        System.out.println("Server ID is: " + playerID);
 
         back.setOnAction(e -> {
             gameStarted = false;
@@ -1036,8 +1044,8 @@ public class MpogCA2 extends Application {
         testGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                    bPush.play();
-                    Action(currentStage, endScreen("its_a_draw"), "Game Over");
+                bPush.play();
+                Action(currentStage, endScreen("its_a_draw"), "Game Over");
             }
         });
 
@@ -1081,37 +1089,35 @@ public class MpogCA2 extends Application {
 
         return scene;
     }//end of createMainMenu
-    
-    
-        public Scene endScreen(String winnerName) {
+
+    public Scene endScreen(String winnerName) {
         endSound.play();
-        
-        gameStarted=false;
-        gameClientRunning=false;
-        gameClientStarted=false;
-        gameServerRunning=false;
-        gameServerStarted=false;
-        
+
+        gameStarted = false;
+        gameClientRunning = false;
+        gameClientStarted = false;
+        gameServerRunning = false;
+        gameServerStarted = false;
+
         BorderPane root = new BorderPane();
         VBox vbox = new VBox(35);
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add("style.css");
 
-        Label info=new Label();
-        if (winnerName=="its_a_draw") {
+        Label info = new Label();
+        if (winnerName == "its_a_draw") {
             info = new Label("It's a draw!");
+        } else {
+            info = new Label(winnerName + " wins!");
         }
-        else {
-            info = new Label(winnerName +" wins!");
-        }
-        
+
         info.getStyleClass().add("labeltextextralarge");
         Button exit = new Button();
         exit.setText("Exit");
         exit.getStyleClass().add("menubtn");
 
         ImageView endImg = new ImageView(new Image("logo.png", 300, 300, true, true));
-        
+
         vbox.setAlignment(Pos.CENTER);
         vbox.getChildren().add(endImg);
         vbox.getChildren().add(info);
@@ -1173,7 +1179,7 @@ public class MpogCA2 extends Application {
             });
         }
     }//end of generic button listener
-    
+
     /**
      * @param args the command line arguments
      */
