@@ -57,6 +57,8 @@ public class ServerThread implements Runnable {
             //we unpack the object received from the client and update them accoridngly
             receivedObj = (JSONObject) jP.parse(json);
 
+            //set the recevied object into the globalUpdate which will be sent to all clients 
+            // globalUpdateArray.add(receivedObj);
             tempID = ((Long) receivedObj.get("playerID")).intValue(); //playerID
             //System.out.println("converted ID is " + tempID);
             pArray = (JSONArray) receivedObj.get("player"); //x and y of player
@@ -75,12 +77,12 @@ public class ServerThread implements Runnable {
                     //System.out.println("Converted y pos is: " + ((Long) pArray.get(i)).intValue());
                     playerList.get(tempID - 1).position.y = ((Long) pArray.get(i)).intValue();
                 }
-                
+
                 playerList.get(tempID - 1).updateLocation();
             }
             //playerList.get(tempID - 1).setIsAlive(iA);
             //System.out.println("playerList" + tempID + " X: " + playerList.get(tempID - 1).position.x);
-            
+
         } catch (ParseException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -271,7 +273,6 @@ public class ServerThread implements Runnable {
                         while (true) {
                             dis = new DataInputStream(socket.getInputStream());
                             String received = dis.readUTF();
-
 
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
                                 //System.out.println("Clients message: " + received);

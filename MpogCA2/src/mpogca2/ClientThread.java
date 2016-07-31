@@ -28,7 +28,7 @@ public class ClientThread implements Runnable {
         main = main2;
     }
 
-    public void UnpackJSON(String bulletString) {
+    public void UnpackBullets(String bulletString) {
 
         int bulSize = 0;
         JSONParser jParser = new JSONParser();
@@ -74,26 +74,50 @@ public class ClientThread implements Runnable {
 
     }
 
-    public int AssignPlayerID(int pID) {
+    public void UnpackPlayers(String playerList) {
 
-        int id = 0;
+        JSONParser p = new JSONParser();
+        JSONObject outerObject = new JSONObject();
+        JSONObject innerObject = new JSONObject();
+        JSONArray outerArray = new JSONArray();
+        JSONArray innerArray = new JSONArray();
+        int tempXPos = 0, tempYPos = 0, tempID = 0;
+        boolean isAlive = false;
 
-        switch (pID) {
+        System.out.println(playerList);
 
-            case 2:
-                id = 1;
-                break;
+        try {
+            //convert string to JSON
+            outerObject = (JSONObject) p.parse(playerList);
+            outerArray = (JSONArray) outerObject.get("PlayerList");
 
-            case 3:
-                id = 2;
-                break;
+            //get all the player object
+            for (int i = 0; i < outerArray.size(); i++) {
 
-            case 4:
-                id = 3;
-                break;
+                //get the individual player object
+                innerObject = (JSONObject) outerArray.get(i);
+                //get player details
+                tempID = ((Long) innerObject.get("playerID")).intValue();
 
+                isAlive = (boolean) innerObject.get("alive");
+
+                innerArray = (JSONArray) innerObject.get("player"); //get the x and y pos
+                for (int t = 0; t < innerArray.size(); t++) {
+
+                    if (t == 0) {
+                        tempXPos = ((Long) innerArray.get(i)).intValue();
+                    }
+                    if (t == 1) {
+                        tempYPos = ((Long) innerArray.get(i)).intValue();
+                    }
+                }
+
+            }
+
+        } catch (ParseException ex) {
+            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return id;
+
     }
 
     @Override
@@ -150,7 +174,6 @@ public class ClientThread implements Runnable {
                                         pLobby.setVisible(false);
                                         main.InitGamePaneClient(h);
                                     }
-
                                 });
                             }
 
@@ -163,18 +186,19 @@ public class ClientThread implements Runnable {
 
                             //for BULLETS 
                             if (readInput.substring(0, 1).equals("#")) {
-
                                 String re = readInput.substring(1);
-
-                                //unpack the JSON and loop through to create the bulllets 
-                                UnpackJSON(re);
-
+                                UnpackBullets(re);
                             }
 
                             //for the total player count -> used to generate players 
                             if (readInput.substring(0, 1).equals("?")) {
-
                                 pCount = Integer.parseInt(readInput.substring(1));
+                            }
+
+                            //this is to receive the inputs from the server and update alllll players on the screen
+                            if (readInput.substring(0, 1).equals("$")) {
+                                String s = readInput.substring(1);
+                                // UnpackPlayers(s);
                             }
 
                         } else {

@@ -5,8 +5,7 @@
 
 
 
-*/
-
+ */
 package mpogca2;
 
 import java.io.DataInputStream;
@@ -129,6 +128,9 @@ public class MpogCA2 extends Application {
 
     public static HBox h;
     public static VBox v;
+
+    public static JSONObject globalUpdate; //used to update all the clients 
+    public static JSONArray globalUpdateArray;
 
     @Override
     public void start(Stage primaryStage) {
@@ -758,7 +760,6 @@ public class MpogCA2 extends Application {
         bulletSpawn++;
 
         //System.out.println("playerList" + 2+ " X: " + playerList.get(2 - 1).position.x);
-        
         SpawnBullets(bulletSpawn);
 
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
@@ -776,11 +777,11 @@ public class MpogCA2 extends Application {
 
         }
 
-        
         UpdateClientBullets(bulletList);
+        //UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true, true);
     }
 
-    public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive) {
+    public void UpdatePlayerPos(int playerXPos, int playerYPos, boolean isAlive, boolean isServer) {
 
         JSONObject playerObj = new JSONObject();
         JSONArray playerPos = new JSONArray();
@@ -795,48 +796,42 @@ public class MpogCA2 extends Application {
         String json = playerObj.toString();
         String j = "$" + json;
 
-        try {
+        if (isServer == false) {
+            //i just send my coordicates 
+            try {
+                dos = new DataOutputStream(socket.getOutputStream());
+                dos.writeUTF(j);
+                dos.flush();
+            } catch (Exception ex) {
+                System.out.println(ex.toString());
+            }
+        }
 
-            dos = new DataOutputStream(socket.getOutputStream());
-
-            dos.writeUTF(j);
-            dos.flush();
-
-        } catch (Exception ex) {
-
-            System.out.println(ex.toString());
+        if (isServer == true) {
+            //update all the players of the different positions 
+            globalUpdateArray.add(playerObj);
+            globalUpdate.put("PlayerList", globalUpdateArray);
+            String p = globalUpdate.toString();
+            System.out.println(p);
+            String i = "$" + p;
+            clientList.forEach((client) -> {
+                client.updateClientChat(i);
+            });
         }
     }
 
     public void ClientUpdate() {
 
-          refreshScreen();
-//        gamePane.getChildren().clear();
-//        gamePane.getChildren().add(middleObj.getCircle());
-//        bulletList = tempbList;
-//
-//        //System.out.println(bulletList.size());
-//        for (int t = 0; t < bulletList.size(); t++) {
-//
-//            gamePane.getChildren().add(bulletList.get(t).getCircle());
-//
-//        }
-//
-//        for (int i = 0; i < playerList.size(); i++) {
-//            gamePane.getChildren().add(playerList.get(i).getCircle());
-//        }
-
+        refreshScreen();
         HandleClientKeyboard();
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
-        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true);
+        UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), true, false);
     }
 
-    void refreshScreen()
-    {
+    void refreshScreen() {
         gamePane.getChildren().clear();
         gamePane.getChildren().add(middleObj.getCircle());
         bulletList = tempbList;
-        
 
         for (int t = 0; t < bulletList.size(); t++) {
 
@@ -852,7 +847,7 @@ public class MpogCA2 extends Application {
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
 
     }
-    
+
     public void HandleServerKeyboard() {
 
         //this is to move the object 
