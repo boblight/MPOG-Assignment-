@@ -796,7 +796,14 @@ public class MpogCA2 extends Application {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).bulletMove();
         }
+        
+        try {
         destroyBullets();
+        }
+        catch (IndexOutOfBoundsException e) {
+        System.out.println("destroy bullets indexoutofboundsexception");
+        }
+        
         UpdateClientBullets(bulletList);
     }
 
@@ -895,21 +902,21 @@ public class MpogCA2 extends Application {
         });
 
         // Prevents player from moving out of screen
-        if (0 > player.position.x && xDirection == -1) {
+        if (0 + (player.getCircle().getRadius()-10) > player.position.x && xDirection == -1) {
             xDirection = 0;
-        }
+        } //left wall
 
-        if (player.position.x > 800 && xDirection == 1) {
+        if (player.position.x > 800 - (player.getCircle().getRadius()+12) && xDirection == 1) {
             xDirection = 0;
-        }
+        } //right wall
 
-        if (0 > player.position.y && yDirection == -1) {
+        if (0 + (player.getCircle().getRadius()-12) > player.position.y && yDirection == -1) {
             yDirection = 0;
-        }
+        } //top wall
 
-        if (player.position.y > 600 && yDirection == 1) {
+        if (player.position.y > 600 - (player.getCircle().getRadius()+14) && yDirection == 1) {
             yDirection = 0;
-        }
+        } //bottom wall
 
     }
 
