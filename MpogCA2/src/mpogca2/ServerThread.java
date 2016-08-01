@@ -48,12 +48,17 @@ public class ServerThread implements Runnable {
     public String name;
     int id = 1;
 
+    //SYMBOLS WIKI:
+    //$ -> data of clients position/alive status
+    //@ -> to send the id to each player
+    
     public ServerThread(int port, int poolSize) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), port));
         pool = Executors.newFixedThreadPool(poolSize);
     }//end of constructor
 
+    //to unpack the position received from client and update accordingly 
     public void ReceivedClientPos(String json) {
 
         JSONParser jP = new JSONParser();
@@ -90,13 +95,12 @@ public class ServerThread implements Runnable {
 
                 playerList.get(tempID - 1).updateLocation();
             }
-            //playerList.get(tempID - 1).setIsAlive(iA);
         } catch (ParseException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    //this is to update all clients 
+    //this is to update all clients the position of everyone
     public void UpdateClients(String update) {
         clientList.forEach((client) -> {
             try {
@@ -199,6 +203,7 @@ public class ServerThread implements Runnable {
             }
         }//end of updateClientChat
 
+        //server spawn bullets, and send positon to all clients accordingly
         public void SendBullets(String son) {
 
             try {
@@ -208,10 +213,9 @@ public class ServerThread implements Runnable {
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
 
-        //remove anyclients that dc at clients' side
+        //remove any clients that dc at clients' side
         public void removeDc(String remove) {
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
@@ -226,7 +230,6 @@ public class ServerThread implements Runnable {
                 pool.shutdown();
                 socket.close();
             } catch (Exception ex) {
-
             }
         }
 
@@ -289,7 +292,6 @@ public class ServerThread implements Runnable {
 
                             if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
                                 final String t = received.replace("\\", "").replace("/", "");
-                                //UpdateClients(received);
                                 hList.forEach((h) -> {
                                     h.updateClientChat(t);
                                 });
@@ -299,41 +301,18 @@ public class ServerThread implements Runnable {
 
                             if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
                                 final String t = received.replace("/", "").replace("\\", "");
-                                //UpdateClients(received);
                                 hList.forEach((h) -> {
                                     h.updateClientChat(t);
                                 });
                                 String x = received.substring(1);
                                 ReceivedClientPos(x);
                             }
-                            //String received = dis.readUTF().replace("/", "").replace("\\", "");
-                            //String received = dis.readUTF().replace("/", "").replace("\\", "");
 
-//                            if (received.substring(0, 1).equals("\\") && received.substring(0, 2).equals("$")) {
-//                                received.replace("\\", "").replace("/", "");
-//                                //UpdateClients(received);
-//                                hList.forEach((h) -> {
-//                                    h.updateClientChat(received);
-//                                });
-//                                String x = received.substring(1);
-//                                ReceivedClientPos(x);
-//                            }
-//
-//                            if (received.substring(0, 1).equals("/") && received.substring(0, 2).equals("$")) {
-//                                received.replace("/", "").replace("\\", "");
-//                                //UpdateClients(received);
-//                                hList.forEach((h) -> {
-//                                    h.updateClientChat(received);
-//                                });
-//                                String x = received.substring(1);
-//                                ReceivedClientPos(x);
-//                            }
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
 
                                 if (!received.contains("playerID")) {
                                     chatArea.appendText("\n" + received.substring(1));
                                 }
-
                                 chatSound.play();
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);
@@ -372,7 +351,6 @@ public class ServerThread implements Runnable {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                    //System.err.println("Pool did not terminate");
                 }
             }
         } catch (InterruptedException ie) {
