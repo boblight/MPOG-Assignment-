@@ -11,18 +11,14 @@ DIT/FT/3A/34
  */
 package mpogca2;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import static java.util.Arrays.stream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 import static mpogca2.MpogCA2.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -49,8 +44,8 @@ public class ServerThread implements Runnable {
     int id = 1;
 
     //SYMBOLS WIKI:
-    //$ -> data of clients position/alive status
-    //@ -> to send the id to each player
+    //$ : player data
+    //@ : player ID
     
     public ServerThread(int port, int poolSize) throws IOException {
         serverSocket = new ServerSocket();
@@ -164,9 +159,7 @@ public class ServerThread implements Runnable {
         Platform.runLater(() -> {
             synchronized (listData) {
                 listData.remove(name);
-
                 listData.forEach((l) -> {
-
                 });
                 pLobby.setItems(listData);
                 chatArea.appendText(message);

@@ -1063,7 +1063,6 @@ public class MpogCA2 extends Application {
                 bulletList.remove(i);
             }
         }
-
     }
 
     public void UpdateClientBullets(ArrayList<Bullet> bList) {

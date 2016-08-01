@@ -25,7 +25,6 @@ public class GameObject {
         position = new Vector2D();
         circle = new Circle(20, Color.web("#3498db"));
         circle.relocate(position.x, position.y);
-
     }
 
     //xpos, ypos, radius, player colour 

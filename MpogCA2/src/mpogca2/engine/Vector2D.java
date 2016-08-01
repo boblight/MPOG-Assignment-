@@ -11,8 +11,6 @@ DIT/FT/3A/34
  */
 package mpogca2.engine;
 
-/*reference: http://noobtuts.com/java/vector2-class*/
-
 public class Vector2D {
 
     public float x;

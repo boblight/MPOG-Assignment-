@@ -34,10 +34,21 @@ public class ClientThread implements Runnable {
     public static ArrayList<Bullet> tempbList = new ArrayList<Bullet>();
     MpogCA2 main;
 
+    //SYMBOLS WIKI:
+    //$ : player data 
+    //< : chat messages 
+    //- : to handle disconnect
+    //+ : to start game 
+    //@ : player ID 
+    //# : bullet data
+    //? : pCount
+    //* : end game
+    
     public ClientThread(MpogCA2 main2) {
         main = main2;
     }
 
+    //unpack the bullet data received and update accordingly 
     public void UnpackBullets(String bulletString) {
 
         int bulSize = 0;
@@ -69,19 +80,17 @@ public class ClientThread implements Runnable {
                     }
                     if (q == 1) {
                         yPos = Integer.parseInt(posArray.get(q).toString());
-
                     }
                 }
                 Bullet b = new Bullet(xPos, yPos, 20, 5, "#9b59b6", xPos, yPos);
-
                 tempbList.add(b);
             }
-
         } catch (ParseException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    //unapack client data received and update accordingly
     public void UnpackPlayer(String player) {
 
         JSONParser p = new JSONParser();
@@ -211,34 +220,24 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("$")) {
                                 String s = readInput.substring(1);
                                 UnpackPlayer(s);
-                            } //game has ended
+                            } //end game condition
                             else if (readInput.substring(0, 1).equals("*")) {
 
                                 String s = readInput.substring(1);
                                 System.out.println(s);
-//                                if (s.equals("over")) {
-//
-//                                    Platform.runLater(() -> {
-//                                        gameStarted = false;
-//                                        main.Action(main.currentStage, main.endScreen(main.gameOver), "Game Over");
-//                                    });
-//                                }
+
                                 if (s.equals("draw")) {
 
                                     Platform.runLater(() -> {
                                         gameStarted = false;
                                         main.Action(main.currentStage, main.endScreen("its_a_draw"), "Game Over");
                                     });
-                                }
-                                
-                                else
-                                {
+                                } else {
                                     Platform.runLater(() -> {
                                         gameStarted = false;
-                                        main.Action(main.currentStage, main.endScreen(s),"Game Over");
+                                        main.Action(main.currentStage, main.endScreen(s), "Game Over");
                                     });
                                 }
-                                
                             }
                         } else {
                             break;
