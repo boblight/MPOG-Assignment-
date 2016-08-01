@@ -817,9 +817,9 @@ public class MpogCA2 extends Application {
         playerList.get(playerID - 1).move(xDirection, yDirection, 3);
         UpdatePlayerPos(((int) playerList.get(playerID - 1).position.x), ((int) playerList.get(playerID - 1).position.y), playerList.get(playerID - 1).isAlive());
 
-        if (gameStarted == true) {
-            checkWinner();
-        }
+//        if (gameStarted == true) {
+//            checkWinner();
+//        }
 
         bulletCollision();
     }
@@ -1194,11 +1194,11 @@ public class MpogCA2 extends Application {
 
             //send over the network to tell everyone that game has ended 
             if (serverRunning == true) {
-                String end = "*over";
+                String end = "*" + pLocal.getName();
                 clientList.forEach((c) -> {
                     c.updateClientChat(end);
                 });
-                Action(currentStage, endScreen(gameOver), "Game Over");
+                Action(currentStage, endScreen(pLocal.getName()), "Game Over");
             }
 
         } else if (deathCount == playerList.size()) {
@@ -1236,7 +1236,7 @@ public class MpogCA2 extends Application {
         if (gameMsg == "its_a_draw") {
             info = new Label("It's a draw!");
         } else {
-            info = new Label(gameMsg);
+            info = new Label(gameMsg + " won!!");
         }
 
         info.getStyleClass().add("labeltextextralarge");

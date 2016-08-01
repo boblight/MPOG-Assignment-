@@ -216,13 +216,13 @@ public class ClientThread implements Runnable {
 
                                 String s = readInput.substring(1);
                                 System.out.println(s);
-                                if (s.equals("over")) {
-
-                                    Platform.runLater(() -> {
-                                        gameStarted = false;
-                                        main.Action(main.currentStage, main.endScreen(main.gameOver), "Game Over");
-                                    });
-                                }
+//                                if (s.equals("over")) {
+//
+//                                    Platform.runLater(() -> {
+//                                        gameStarted = false;
+//                                        main.Action(main.currentStage, main.endScreen(main.gameOver), "Game Over");
+//                                    });
+//                                }
                                 if (s.equals("draw")) {
 
                                     Platform.runLater(() -> {
@@ -230,6 +230,15 @@ public class ClientThread implements Runnable {
                                         main.Action(main.currentStage, main.endScreen("its_a_draw"), "Game Over");
                                     });
                                 }
+                                
+                                else
+                                {
+                                    Platform.runLater(() -> {
+                                        gameStarted = false;
+                                        main.Action(main.currentStage, main.endScreen(s),"Game Over");
+                                    });
+                                }
+                                
                             }
                         } else {
                             break;
