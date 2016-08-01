@@ -81,32 +81,19 @@ public class ServerThread implements Runnable {
                     playerList.get(tempID - 1).position.x = ((Long) pArray.get(i)).intValue();
 
                     iA = ((Long) receivedObj.get("alive")).intValue();
-                    if (iA == 0)
-                    {
-                        playerList.get(tempID - 1).setIsAlive(false);
-                    }
 
-                    if (iA == 0)
-                    {
-                        playerList.get(tempID - 1).setIsAlive(true);
-                    }
-                    
                 }
-                if (i == 1) { //yPos/
+                if (i == 1) { //yPos
 
                     playerList.get(tempID - 1).position.y = ((Long) pArray.get(i)).intValue();
                 }
 
-//                if (iA == 0) {
-//                    playerList.get(tempID - 1).dead();
-//                }
                 playerList.get(tempID - 1).updateLocation();
             }
             //playerList.get(tempID - 1).setIsAlive(iA);
         } catch (ParseException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     //this is to update all clients 
@@ -342,11 +329,11 @@ public class ServerThread implements Runnable {
 //                                ReceivedClientPos(x);
 //                            }
                             if (!received.trim().equals("") && !received.substring(0, 1).equals("$")) {
-                                
+
                                 if (!received.contains("playerID")) {
                                     chatArea.appendText("\n" + received.substring(1));
                                 }
-                                
+
                                 chatSound.play();
                                 hList.forEach((h) -> {
                                     h.updateClientChat(received);

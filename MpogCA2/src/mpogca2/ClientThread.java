@@ -104,15 +104,6 @@ public class ClientThread implements Runnable {
             if (tempID == playerID) {
 
                 isAlive = ((Long) pObject.get("alive")).intValue();
-                if (isAlive == 0)
-                {
-                    playerList.get(tempID - 1).setIsAlive(false);
-                }
-                
-                if (isAlive == 0)
-                {
-                    playerList.get(tempID - 1).setIsAlive(true);
-                }
 
             } else {
 
@@ -220,8 +211,26 @@ public class ClientThread implements Runnable {
                             if (readInput.substring(0, 1).equals("$")) {
                                 String s = readInput.substring(1);
                                 UnpackPlayer(s);
-                            }
+                            } //game has ended
+                            else if (readInput.substring(0, 1).equals("*")) {
 
+                                String s = readInput.substring(1);
+                                System.out.println(s);
+                                if (s.equals("over")) {
+
+                                    Platform.runLater(() -> {
+                                        gameStarted = false;
+                                        main.Action(main.currentStage, main.endScreen(main.gameOver), "Game Over");
+                                    });
+                                }
+                                if (s.equals("draw")) {
+
+                                    Platform.runLater(() -> {
+                                        gameStarted = false;
+                                        main.Action(main.currentStage, main.endScreen("its_a_draw"), "Game Over");
+                                    });
+                                }
+                            }
                         } else {
                             break;
                         }

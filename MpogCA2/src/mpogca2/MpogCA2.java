@@ -75,7 +75,7 @@ public class MpogCA2 extends Application {
     private static Label nameLbl, ipLbl;
     public static Label error;
     private static TextField chatMsg, inputPName, inputIp;
-    private Stage currentStage;
+    public Stage currentStage;
 
     public static boolean isServer = false, gameStart = false, switchTurn = false, btnDisable = true,
             serverStarted = false, gameServerStarted = false, serverRunning = false, gameServerRunning = false,
@@ -126,6 +126,8 @@ public class MpogCA2 extends Application {
     public static GameObject middleObj;
     public static BorderPane root = new BorderPane();
     public static String gameData = "";
+    public String gameOver = "Game Over !";
+    public String gameDraw = "Draw !";
 
     public static HBox h;
     public static VBox v;
@@ -1189,16 +1191,34 @@ public class MpogCA2 extends Application {
 
         if (deathCount == playerList.size() - 1) {
             gameStarted = false;
-            Action(currentStage, endScreen(pLocal.getName()), "Game Over");
+
+            //send over the network to tell everyone that game has ended 
+            if (serverRunning == true) {
+                String end = "*over";
+                clientList.forEach((c) -> {
+                    c.updateClientChat(end);
+                });
+                Action(currentStage, endScreen(gameOver), "Game Over");
+            }
+
         } else if (deathCount == playerList.size()) {
-            gameStarted = false;
-            Action(currentStage, endScreen("its_a_draw"), "Game Over");
-            //endScreen("its_a_draw");
+
+            //send over to say that its a draw
+            if (serverRunning == true) {
+                String end = "*draw";
+
+                clientList.forEach((c) -> {
+                    c.updateClientChat(end);
+                });
+
+                gameStarted = false;
+                Action(currentStage, endScreen("its_a_draw"), "Game Over");
+            }
         }
     }
 
     //to display at the end of the game
-    public Scene endScreen(String winnerName) {
+    public Scene endScreen(String gameMsg) {
         endSound.play();
 
         gameStarted = false;
@@ -1213,10 +1233,10 @@ public class MpogCA2 extends Application {
         scene.getStylesheets().add("style.css");
 
         Label info = new Label();
-        if (winnerName == "its_a_draw") {
+        if (gameMsg == "its_a_draw") {
             info = new Label("It's a draw!");
         } else {
-            info = new Label(winnerName + " wins!");
+            info = new Label(gameMsg);
         }
 
         info.getStyleClass().add("labeltextextralarge");
