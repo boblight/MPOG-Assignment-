@@ -1236,7 +1236,7 @@ public class MpogCA2 extends Application {
         if (gameMsg == "its_a_draw") {
             info = new Label("It's a draw!");
         } else {
-            info = new Label(gameMsg + " won!!");
+            info = new Label(gameMsg + " won!");
         }
 
         info.getStyleClass().add("labeltextextralarge");
